@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estrategia 2031 — Árbol estratégico</title>
+    <meta
+      name="description"
+      content="Árbol estratégico interactivo: objetivo al 2031, fuerzas, valor agregado y agendas institucionales."
+    />
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+
+  <body>
+    <a class="salto-contenido" href="#arbol">Saltar al contenido</a>
+
+    <header class="encabezado">
+      <div class="encabezado__texto">
+        <h1 class="encabezado__titulo" id="app-titulo">Estrategia 2031</h1>
+        <p class="encabezado__subtitulo" id="app-subtitulo">Árbol estratégico institucional</p>
+      </div>
+      <p class="encabezado__ayuda">
+        <span class="encabezado__punto" aria-hidden="true"></span>
+        Hacé clic en una agenda institucional para ver el detalle
+      </p>
+    </header>
+
+    <!-- El árbol se dibuja acá desde js/app.js con los datos de js/contenido.js -->
+    <main class="arbol" id="arbol"></main>
+
+    <footer class="pie">
+      <p id="app-pie"></p>
+    </footer>
+
+    <!-- Panel lateral de detalle -->
+    <div class="fondo-panel" id="fondo-panel" hidden></div>
+
+    <aside
+      class="panel"
+      id="panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="panel-titulo"
+      hidden
+    >
+      <div class="panel__barra">
+        <span class="panel__etiqueta" id="panel-etiqueta">Agenda institucional</span>
+        <button class="panel__cerrar" id="panel-cerrar" type="button" aria-label="Cerrar detalle">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="panel__cuerpo" id="panel-cuerpo">
+        <h2 class="panel__titulo" id="panel-titulo"></h2>
+        <p class="panel__resumen" id="panel-resumen"></p>
+
+        <section class="bloque">
+          <h3 class="bloque__titulo">
+            <span class="bloque__icono" aria-hidden="true">→</span>
+            Qué haremos al 2031
+          </h3>
+          <p class="bloque__texto" id="panel-quehacemos"></p>
+        </section>
+
+        <section class="bloque bloque--indicador">
+          <h3 class="bloque__titulo">
+            <span class="bloque__icono" aria-hidden="true">◆</span>
+            Indicador de seguimiento
+          </h3>
+          <p class="indicador__nombre" id="panel-indicador-nombre"></p>
+          <p class="bloque__texto" id="panel-indicador-desc"></p>
+          <p class="indicador__meta" id="panel-indicador-meta"></p>
+        </section>
+      </div>
+
+      <nav class="panel__navegacion" aria-label="Navegar entre agendas">
+        <button class="nav-boton" id="nav-anterior" type="button">
+          <span aria-hidden="true">‹</span> Anterior
+        </button>
+        <span class="nav-posicion" id="nav-posicion"></span>
+        <button class="nav-boton" id="nav-siguiente" type="button">
+          Siguiente <span aria-hidden="true">›</span>
+        </button>
+      </nav>
+    </aside>
+
+    <script src="js/contenido.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
