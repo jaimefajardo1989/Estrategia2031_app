@@ -3,9 +3,15 @@
 Aplicación web que muestra el árbol estratégico en sus cuatro niveles: **objetivo al 2031**,
 **oportunidades**, **valor agregado** y **agendas institucionales**.
 
-Las 16 tarjetas son clickeables y abren un panel lateral con el detalle. Según el nivel,
-el panel muestra qué es esa tarjeta, qué significa el nivel al que pertenece y —en el caso
-de las agendas institucionales— el compromiso al 2031 con su indicador de seguimiento.
+Hay dos cosas que se abren con un clic:
+
+- **El nombre de un nivel** (Oportunidades, Valor agregado, Agendas institucionales) explica
+  qué es ese tipo de agenda. Se reconoce por la pastilla con una **i** al lado.
+- **Cada tarjeta** dice qué hará CAF al 2031 en ese frente y con qué indicador se le hace
+  seguimiento.
+
+Arriba a la derecha hay un **buscador de temas**: al escribir, por ejemplo, `agricultura`,
+se encienden las tarjetas donde ese tema aparece y se apagan las demás.
 
 No usa frameworks ni dependencias: es HTML, CSS y JavaScript. Se abre haciendo doble clic
 en `index.html`.
@@ -60,11 +66,26 @@ se ve así:
 },
 ```
 
-Cada nivel tiene además un campo `descripcion` que explica qué es ese nivel. Ese texto
-aparece en el recuadro gris del panel, en todas las tarjetas de ese nivel.
+Cada **nivel** tiene su propio bloque `detalle`, con la misma forma. Ese es el texto que se
+abre al hacer clic en el nombre del nivel, y es donde se explica qué es ese tipo de agenda.
 
 Dos cuidados: no borres las comas al final de cada línea, y si un texto lleva apóstrofe
 escribilo como `\'`.
+
+### El buscador
+
+Cada tarjeta tiene un campo `temas` con las palabras por las que querés que se encienda:
+
+```js
+temas: 'agricultura agua bosques biodiversidad clima adaptación …',
+```
+
+El buscador mira el título, todos los textos **y** ese campo. Sirve para agregar sinónimos
+que no están escritos en el contenido: por ejemplo, la tarjeta Ambiental se enciende al
+buscar `agricultura` aunque esa palabra no aparezca en su párrafo.
+
+Detalles de cómo busca: no distingue mayúsculas ni acentos (`energia` encuentra
+`Energética`), y si escribís varias palabras exige que estén todas.
 
 ### El sello "Borrador"
 
@@ -80,8 +101,9 @@ ser clickeable. No hay que tocar código en ningún caso.
 
 ## Cómo se usa
 
-- **Clic** en cualquier tarjeta —de cualquiera de los cuatro niveles— abre el detalle.
-- **Anterior / Siguiente** recorre las 16 tarjetas en orden, sin cerrar el panel.
+- **Clic** en cualquier tarjeta, o en el nombre de un nivel, abre el detalle.
+- **Escribí un tema** en el buscador y se encienden las tarjetas donde aparece.
+- **Anterior / Siguiente** recorre los 19 paneles en orden, sin cerrar.
 - **Flechas ← →** del teclado hacen lo mismo.
 - **Esc**, clic afuera, o el botón ✕ cierran el panel.
 - El panel toma el color del nivel que se está viendo.

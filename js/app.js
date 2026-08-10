@@ -1,9 +1,9 @@
 /**
  * Estrategia 2031 — lógica de la aplicación.
  *
- * Dibuja el árbol estratégico a partir de js/contenido.js y maneja el panel
- * de detalle. Normalmente no hace falta tocar este archivo: para cambiar
- * textos, editá js/contenido.js.
+ * Dibuja el árbol estratégico a partir de js/contenido.js, maneja el panel de
+ * detalle y el buscador de temas. Normalmente no hace falta tocar este archivo:
+ * para cambiar textos, editá js/contenido.js.
  */
 (function () {
   'use strict';
@@ -21,61 +21,134 @@
   const selloPanel = document.getElementById('panel-sello');
   const posicionPanel = document.getElementById('nav-posicion');
 
-  // Lista plana de todas las tarjetas con detalle, en orden de lectura.
-  // Es lo que recorren los botones Anterior / Siguiente.
-  const navegables = [];
+  const entradaBusqueda = document.getElementById('buscador');
+  const botonLimpiar = document.getElementById('buscador-limpiar');
+  const estadoBusqueda = document.getElementById('buscador-estado');
+  const textoAyuda = document.getElementById('app-ayuda');
+
+  /**
+   * Todo lo que se puede abrir, en orden de lectura: la etiqueta de cada nivel
+   * y después sus tarjetas. Es lo que recorren los botones Anterior/Siguiente
+   * y también lo que revisa el buscador.
+   */
+  const abribles = [];
 
   let focoPrevio = null;
   let idAbierto = null;
+
+  // --- Utilidades -------------------------------------------------------
+
+  // Pasa a minúsculas y saca los acentos, para que "energetica" encuentre "Energética"
+  function normalizar(texto) {
+    return String(texto || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
+  // Junta todo el texto de un elemento en una sola cadena, para buscar dentro
+  function armarIndice(item) {
+    const partes = [item.titulo, item.temas, item.nivelEtiqueta];
+    const d = item.detalle || {};
+    partes.push(d.resumen);
+    (d.secciones || []).forEach(function (s) {
+      partes.push(s.titulo, s.texto);
+    });
+    if (d.indicador) {
+      partes.push(d.indicador.nombre, d.indicador.descripcion, d.indicador.meta);
+    }
+    return normalizar(partes.filter(Boolean).join(' '));
+  }
 
   // --- Dibujar el árbol -------------------------------------------------
 
   function dibujarArbol() {
     document.getElementById('app-titulo').textContent = ESTRATEGIA.meta.titulo;
     document.getElementById('app-subtitulo').textContent = ESTRATEGIA.meta.subtitulo;
-    document.getElementById('app-ayuda').textContent = ESTRATEGIA.meta.ayuda;
+    textoAyuda.textContent = ESTRATEGIA.meta.ayuda;
     document.getElementById('app-pie').textContent = ESTRATEGIA.meta.pieDePagina;
+    entradaBusqueda.placeholder = ESTRATEGIA.meta.marcadorBusqueda;
     document.title = ESTRATEGIA.meta.titulo + ' — Árbol estratégico';
 
-    let retrasoTarjeta = 0.18; // segundos; se acumula para escalonar la entrada
+    let retraso = 0.18; // segundos; se acumula para escalonar la entrada
 
     ESTRATEGIA.niveles.forEach(function (nivel, indiceNivel) {
       const fila = document.createElement('section');
       fila.className = 'nivel';
       fila.dataset.nivel = nivel.id;
 
-      const etiqueta = document.createElement('h2');
-      etiqueta.className = 'nivel__etiqueta';
-      etiqueta.textContent = nivel.etiqueta;
-      etiqueta.style.setProperty('--retraso', indiceNivel * 0.14 + 's');
-      fila.appendChild(etiqueta);
+      fila.appendChild(crearEtiquetaNivel(nivel, indiceNivel * 0.14));
 
       const grupo = document.createElement('div');
       grupo.className =
         'grupo grupo--' + nivel.estilo + (nivel.segmentado ? ' grupo--segmentado' : '');
 
       nivel.elementos.forEach(function (elemento) {
-        grupo.appendChild(crearTarjeta(elemento, nivel, retrasoTarjeta));
-        retrasoTarjeta += 0.07;
+        grupo.appendChild(crearTarjeta(elemento, nivel, retraso));
+        retraso += 0.07;
       });
-      retrasoTarjeta += 0.06; // respiro entre niveles
+      retraso += 0.06; // respiro entre niveles
 
       fila.appendChild(grupo);
       arbol.appendChild(fila);
     });
   }
 
+  /**
+   * La etiqueta del nivel. Si el nivel trae "detalle", se dibuja como botón:
+   * al hacerle clic explica qué es ese tipo de agenda.
+   */
+  function crearEtiquetaNivel(nivel, retraso) {
+    const abrible = Boolean(nivel.detalle);
+    const etiqueta = document.createElement(abrible ? 'button' : 'h2');
+
+    etiqueta.className = 'nivel__etiqueta';
+    etiqueta.style.setProperty('--retraso', retraso.toFixed(2) + 's');
+    etiqueta.appendChild(document.createTextNode(nivel.etiqueta));
+
+    if (!abrible) return etiqueta;
+
+    const id = 'nivel-' + nivel.id;
+    etiqueta.type = 'button';
+    etiqueta.id = id;
+    etiqueta.classList.add('nivel__etiqueta--abrible');
+    etiqueta.setAttribute('aria-haspopup', 'dialog');
+    etiqueta.setAttribute('aria-expanded', 'false');
+    etiqueta.title = 'Ver qué es este tipo de agenda';
+
+    const pista = document.createElement('span');
+    pista.className = 'nivel__pista';
+    pista.setAttribute('aria-hidden', 'true');
+    pista.textContent = 'i';
+    etiqueta.appendChild(pista);
+
+    etiqueta.addEventListener('click', function () {
+      abrirDetalle(id);
+    });
+
+    abribles.push({
+      id: id,
+      titulo: nivel.etiqueta,
+      detalle: nivel.detalle,
+      nivelId: nivel.id,
+      nivelEtiqueta: nivel.etiqueta,
+      esNivel: true,
+    });
+
+    return etiqueta;
+  }
+
   function crearTarjeta(elemento, nivel, retraso) {
-    const tieneDetalle = Boolean(elemento.detalle);
-    // Si es clickeable usamos <button>: funciona con teclado y lectores de pantalla
-    const tarjeta = document.createElement(tieneDetalle ? 'button' : 'div');
+    const abrible = Boolean(elemento.detalle);
+    // Si se puede abrir usamos <button>: funciona con teclado y lectores de pantalla
+    const tarjeta = document.createElement(abrible ? 'button' : 'div');
 
     tarjeta.className = 'tarjeta tarjeta--' + nivel.estilo;
     tarjeta.id = elemento.id;
     tarjeta.textContent = elemento.titulo;
     tarjeta.style.setProperty('--retraso', retraso.toFixed(2) + 's');
 
-    if (tieneDetalle) {
+    if (abrible) {
       tarjeta.type = 'button';
       tarjeta.setAttribute('aria-haspopup', 'dialog');
       tarjeta.setAttribute('aria-expanded', 'false');
@@ -84,13 +157,14 @@
         abrirDetalle(elemento.id);
       });
 
-      navegables.push({
+      abribles.push({
         id: elemento.id,
         titulo: elemento.titulo,
+        temas: elemento.temas,
         detalle: elemento.detalle,
         nivelId: nivel.id,
         nivelEtiqueta: nivel.etiqueta,
-        nivelDescripcion: nivel.descripcion,
+        esNivel: false,
       });
     }
 
@@ -120,8 +194,8 @@
   // --- Panel de detalle -------------------------------------------------
 
   function indiceDe(id) {
-    for (let i = 0; i < navegables.length; i++) {
-      if (navegables[i].id === id) return i;
+    for (let i = 0; i < abribles.length; i++) {
+      if (abribles[i].id === id) return i;
     }
     return -1;
   }
@@ -134,8 +208,8 @@
     if (esPrimeraApertura) focoPrevio = document.activeElement;
 
     idAbierto = id;
-    llenarPanel(navegables[indice], indice);
-    marcarTarjetaActiva(id);
+    llenarPanel(abribles[indice], indice);
+    marcarActivo(id);
 
     if (esPrimeraApertura) {
       panel.hidden = false;
@@ -150,7 +224,7 @@
       botonCerrar.focus();
     }
 
-    // Deja la tarjeta abierta en la dirección: el enlace se puede compartir
+    // Deja lo abierto en la dirección: el enlace se puede compartir
     if (history.replaceState) history.replaceState(null, '', '#' + id);
   }
 
@@ -158,7 +232,8 @@
     const d = item.detalle;
 
     panel.dataset.nivel = item.nivelId;
-    etiquetaPanel.textContent = item.nivelEtiqueta;
+    // En la etiqueta de un nivel el encabezado dice de qué se trata el panel
+    etiquetaPanel.textContent = item.esNivel ? 'Qué es este nivel' : item.nivelEtiqueta;
     selloPanel.hidden = !ESTRATEGIA.meta.marcarBorrador;
 
     cuerpoPanel.textContent = '';
@@ -169,14 +244,6 @@
     titulo.id = 'panel-titulo';
     titulo.textContent = item.titulo;
     bloques.push(titulo);
-
-    // Explicación de qué es el nivel al que pertenece esta tarjeta
-    if (item.nivelDescripcion) {
-      const contexto = document.createElement('p');
-      contexto.className = 'panel__contexto';
-      contexto.textContent = item.nivelDescripcion;
-      bloques.push(contexto);
-    }
 
     if (d.resumen) {
       const resumen = document.createElement('p');
@@ -197,9 +264,9 @@
       cuerpoPanel.appendChild(bloque);
     });
 
-    posicionPanel.textContent = indice + 1 + ' de ' + navegables.length;
+    posicionPanel.textContent = indice + 1 + ' de ' + abribles.length;
     botonAnterior.disabled = indice === 0;
-    botonSiguiente.disabled = indice === navegables.length - 1;
+    botonSiguiente.disabled = indice === abribles.length - 1;
     cuerpoPanel.scrollTop = 0;
   }
 
@@ -246,22 +313,22 @@
     return seccion;
   }
 
-  function marcarTarjetaActiva(id) {
+  function marcarActivo(id) {
     limpiarMarcas();
 
-    const tarjeta = document.getElementById(id);
-    if (!tarjeta) return;
-    tarjeta.classList.add('tarjeta--activa');
-    tarjeta.setAttribute('aria-expanded', 'true');
+    const elemento = document.getElementById(id);
+    if (!elemento) return;
+    elemento.classList.add('es-activa');
+    elemento.setAttribute('aria-expanded', 'true');
 
-    const fila = tarjeta.closest('.nivel');
+    const fila = elemento.closest('.nivel');
     if (fila) fila.classList.add('nivel--con-activa');
   }
 
   function limpiarMarcas() {
-    document.querySelectorAll('.tarjeta--activa').forEach(function (t) {
-      t.classList.remove('tarjeta--activa');
-      t.setAttribute('aria-expanded', 'false');
+    document.querySelectorAll('.es-activa').forEach(function (e) {
+      e.classList.remove('es-activa');
+      e.setAttribute('aria-expanded', 'false');
     });
     document.querySelectorAll('.nivel--con-activa').forEach(function (n) {
       n.classList.remove('nivel--con-activa');
@@ -276,7 +343,7 @@
     arbol.classList.remove('arbol--enfocado');
     document.body.classList.remove('con-panel');
 
-    const tarjeta = document.getElementById(idAbierto);
+    const elemento = document.getElementById(idAbierto);
     idAbierto = null;
     limpiarMarcas();
 
@@ -288,8 +355,8 @@
       }
     }, 520);
 
-    // El foco vuelve a la tarjeta que estaba abierta
-    const destino = tarjeta || (focoPrevio && document.contains(focoPrevio) ? focoPrevio : null);
+    // El foco vuelve a lo que estaba abierto
+    const destino = elemento || (focoPrevio && document.contains(focoPrevio) ? focoPrevio : null);
     if (destino && destino.focus) destino.focus();
     focoPrevio = null;
 
@@ -301,8 +368,87 @@
   function mover(paso) {
     const indice = indiceDe(idAbierto);
     const siguiente = indice + paso;
-    if (indice === -1 || siguiente < 0 || siguiente >= navegables.length) return;
-    abrirDetalle(navegables[siguiente].id);
+    if (indice === -1 || siguiente < 0 || siguiente >= abribles.length) return;
+    abrirDetalle(abribles[siguiente].id);
+  }
+
+  // --- Buscador ---------------------------------------------------------
+
+  // Se arma una vez, al arrancar: id -> todo su texto normalizado
+  const indiceBusqueda = [];
+
+  function prepararBusqueda() {
+    abribles.forEach(function (item) {
+      // Las etiquetas de nivel no participan de la búsqueda: lo que se busca
+      // son temas concretos, y esos viven en las tarjetas
+      if (item.esNivel) return;
+      indiceBusqueda.push({ id: item.id, texto: armarIndice(item) });
+    });
+  }
+
+  function buscar(consulta) {
+    const terminos = normalizar(consulta).split(/\s+/).filter(Boolean);
+
+    if (terminos.length === 0 || normalizar(consulta).length < 2) {
+      limpiarResaltado();
+      return;
+    }
+
+    let encontrados = 0;
+    indiceBusqueda.forEach(function (entrada) {
+      // Tienen que estar todos los términos escritos, no alcanza con uno
+      const coincide = terminos.every(function (t) {
+        return entrada.texto.indexOf(t) !== -1;
+      });
+      const tarjeta = document.getElementById(entrada.id);
+      if (!tarjeta) return;
+      tarjeta.classList.toggle('tarjeta--hallada', coincide);
+      tarjeta.classList.toggle('tarjeta--descartada', !coincide);
+      if (coincide) encontrados++;
+    });
+
+    arbol.classList.add('arbol--buscando');
+    botonLimpiar.hidden = false;
+    mostrarEstado(encontrados, consulta.trim());
+  }
+
+  function mostrarEstado(encontrados, consulta) {
+    estadoBusqueda.classList.add('buscador__estado--resultado');
+    if (encontrados === 0) {
+      estadoBusqueda.textContent = 'Sin coincidencias para «' + consulta + '»';
+      estadoBusqueda.classList.add('buscador__estado--vacio');
+    } else {
+      estadoBusqueda.textContent =
+        encontrados === 1 ? '1 tarjeta encontrada' : encontrados + ' tarjetas encontradas';
+      estadoBusqueda.classList.remove('buscador__estado--vacio');
+    }
+  }
+
+  function limpiarResaltado() {
+    arbol.classList.remove('arbol--buscando');
+    document.querySelectorAll('.tarjeta--hallada, .tarjeta--descartada').forEach(function (t) {
+      t.classList.remove('tarjeta--hallada', 'tarjeta--descartada');
+    });
+    botonLimpiar.hidden = entradaBusqueda.value.length === 0;
+
+    // Vuelve el texto de ayuda original
+    estadoBusqueda.classList.remove('buscador__estado--resultado', 'buscador__estado--vacio');
+    estadoBusqueda.textContent = '';
+    const punto = document.createElement('span');
+    punto.className = 'encabezado__punto';
+    punto.setAttribute('aria-hidden', 'true');
+    const texto = document.createElement('span');
+    texto.id = 'app-ayuda';
+    texto.textContent = ESTRATEGIA.meta.ayuda;
+    estadoBusqueda.appendChild(punto);
+    estadoBusqueda.appendChild(texto);
+  }
+
+  function limpiarBusqueda() {
+    entradaBusqueda.value = '';
+    botonLimpiar.hidden = true;
+    limpiarResaltado();
+    entradaBusqueda.focus();
   }
 
   // --- Eventos ----------------------------------------------------------
@@ -316,6 +462,24 @@
     mover(1);
   });
 
+  // Se espera a que la persona termine de escribir antes de filtrar
+  let temporizador = null;
+  entradaBusqueda.addEventListener('input', function () {
+    window.clearTimeout(temporizador);
+    temporizador = window.setTimeout(function () {
+      buscar(entradaBusqueda.value);
+    }, 140);
+  });
+
+  entradaBusqueda.addEventListener('keydown', function (evento) {
+    if (evento.key === 'Escape' && entradaBusqueda.value) {
+      evento.stopPropagation();
+      limpiarBusqueda();
+    }
+  });
+
+  botonLimpiar.addEventListener('click', limpiarBusqueda);
+
   document.addEventListener('keydown', function (evento) {
     if (idAbierto === null) return;
 
@@ -325,6 +489,7 @@
       return;
     }
 
+    // Las flechas navegan, salvo mientras se está escribiendo
     const etiqueta = document.activeElement && document.activeElement.tagName;
     if (etiqueta === 'INPUT' || etiqueta === 'TEXTAREA') return;
 
@@ -361,8 +526,9 @@
   // --- Arranque ---------------------------------------------------------
 
   dibujarArbol();
+  prepararBusqueda();
 
-  // Si la dirección trae una tarjeta (por ejemplo .../#oportunidad-digital), la abre sola
+  // Si la dirección trae algo (por ejemplo .../#oportunidad-digital), lo abre solo
   const idInicial = window.location.hash.replace('#', '');
   if (idInicial && indiceDe(idInicial) !== -1) {
     window.setTimeout(function () {

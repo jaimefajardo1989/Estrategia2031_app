@@ -38,6 +38,13 @@
   box-sizing: border-box;
 }
 
+/* El atributo hidden tiene que ganarle a cualquier display que pongamos abajo.
+   Sin esto, el panel cerrado seguiría siendo tabulable y visible para los
+   lectores de pantalla, y el botón de limpiar aparecería con el campo vacío. */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
@@ -94,17 +101,113 @@ body {
   color: var(--tinta-suave);
 }
 
-.encabezado__ayuda {
+/* ---------- Buscador ---------- */
+
+.buscador {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+  min-width: 320px;
+}
+
+.buscador__campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--fondo-suave);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  transition: border-color 0.3s var(--curva), box-shadow 0.3s var(--curva),
+    background 0.3s var(--curva);
+}
+
+.buscador__campo:focus-within {
+  background: #fff;
+  border-color: var(--tinta-suave);
+  box-shadow: 0 0 0 4px rgba(52, 73, 94, 0.09);
+}
+
+.buscador__lupa {
+  width: 17px;
+  height: 17px;
+  margin-left: 16px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--tinta-suave);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.buscador__entrada {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--tinta);
+  padding: 11px 10px;
+}
+
+.buscador__entrada::placeholder {
+  color: var(--tinta-suave);
+  opacity: 0.85;
+}
+
+.buscador__limpiar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 9px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--linea);
+  color: var(--tinta);
+  cursor: pointer;
+  transition: background 0.25s var(--curva), transform 0.3s var(--rebote);
+}
+.buscador__limpiar:hover {
+  background: var(--coral);
+  color: #fff;
+  transform: rotate(90deg);
+}
+.buscador__limpiar:focus-visible {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+}
+.buscador__limpiar svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.buscador__estado {
   display: flex;
   align-items: center;
   gap: 9px;
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--tinta-suave);
-  background: var(--fondo-suave);
-  border: 1px solid var(--linea);
-  border-radius: var(--radio);
-  padding: 9px 18px;
+  text-align: right;
+}
+
+/* Cuando muestra un recuento de resultados en vez del texto de ayuda */
+.buscador__estado--resultado {
+  font-weight: 700;
+  color: var(--tinta);
+  animation: subir 0.35s var(--rebote) backwards;
+}
+
+.buscador__estado--vacio {
+  color: var(--coral-txt);
 }
 
 .encabezado__punto {
@@ -144,8 +247,32 @@ body {
   align-items: center;
 }
 
+/* Color de acento de cada fila, para la etiqueta y sus detalles */
+.nivel[data-nivel='objetivo'] {
+  --acento: var(--verde);
+  --acento-txt: var(--verde-txt);
+}
+.nivel[data-nivel='oportunidades'] {
+  --acento: var(--amarillo);
+  --acento-txt: var(--amarillo-txt);
+}
+.nivel[data-nivel='valor'] {
+  --acento: var(--turquesa);
+  --acento-txt: var(--turquesa-txt);
+}
+.nivel[data-nivel='agendas'] {
+  --acento: var(--coral);
+  --acento-txt: var(--coral-txt);
+}
+
 .nivel__etiqueta {
+  display: block;
+  width: 100%;
   margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
   text-align: right;
   font-size: 17px;
   font-weight: 800;
@@ -157,6 +284,58 @@ body {
      propiedades como transform u opacity. */
   animation: entrarLateral 0.6s var(--rebote) backwards;
   animation-delay: var(--retraso, 0s);
+}
+
+/* Etiqueta que se puede abrir: explica qué es ese tipo de agenda */
+.nivel__etiqueta--abrible {
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin: -8px -10px;
+  transition: color 0.3s var(--curva), background 0.3s var(--curva),
+    transform 0.35s var(--rebote);
+}
+
+.nivel__etiqueta--abrible:hover,
+.nivel__etiqueta--abrible:focus-visible {
+  color: var(--acento-txt);
+  background: var(--fondo-suave);
+  transform: translateX(-3px);
+  outline: none;
+}
+
+.nivel__etiqueta--abrible:focus-visible {
+  box-shadow: 0 0 0 3px var(--tinta);
+}
+
+/* Pastilla con la "i" que indica que la etiqueta se puede abrir */
+.nivel__pista {
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  margin-left: 7px;
+  vertical-align: 1px;
+  border-radius: 50%;
+  background: var(--acento);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  font-style: italic;
+  opacity: 0.55;
+  transition: opacity 0.3s var(--curva), transform 0.35s var(--rebote);
+}
+
+.nivel__etiqueta--abrible:hover .nivel__pista,
+.nivel__etiqueta--abrible:focus-visible .nivel__pista,
+.nivel__etiqueta--abrible.es-activa .nivel__pista {
+  opacity: 1;
+  transform: scale(1.18);
+}
+
+.nivel__etiqueta--abrible.es-activa {
+  color: var(--acento-txt);
+  background: var(--fondo-suave);
 }
 
 @keyframes entrarLateral {
@@ -349,13 +528,13 @@ body {
 }
 
 /* Tarjeta seleccionada mientras el panel está abierto */
-.tarjeta--activa {
+.tarjeta.es-activa {
   transform: translateY(-7px) scale(1.035);
   filter: brightness(1.08);
   z-index: 3;
   animation: aura 2.6s ease-in-out infinite;
 }
-.grupo--segmentado .tarjeta--activa {
+.grupo--segmentado .tarjeta.es-activa {
   border-radius: 18px;
 }
 
@@ -369,6 +548,43 @@ body {
     box-shadow: var(--sombra-alta), 0 0 0 4px rgba(255, 255, 255, 0.95),
       0 0 0 9px rgba(52, 73, 94, 0.14);
   }
+}
+
+/* ---------- Resultados de la búsqueda ---------- */
+
+/* Las que no coinciden se apagan, sin desaparecer del árbol */
+.arbol--buscando .tarjeta--descartada {
+  opacity: 0.22;
+  filter: saturate(0.25);
+  transform: scale(0.985);
+}
+
+/* Las que coinciden quedan encendidas y con un halo que las señala */
+.arbol--buscando .tarjeta--hallada {
+  opacity: 1;
+  z-index: 3;
+  animation: destacar 1.9s ease-in-out infinite;
+}
+
+@keyframes destacar {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 73, 94, 0.16), 0 8px 20px rgba(52, 73, 94, 0.14);
+    transform: translateY(-3px) scale(1.02);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(52, 73, 94, 0.06), 0 14px 30px rgba(52, 73, 94, 0.2);
+    transform: translateY(-6px) scale(1.035);
+  }
+}
+
+/* Mientras se busca, el efecto de atenuar la fila al pasar el mouse molesta */
+.arbol--buscando .grupo:hover .tarjeta:not(:hover) {
+  opacity: inherit;
+  filter: inherit;
+}
+.arbol--buscando .grupo:hover .tarjeta--descartada {
+  opacity: 0.22;
 }
 
 /* Con el panel abierto, el contenido se corre para que no quede nada tapado
@@ -733,6 +949,21 @@ body {
     color: var(--tinta-suave);
   }
 
+  .nivel__etiqueta--abrible:hover,
+  .nivel__etiqueta--abrible:focus-visible {
+    transform: none;
+  }
+
+  /* El buscador ocupa todo el ancho debajo del título */
+  .buscador {
+    min-width: 0;
+    width: 100%;
+    align-items: stretch;
+  }
+  .buscador__estado {
+    text-align: left;
+  }
+
   /* Las filas segmentadas pasan a columna */
   .grupo--segmentado {
     flex-direction: column;
@@ -760,7 +991,7 @@ body {
   /* Menos movimiento en táctil: el hover no existe */
   .tarjeta:hover,
   .tarjeta:focus-visible,
-  .tarjeta--activa {
+  .tarjeta.es-activa {
     transform: translateY(-4px) scale(1.01);
   }
 
@@ -837,7 +1068,7 @@ body {
   }
   .tarjeta:hover,
   .tarjeta:focus-visible,
-  .tarjeta--activa {
+  .tarjeta.es-activa {
     transform: none;
   }
   .onda {

@@ -22,10 +22,32 @@
         <h1 class="encabezado__titulo" id="app-titulo">Estrategia 2031</h1>
         <p class="encabezado__subtitulo" id="app-subtitulo">Árbol estratégico institucional</p>
       </div>
-      <p class="encabezado__ayuda">
-        <span class="encabezado__punto" aria-hidden="true"></span>
-        <span id="app-ayuda">Hacé clic en cualquier tarjeta para ver el detalle</span>
-      </p>
+      <div class="buscador">
+        <div class="buscador__campo">
+          <svg class="buscador__lupa" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M16.5 16.5L21 21" />
+          </svg>
+          <input
+            class="buscador__entrada"
+            id="buscador"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Buscar un tema en el árbol estratégico"
+            aria-describedby="buscador-estado"
+          />
+          <button class="buscador__limpiar" id="buscador-limpiar" type="button" aria-label="Limpiar búsqueda" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+        <p class="buscador__estado" id="buscador-estado" role="status" aria-live="polite">
+          <span class="encabezado__punto" aria-hidden="true"></span>
+          <span id="app-ayuda">Hacé clic en cualquier tarjeta para ver el detalle</span>
+        </p>
+      </div>
     </header>
 
     <!-- El árbol se dibuja acá desde js/app.js con los datos de js/contenido.js -->
