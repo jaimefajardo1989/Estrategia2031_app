@@ -10,7 +10,20 @@ de las agendas institucionales— el compromiso al 2031 con su indicador de segu
 No usa frameworks ni dependencias: es HTML, CSS y JavaScript. Se abre haciendo doble clic
 en `index.html`.
 
-## Cómo abrirla
+## Enlace publicado
+
+**https://jaimefajardo1989.github.io/Estrategia2031_app/**
+
+> ⚠️ **El enlace es de acceso abierto.** Cualquiera que lo tenga puede entrar: GitHub Pages
+> en plan gratuito no permite restringir el acceso. Lleva `noindex` y `robots.txt` para que
+> no aparezca en buscadores, pero eso no lo hace privado. No pongas ahí información sensible.
+>
+> Si más adelante hace falta acceso restringido de verdad, la vía es Cloudflare Pages con
+> Cloudflare Access (gratis hasta 50 usuarios, con lista de correos autorizados).
+
+El sitio se actualiza solo: cada `git push` a `main` vuelve a publicarlo en un par de minutos.
+
+## Cómo abrirla localmente
 
 Doble clic en `index.html`. Se abre en el navegador y funciona sin internet.
 
