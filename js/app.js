@@ -32,34 +32,39 @@ document.getElementById('tl').innerHTML = TL.map(t=>
 
 /* ---------- COLLAGE ---------- */
 /* Cada pieza del collage lleva:
-     mov = cómo se mueve (vuela, aletea, mece, flota)
+     mov = cómo se mueve para siempre (vuela, aletea, mece, flota)
      p   = profundidad para el paralaje, de 0 (al fondo) a 1 (al frente)
-     d   = retraso, para que no se muevan todas al mismo tiempo         */
+     e   = cuándo entra en escena, en segundos
+     d   = desfase del movimiento, para que no se muevan todas a la vez
+
+   La escena se arma por capas: primero el fondo, después los árboles y
+   los pastos, luego las personas y al final los pájaros.               */
 const COLLAGE = [
-  {s:IMG.wash_teal, l:'-2%', b:'-6%', h:'62%', o:.5, z:0, p:.05},
-  {s:IMG.tree_b,    l:'50%', b:'0',   h:'96%', z:2, mov:'mece', p:.2, d:0},
-  {s:IMG.tree_a,    l:'70%', b:'0',   h:'82%', z:1, mov:'mece', p:.15, d:1.4},
-  {s:IMG.grass_tall,l:'40%', b:'0',   h:'46%', z:2, mov:'mece', p:.3, d:.7},
-  {s:IMG.pampas,    l:'88%', b:'0',   h:'52%', z:1, mov:'mece', p:.25, d:2.1},
-  {s:IMG.grass,     l:'30%', b:'0',   h:'26%', z:3, mov:'mece', p:.4, d:1.1},
-  {s:IMG.grass,     l:'63%', b:'0',   h:'22%', z:3, mov:'mece', p:.4, d:2.6},
-  {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3, p:.5},
-  {s:IMG.p_students,l:'23%', b:'0',   h:'62%', z:3, p:.5},
-  {s:IMG.p_skate,   l:'80%', b:'0',   h:'58%', z:3, p:.55},
-  {s:IMG.macaw,     l:'36%', b:'62%', h:'19%', z:4, mov:'vuela', p:.8, d:0},
-  {s:IMG.hummingbird,l:'92%',b:'70%', h:'13%', z:4, mov:'aletea', p:.85, d:.5},
-  {s:IMG.butterfly_b,l:'17%',b:'52%', h:'11%', z:4, mov:'revolotea', p:.9, d:1.2},
-  {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1, mov:'flota', p:.35, d:.4},
-  {s:IMG.dots_coral, l:'2%', b:'34%', h:'11%', o:.8,  z:1, mov:'flota', p:.3, d:1.8},
-  {s:IMG.squig_yellow,l:'12%',b:'2%', h:'13%', o:.95, z:0, mov:'flota', p:.2, d:1}
+  {s:IMG.wash_teal, l:'-2%', b:'-6%', h:'62%', o:.5, z:0, p:.05, e:.05},
+  {s:IMG.tree_b,    l:'50%', b:'0',   h:'96%', z:2, mov:'mece', p:.2, e:.20, d:0},
+  {s:IMG.tree_a,    l:'70%', b:'0',   h:'82%', z:1, mov:'mece', p:.15, e:.30, d:1.4},
+  {s:IMG.grass_tall,l:'40%', b:'0',   h:'46%', z:2, mov:'mece', p:.3, e:.40, d:.7},
+  {s:IMG.pampas,    l:'88%', b:'0',   h:'52%', z:1, mov:'mece', p:.25, e:.48, d:2.1},
+  {s:IMG.grass,     l:'30%', b:'0',   h:'26%', z:3, mov:'mece', p:.4, e:.56, d:1.1},
+  {s:IMG.grass,     l:'63%', b:'0',   h:'22%', z:3, mov:'mece', p:.4, e:.62, d:2.6},
+  {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3, p:.5, e:.78},
+  {s:IMG.p_students,l:'23%', b:'0',   h:'62%', z:3, p:.5, e:.88},
+  {s:IMG.p_skate,   l:'80%', b:'0',   h:'58%', z:3, p:.55, e:.98},
+  {s:IMG.macaw,     l:'36%', b:'62%', h:'19%', z:4, mov:'vuela', p:.8, e:1.20, d:0},
+  {s:IMG.hummingbird,l:'92%',b:'70%', h:'13%', z:4, mov:'aletea', p:.85, e:1.34, d:.5},
+  {s:IMG.butterfly_b,l:'17%',b:'52%', h:'11%', z:4, mov:'revolotea', p:.9, e:1.46, d:1.2},
+  {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1, mov:'flota', p:.35, e:.66, d:.4},
+  {s:IMG.dots_coral, l:'2%', b:'34%', h:'11%', o:.8,  z:1, mov:'flota', p:.3, e:.72, d:1.8},
+  {s:IMG.squig_yellow,l:'12%',b:'2%', h:'13%', o:.95, z:0, mov:'flota', p:.2, e:.36, d:1}
 ];
 const col = document.getElementById('collage');
-col.insertAdjacentHTML('beforeend','<div class="sun" style="left:58%;bottom:24%;width:clamp(140px,19vw,250px);aspect-ratio:1;z-index:0"></div>');
+col.insertAdjacentHTML('beforeend','<div class="sun" style="left:58%;bottom:24%;width:clamp(140px,19vw,250px);aspect-ratio:1;z-index:0;--de:.12s"></div>');
 COLLAGE.forEach(c=>{
   const i = document.createElement('img');
   i.src = c.s; i.alt = '';
   i.className = 'pieza' + (c.mov ? ' mov-' + c.mov : '');
   i.style.cssText = 'left:'+c.l+';bottom:'+c.b+';height:'+c.h+';width:auto;max-width:none;z-index:'+(c.z||1)+';opacity:'+(c.o||1);
+  i.style.setProperty('--de', (c.e||0) + 's');
   i.style.setProperty('--d', (c.d||0) + 's');
   i.dataset.p = c.p || 0;
   col.appendChild(i);
@@ -151,7 +156,8 @@ document.getElementById('chips').addEventListener('click', e=>{
 const tour = document.getElementById('tour'), tstage = document.getElementById('tstage');
 let ti = 0;
 
-function decoHTML(list){ return list.map(d=>'<img class="tdeco" src="'+d.s+'" style="'+d.st+'" alt="">').join(''); }
+// El --i escalona la entrada de cada ilustración de la lámina
+function decoHTML(list){ return list.map((d,i)=>'<img class="tdeco" src="'+d.s+'" style="--i:'+i+';'+d.st+'" alt="">').join(''); }
 
 /**
  * Rejilla en la que se puede hacer clic. Cada casilla muestra solo su título;
@@ -328,6 +334,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   const grupos = [
     '#attrs', '#forces', '#valor', '#agendas', '#trans', '#stats', '#tl'
   ];
+  document.querySelectorAll('.hero-in').forEach(e => grupos.push(e));
   document.querySelectorAll('.sec-head').forEach(e => grupos.push(e));
   document.querySelectorAll('.toolbar').forEach(e => grupos.push(e));
   document.querySelectorAll('footer.foot .wrap').forEach(e => grupos.push(e));

@@ -336,7 +336,7 @@ footer.foot strong{color:var(--ink-2)}
   to{opacity:1;transform:none}
 }
 .tslide.on .inner > *{animation:subirBloque .55s var(--rebote) backwards;animation-delay:calc(var(--i,0) * 90ms + 120ms)}
-.tslide.on .tdeco{animation:flotarDeco .9s var(--rebote) backwards;animation-delay:.25s}
+.tslide.on .tdeco{animation:flotarDeco .9s var(--rebote) backwards;animation-delay:calc(var(--i,0) * 130ms + .25s)}
 @keyframes flotarDeco{
   from{opacity:0;transform:translateY(24px)}
   to{opacity:1;transform:none}
@@ -383,21 +383,37 @@ footer.foot strong{color:var(--ink-2)}
 
 /* =========================================================
    PORTADA CON VIDA
-   Cada pieza del collage se mueve un poco. El paralaje llega por
-   las variables --px/--py, que fija el JS con el mouse y el scroll;
-   por eso cada keyframe las incluye al principio del transform.
+   Cada pieza hace dos cosas: entra una vez, y después se mueve
+   para siempre. Van como dos animaciones sobre el mismo elemento.
+   El orden importa: la de entrada va primera y la de movimiento
+   segunda, con retraso suficiente para que arranque recién cuando
+   la entrada terminó. Mientras tanto la segunda está en su fase de
+   espera y no aplica valores, así que no se pisan.
+
+   El paralaje llega por --px/--py, que fija el JS con el mouse y el
+   scroll; por eso cada keyframe las incluye al principio del transform.
+
+   Variables: --de retraso de entrada · --d desfase del movimiento
    ========================================================= */
 
-.collage .pieza{
+.collage .pieza,
+.collage .sun{
   transform:translate(var(--px,0px),var(--py,0px));
   will-change:transform;
+  animation:aparecePieza .9s var(--rebote) backwards;
+  animation-delay:var(--de,0s);
+}
+
+@keyframes aparecePieza{
+  from{opacity:0;transform:translate(var(--px,0px),var(--py,0px)) translateY(30px) scale(.92)}
 }
 
 /* Árboles y pastos: se mecen desde la base, como con viento suave */
-.mov-mece{
+.collage .mov-mece{
   transform-origin:50% 100%;
-  animation:mece 7.5s ease-in-out infinite alternate;
-  animation-delay:var(--d,0s);
+  animation:aparecePieza .9s var(--rebote) backwards,
+            mece 7.5s ease-in-out infinite alternate;
+  animation-delay:var(--de,0s), calc(var(--de,0s) + .9s + var(--d,0s));
 }
 @keyframes mece{
   from{transform:translate(var(--px,0px),var(--py,0px)) rotate(-.9deg)}
@@ -405,9 +421,10 @@ footer.foot strong{color:var(--ink-2)}
 }
 
 /* La guacamaya cruza el cielo y vuelve, subiendo y bajando */
-.mov-vuela{
-  animation:vuela 15s ease-in-out infinite;
-  animation-delay:var(--d,0s);
+.collage .mov-vuela{
+  animation:aparecePieza .9s var(--rebote) backwards,
+            vuela 15s ease-in-out infinite;
+  animation-delay:var(--de,0s), calc(var(--de,0s) + .9s + var(--d,0s));
 }
 @keyframes vuela{
   0%   {transform:translate(var(--px,0px),var(--py,0px)) translate(0,0) rotate(0deg)}
@@ -418,9 +435,10 @@ footer.foot strong{color:var(--ink-2)}
 }
 
 /* El colibrí se queda suspendido, con un vaivén corto y rápido */
-.mov-aletea{
-  animation:aletea 2.6s ease-in-out infinite;
-  animation-delay:var(--d,0s);
+.collage .mov-aletea{
+  animation:aparecePieza .9s var(--rebote) backwards,
+            aletea 2.6s ease-in-out infinite;
+  animation-delay:var(--de,0s), calc(var(--de,0s) + .9s + var(--d,0s));
 }
 @keyframes aletea{
   0%,100%{transform:translate(var(--px,0px),var(--py,0px)) translate(0,0) rotate(0deg)}
@@ -428,9 +446,10 @@ footer.foot strong{color:var(--ink-2)}
 }
 
 /* La mariposa va y viene en zigzag */
-.mov-revolotea{
-  animation:revolotea 11s ease-in-out infinite;
-  animation-delay:var(--d,0s);
+.collage .mov-revolotea{
+  animation:aparecePieza .9s var(--rebote) backwards,
+            revolotea 11s ease-in-out infinite;
+  animation-delay:var(--de,0s), calc(var(--de,0s) + .9s + var(--d,0s));
 }
 @keyframes revolotea{
   0%   {transform:translate(var(--px,0px),var(--py,0px)) translate(0,0) rotate(0deg)}
@@ -441,9 +460,10 @@ footer.foot strong{color:var(--ink-2)}
 }
 
 /* Puntos y trazos: apenas flotan */
-.mov-flota{
-  animation:flota 9s ease-in-out infinite alternate;
-  animation-delay:var(--d,0s);
+.collage .mov-flota{
+  animation:aparecePieza .9s var(--rebote) backwards,
+            flota 9s ease-in-out infinite alternate;
+  animation-delay:var(--de,0s), calc(var(--de,0s) + .9s + var(--d,0s));
 }
 @keyframes flota{
   from{transform:translate(var(--px,0px),var(--py,0px)) translateY(0)}
@@ -452,8 +472,9 @@ footer.foot strong{color:var(--ink-2)}
 
 /* El sol respira */
 .collage .sun{
-  transform:translate(var(--px,0px),var(--py,0px));
-  animation:respira 9s ease-in-out infinite alternate;
+  animation:aparecePieza .9s var(--rebote) backwards,
+            respira 9s ease-in-out infinite alternate;
+  animation-delay:var(--de,0s), calc(var(--de,0s) + .9s);
 }
 @keyframes respira{
   from{transform:translate(var(--px,0px),var(--py,0px)) scale(1);opacity:.95}
