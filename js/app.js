@@ -50,10 +50,14 @@ const COLLAGE = [
   {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3, p:.5, e:.78},
   {s:IMG.p_students,l:'23%', b:'0',   h:'62%', z:3, p:.5, e:.88},
   {s:IMG.p_skate,   l:'80%', b:'0',   h:'58%', z:3, p:.55, e:.98},
+  // El flamenco es un ave de suelo: va parado, sin movimiento propio de vuelo.
+  // Se ubica en el claro entre los estudiantes y el pasto alto, para que no
+  // quede tapado por el árbol rojo.
+  {s:IMG.flamingo, v:VID.flamenco, l:'34%', b:'0', h:'42%', z:3, p:.45, e:1.05},
   // v = video con fondo transparente; s queda como respaldo estático
   {s:IMG.macaw, v:VID.guacamaya, l:'33%', b:'58%', h:'23%', z:4, mov:'vuela', p:.8, e:1.20, d:0},
   {s:IMG.hummingbird, v:VID.ave, l:'88%', b:'62%', h:'19%', z:4, mov:'aletea', p:.85, e:1.34, d:.5},
-  {s:IMG.butterfly_b,l:'17%',b:'52%', h:'11%', z:4, mov:'revolotea', p:.9, e:1.46, d:1.2},
+  {s:IMG.hummingbird, v:VID.colibri, l:'15%', b:'64%', h:'14%', z:4, mov:'aletea', p:.9, e:1.46, d:1.2},
   {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1, mov:'flota', p:.35, e:.66, d:.4},
   {s:IMG.dots_coral, l:'2%', b:'34%', h:'11%', o:.8,  z:1, mov:'flota', p:.3, e:.72, d:1.8},
   {s:IMG.squig_yellow,l:'12%',b:'2%', h:'13%', o:.95, z:0, mov:'flota', p:.2, e:.36, d:1}
@@ -270,7 +274,7 @@ function buildTour(){
         + decoHTML([
           {s:IMG.p_kidpaint, st:'right:6%;bottom:-2%;height:44%;z-index:2'},
           {s:IMG.grass, st:'right:2%;bottom:-2%;height:16%;z-index:1'},
-          {s:IMG.hummingbird2, v:VID.ave, st:'right:30%;top:12%;height:16%'},
+          {s:IMG.hummingbird2, v:VID.colibri, st:'right:26%;top:12%;height:14%'},
           {s:IMG.dots_green, st:'left:0;top:10%;height:9%;opacity:.85'}
         ]);
     } else if(s.kind === 'attrs'){
@@ -299,15 +303,15 @@ function buildTour(){
         + decoHTML(s.lvl===2
             ? [{s:IMG.butterfly_b, st:'right:4%;top:6%;height:11%'},{s:IMG.dots_yellow, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
             : s.lvl===3
-            ? [{s:IMG.hummingbird, v:VID.ave, st:'right:4%;top:6%;height:15%'},{s:IMG.dots_teal, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
-            : [{s:IMG.flamingo, st:'right:4%;bottom:2%;height:34%'},{s:IMG.dots_coral, st:'left:0;bottom:4%;height:8%;opacity:.8'}]);
+            ? [{s:IMG.hummingbird, v:VID.colibri, st:'right:2%;top:6%;height:13%'},{s:IMG.dots_teal, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
+            : [{s:IMG.flamingo, v:VID.flamenco, st:'right:4%;bottom:2%;height:38%'},{s:IMG.dots_coral, st:'left:0;bottom:4%;height:8%;opacity:.8'}]);
     } else if(s.kind === 'close'){
       inner = '<div class="inner"><h3 style="font-size:clamp(30px,4.6vw,56px);max-width:min(720px,64%)">CAF — <em>Banco Verde</em><br>de América Latina y el Caribe</h3>'
         + '<p style="margin-top:18px">Estrategia 2026–2031 · Dirección de Estrategia y Análisis Institucional</p></div>'
         + decoHTML([
           {s:IMG.tree_a, st:'right:3%;bottom:-3%;height:46%;z-index:1'},
           {s:IMG.p_wheelchair, st:'right:26%;bottom:3%;height:18%;z-index:2'},
-          {s:IMG.flamingo, st:'left:1%;bottom:-2%;height:30%;z-index:2'},
+          {s:IMG.flamingo, v:VID.flamenco, st:'left:1%;bottom:-2%;height:34%;z-index:2'},
           {s:IMG.macaw, v:VID.guacamaya, st:'left:22%;top:8%;height:15%'},
           {s:IMG.wash_teal, st:'left:0;bottom:0;height:46%;opacity:.35;z-index:0'}
         ]);

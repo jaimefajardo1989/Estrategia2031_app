@@ -51,6 +51,8 @@ const IMG = {
 const VID = {
   guacamaya: 'video/guacamaya',
   ave: 'video/ave',
+  colibri: 'video/colibri',
+  flamenco: 'video/flamenco',
 };
 
 /* ====================== DATA ====================== */
