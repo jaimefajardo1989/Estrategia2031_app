@@ -593,3 +593,56 @@ video.tdeco{
 @media (prefers-reduced-motion:reduce){
   .collage video.pieza,video.tdeco{animation:none !important;transform:none !important}
 }
+
+/* =========================================================
+   META DE CADA AGENDA, DENTRO DEL PANEL
+   ========================================================= */
+
+#dr-meta-wrap{margin-bottom:26px}
+.meta-nombre{font-size:14.5px;font-weight:700;color:var(--ink);margin:0 0 10px;line-height:1.35}
+
+.meta-cifra{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+.meta-cifra b{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.meta-cifra span{font-size:12.5px;color:var(--ink-2)}
+
+/* La barra va del punto de partida a la meta. El relleno crece al abrirse. */
+.meta-pista{height:9px;border-radius:20px;background:var(--soft);overflow:hidden;border:1px solid var(--line)}
+.meta-pista i{
+  display:block;height:100%;width:100%;border-radius:20px;background:var(--c);
+  transform-origin:left;
+  animation:crecerMeta .9s var(--rebote) backwards;
+  animation-delay:.35s;
+}
+@keyframes crecerMeta{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.meta-pie{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:9px}
+.meta-pie span{display:flex;flex-direction:column;gap:1px;font-size:12px}
+.meta-pie small{color:var(--mute)}
+.meta-pie b{font-size:13.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+.meta-fin{text-align:right;align-items:flex-end}
+.meta-flecha{font-size:15px;color:var(--mute);align-self:center}
+
+/* La etiqueta de fila del mapa, ahora es un botón */
+.rlabel--abrible{
+  display:block;width:100%;border:0;background:none;font-family:inherit;cursor:pointer;
+  text-align:right;font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.28;
+  padding:9px 12px;margin:-9px -12px;border-radius:14px;
+  transition:background .25s var(--curva),color .25s var(--curva),transform .3s var(--rebote);
+}
+.rlabel--abrible:hover,.rlabel--abrible:focus-visible{background:var(--soft);color:var(--teal-dd);transform:translateX(-3px)}
+.rlabel--abrible small{display:block;font-weight:400;color:var(--mute);font-size:12px;margin-top:5px}
+/* Punto que avisa que se puede abrir */
+.rlabel--abrible::after{
+  content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--teal-d);margin-left:7px;vertical-align:2px;opacity:.5;
+  transition:opacity .25s var(--curva),transform .3s var(--rebote);
+}
+.rlabel--abrible:hover::after,.rlabel--abrible:focus-visible::after{opacity:1;transform:scale(1.4)}
+
+@media(max-width:860px){
+  .rlabel--abrible{text-align:left;margin-left:-12px;margin-right:0;width:auto;display:inline-block}
+  .rlabel--abrible:hover,.rlabel--abrible:focus-visible{transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .meta-pista i{animation:none}
+}

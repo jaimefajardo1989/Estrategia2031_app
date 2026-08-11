@@ -117,6 +117,37 @@ col.insertAdjacentHTML('beforeend','<div class="sun" style="left:58%;bottom:24%;
 COLLAGE.forEach(c=>col.appendChild(crearPiezaCollage(c)));
 col.insertAdjacentHTML('beforeend','<div class="ground"></div>');
 
+/* ---------- META DE CADA AGENDA ---------- */
+
+const fmt = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
+
+/**
+ * Dibuja la meta al 2031 como una barra entre el punto de partida y el
+ * destino. Funciona igual si la meta es mayor que la base (cartera) o menor
+ * (días de respuesta, costo): la barra siempre representa el recorrido total
+ * y el número grande es el destino.
+ *
+ * Todos los valores van también como texto, así que la barra no esconde
+ * ninguna información.
+ */
+function pintarMeta(m, color){
+  const caja = document.getElementById('dr-meta-wrap');
+  if(!m){ caja.style.display = 'none'; return; }
+  caja.style.display = '';
+
+  const baja = m.hasta.valor < m.desde.valor;
+  document.getElementById('dr-meta').innerHTML =
+      '<p class="meta-nombre">' + esc(m.nombre) + '</p>'
+    + '<div class="meta-cifra"><b style="color:' + color + '">' + fmt.format(m.hasta.valor) + '</b>'
+    + '<span>' + esc(m.unidad) + '</span></div>'
+    + '<div class="meta-pista" style="--c:' + color + '"><i></i></div>'
+    + '<div class="meta-pie">'
+    +   '<span><small>' + esc(m.desde.etiqueta) + '</small><b>' + fmt.format(m.desde.valor) + '</b></span>'
+    +   '<span class="meta-flecha" aria-hidden="true">' + (baja ? '↓' : '↑') + '</span>'
+    +   '<span class="meta-fin"><small>' + esc(m.hasta.etiqueta) + '</small><b>' + fmt.format(m.hasta.valor) + '</b></span>'
+    + '</div>';
+}
+
 /* ---------- DRAWER ---------- */
 const drawer = document.getElementById('drawer'), scrim = document.getElementById('scrim');
 let current = null, lastFocus = null;
@@ -141,7 +172,11 @@ function openCard(id, push){
   lw.style.display = ls.length ? '' : 'none';
   document.getElementById('dr-links').innerHTML = ls.map(x=>
     '<button class="lchip" data-go="'+x.id+'"><i style="background:'+LEVELS[x.lvl].color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
+  pintarMeta(d.meta, L.color);
+
   document.getElementById('dr-pos').textContent = (ORDER.indexOf(id)+1) + ' / ' + ORDER.length;
+  document.getElementById('dr-prev').disabled = false;
+  document.getElementById('dr-next').disabled = false;
   drawer.classList.add('on'); scrim.classList.add('on');
   drawer.querySelector('.dr-body').scrollTop = 0;
   drawer.focus();
@@ -156,7 +191,44 @@ function step(n){
   const i = ORDER.indexOf(current);
   openCard(ORDER[(i + n + ORDER.length) % ORDER.length]);
 }
+/**
+ * Abre la explicación de un nivel completo: qué es ese tipo de agenda.
+ * Se dispara desde el nombre de la fila, a la izquierda del mapa.
+ */
+function openLevel(lvl){
+  const L = LEVELS[lvl]; if(!L || !L.explica) return;
+  const e = L.explica;
+  if(!current) lastFocus = document.activeElement;
+  current = null;   // no es una tarjeta: Anterior/Siguiente no aplican
+
+  document.getElementById('dr-tag').textContent = 'Qué es este nivel';
+  document.getElementById('dr-tag').style.background = L.color;
+  document.getElementById('dr-deco').src = L.deco;
+  document.getElementById('dr-title').textContent = e.t;
+  document.getElementById('dr-title').style.fontSize = '26px';
+  document.getElementById('dr-lead').textContent = e.lead || '';
+  document.getElementById('dr-what').textContent = e.what || '';
+  document.getElementById('dr-acts').style.setProperty('--c', L.color);
+  document.getElementById('dr-acts').innerHTML = (e.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
+
+  // Las tarjetas de ese nivel quedan como accesos directos
+  const ls = DATA.filter(d=>d.lvl===lvl);
+  document.getElementById('dr-links-wrap').style.display = ls.length ? '' : 'none';
+  document.getElementById('dr-links').innerHTML = ls.map(x=>
+    '<button class="lchip" data-go="'+x.id+'"><i style="background:'+L.color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
+
+  document.getElementById('dr-meta-wrap').style.display = 'none';
+  document.getElementById('dr-pos').textContent = ls.length + (ls.length===1?' tarjeta':' tarjetas');
+  document.getElementById('dr-prev').disabled = true;
+  document.getElementById('dr-next').disabled = true;
+
+  drawer.classList.add('on'); scrim.classList.add('on');
+  drawer.querySelector('.dr-body').scrollTop = 0;
+  drawer.focus();
+}
+
 document.addEventListener('click', e=>{
+  const r = e.target.closest('.rlabel--abrible'); if(r){ openLevel(+r.dataset.nivel); return; }
   const c = e.target.closest('.card'); if(c){ openCard(c.dataset.id); return; }
   const g = e.target.closest('[data-go]'); if(g){ openCard(g.dataset.go); return; }
 });
@@ -286,7 +358,7 @@ function buildTour(){
             return { titulo: d.t, texto: (d.lead||'') + ' ' + (d.what||''), color: colores[k] };
           }), 3)
         + '</div>'
-        + decoHTML([{s:IMG.p_girljump, st:'right:3%;bottom:2%;height:36%;z-index:2'},{s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}]);
+        + decoHTML([{s:IMG.p_girljump, v:VID.nina, st:'right:3%;bottom:0;height:52%;z-index:2'},{s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}]);
     } else if(s.kind === 'level'){
       const items = DATA.filter(d=>d.lvl===s.lvl);
       const bg = s.lvl===2?'var(--yellow)':(s.lvl===3?'var(--teal-d)':'var(--coral-d)');

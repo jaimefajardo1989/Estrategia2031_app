@@ -14,7 +14,7 @@
     <!-- El ?v= obliga al navegador a bajar los archivos de nuevo cuando cambian.
          Si editás css/estilos.css, js/contenido.js o js/app.js, subí el número
          en las tres líneas (acá y al final del body). -->
-    <link rel="stylesheet" href="css/estilos.css?v=17" />
+    <link rel="stylesheet" href="css/estilos.css?v=18" />
   </head>
 
   <body>
@@ -52,7 +52,7 @@
     <div class="sec-head">
       <div class="eyebrow">Mapa estratégico</div>
       <h2>La <em>propuesta de valor</em> de CAF al 2031</h2>
-      <p>Cuatro niveles encadenados: el objetivo que perseguimos, las fuerzas y espacios donde se abren oportunidades, el valor agregado que aporta CAF y las agendas institucionales que lo habilitan.</p>
+      <p>Cuatro niveles encadenados: el objetivo que perseguimos, las fuerzas y espacios donde se abren oportunidades, las agendas transversales donde CAF aporta valor y las habilitadoras que lo hacen posible.</p>
     </div>
 
     <div class="toolbar">
@@ -63,15 +63,15 @@
       <div class="chips" id="chips">
         <button class="chip" data-l="1" aria-pressed="false"><i style="background:var(--green-d)"></i>Objetivo</button>
         <button class="chip" data-l="2" aria-pressed="false"><i style="background:var(--yellow-d)"></i>Oportunidades</button>
-        <button class="chip" data-l="3" aria-pressed="false"><i style="background:var(--teal-d)"></i>Valor agregado</button>
-        <button class="chip" data-l="4" aria-pressed="false"><i style="background:var(--coral-d)"></i>Agendas</button>
+        <button class="chip" data-l="3" aria-pressed="false"><i style="background:var(--teal-d)"></i>Transversales</button>
+        <button class="chip" data-l="4" aria-pressed="false"><i style="background:var(--coral-d)"></i>Habilitadoras</button>
       </div>
       <span class="count" id="count"></span>
     </div>
 
     <div id="tree">
       <div class="row">
-        <div class="rlabel">Objetivo al 2031<small>Hacia dónde vamos</small></div>
+        <button class="rlabel rlabel--abrible" data-nivel="1">Objetivo al 2031<small>Hacia dónde vamos</small></button>
         <div>
           <button class="card goal" data-id="obj"></button>
           <div class="attrs" id="attrs"></div>
@@ -81,21 +81,21 @@
       <div class="row"><div></div><div class="flow" style="background-image:url('img/flow1.webp')"></div></div>
 
       <div class="row">
-        <div class="rlabel">Fuerzas y espacios donde se abren oportunidades<small>Dónde está el potencial</small></div>
+        <button class="rlabel rlabel--abrible" data-nivel="2">Oportunidades<small>Dónde está el potencial</small></button>
         <div class="forces" id="forces"></div>
       </div>
 
       <div class="row"><div></div><div class="flow" style="background-image:url('img/flow2.webp')"></div></div>
 
       <div class="row">
-        <div class="rlabel">Valor agregado<small>Qué aporta CAF</small></div>
+        <button class="rlabel rlabel--abrible" data-nivel="3">Transversales<small>Lo que CAF aporta en todas las agendas</small></button>
         <div class="group" id="valor"></div>
       </div>
 
       <div class="row"><div></div><div class="flow" style="background-image:url('img/flow3.webp')"></div></div>
 
       <div class="row">
-        <div class="rlabel">Agendas institucionales<small>Qué nos habilita</small></div>
+        <button class="rlabel rlabel--abrible" data-nivel="4">Habilitadoras<small>Lo que nos habilita por dentro</small></button>
         <div class="group coral" id="agendas"></div>
       </div>
     </div>
@@ -146,8 +146,10 @@
     <p id="dr-what"></p>
     <h4>Cómo se traduce en acción</h4>
     <ul class="acts" id="dr-acts"></ul>
+    <!-- Meta de la agenda, con su barra de avance. La arma js/app.js -->
+    <div id="dr-meta-wrap"><h4>La meta al 2031</h4><div id="dr-meta"></div></div>
     <div id="dr-links-wrap"><h4>Se conecta con</h4><div class="links" id="dr-links"></div></div>
-    <div class="note">Texto de detalle en borrador. Para editarlo, modifica el bloque <b>DATA</b> en el código de esta pieza.</div>
+    <div class="note">Textos en borrador y cifras de ejemplo. Para editarlos, modificá el bloque <b>DATA</b> en <b>js/contenido.js</b>.</div>
   </div>
   <div class="dr-foot">
     <button class="nav-btn" id="dr-prev">← Anterior</button>
@@ -166,7 +168,7 @@
     <button class="btn btn-ghost" id="tclose" style="margin-left:10px">Salir ✕</button>
   </div>
 </div>
-    <script src="js/contenido.js?v=17"></script>
-    <script src="js/app.js?v=17"></script>
+    <script src="js/contenido.js?v=18"></script>
+    <script src="js/app.js?v=18"></script>
   </body>
 </html>
