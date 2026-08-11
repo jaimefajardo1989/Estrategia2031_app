@@ -587,20 +587,11 @@ body {
   opacity: 0.22;
 }
 
-/* Con el panel abierto, el contenido se corre para que no quede nada tapado
-   detrás de él. Solo en pantallas anchas, donde hay lugar de sobra. */
-@media (min-width: 1200px) {
-  .encabezado,
-  .arbol,
-  .pie {
-    transition: padding-right 0.5s var(--rebote);
-  }
-  body.con-panel .encabezado,
-  body.con-panel .arbol,
-  body.con-panel .pie {
-    padding-right: calc(var(--ancho-panel) + 40px);
-  }
-}
+/* Nota: el panel se superpone al árbol, no lo desplaza.
+   Antes achicábamos el ancho del árbol al abrir el panel, pero eso refluía la
+   grilla y dejaba las seis tarjetas de Oportunidades convertidas en pastillas
+   angostas con el texto partido letra por letra. El árbol conserva su tamaño
+   y simplemente se atenúa. */
 
 /* Atenuar el resto del árbol al abrir el panel */
 .arbol--enfocado .nivel {

@@ -220,7 +220,6 @@
         fondoPanel.classList.add('fondo-panel--visible');
       });
       arbol.classList.add('arbol--enfocado');
-      document.body.classList.add('con-panel');
       botonCerrar.focus();
     }
 
@@ -475,7 +474,6 @@
     panel.classList.remove('panel--abierto');
     fondoPanel.classList.remove('fondo-panel--visible');
     arbol.classList.remove('arbol--enfocado');
-    document.body.classList.remove('con-panel');
 
     const elemento = document.getElementById(idAbierto);
     idAbierto = null;
