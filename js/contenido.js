@@ -60,6 +60,8 @@
 const ESTRATEGIA = {
   meta: {
     titulo: 'Estrategia 2031',
+    // Esta parte del título se pinta en turquesa, como en la presentación
+    tituloResaltado: '2031',
     subtitulo: 'Árbol estratégico institucional',
     ayuda: 'Hacé clic en cualquier tarjeta, o en el nombre de un nivel, para ver el detalle',
     marcadorBusqueda: 'Buscar un tema: agricultura, pymes, agua…',

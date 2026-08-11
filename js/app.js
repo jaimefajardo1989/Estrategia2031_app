@@ -62,8 +62,35 @@
 
   // --- Dibujar el árbol -------------------------------------------------
 
+  /**
+   * Título en dos tonos: la parte indicada en "tituloResaltado" va en turquesa
+   * y el resto en gris, como los títulos de la presentación.
+   */
+  function pintarTitulo() {
+    const contenedor = document.getElementById('app-titulo');
+    const completo = ESTRATEGIA.meta.titulo;
+    const resaltado = ESTRATEGIA.meta.tituloResaltado;
+
+    contenedor.textContent = '';
+    const corte = resaltado ? completo.indexOf(resaltado) : -1;
+
+    if (corte === -1) {
+      contenedor.textContent = completo;
+      return;
+    }
+
+    if (corte > 0) {
+      contenedor.appendChild(document.createTextNode(completo.slice(0, corte)));
+    }
+    const acento = document.createElement('span');
+    acento.className = 'encabezado__acento';
+    acento.textContent = resaltado;
+    contenedor.appendChild(acento);
+    contenedor.appendChild(document.createTextNode(completo.slice(corte + resaltado.length)));
+  }
+
   function dibujarArbol() {
-    document.getElementById('app-titulo').textContent = ESTRATEGIA.meta.titulo;
+    pintarTitulo();
     document.getElementById('app-subtitulo').textContent = ESTRATEGIA.meta.subtitulo;
     textoAyuda.textContent = ESTRATEGIA.meta.ayuda;
     document.getElementById('app-pie').textContent = ESTRATEGIA.meta.pieDePagina;
