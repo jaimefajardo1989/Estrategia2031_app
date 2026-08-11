@@ -516,8 +516,15 @@ body {
 
 /* Colores y tamaños por nivel */
 
+/* El texto de las tarjetas claras va en un tono profundo del mismo color, no
+   en blanco: sobre el amarillo vivo el blanco queda en 1,56:1. Con estos tonos
+   los tres pasan 4,5:1 incluso en la zona más oscura del degradado.
+   Las corales conservan el blanco, con la letra a 19px para entrar en el
+   umbral de texto grande (3:1), que sí cumplen. */
+
 .tarjeta--objetivo {
   background: var(--verde);
+  color: #2d4014;
   border-radius: var(--radio);
   font-size: 22px;
   padding: 28px 48px;
@@ -526,6 +533,7 @@ body {
 
 .tarjeta--oportunidades {
   background: var(--amarillo);
+  color: #624b00;
   border-radius: var(--radio);
   font-size: 19px;
   min-height: 118px;
@@ -533,6 +541,7 @@ body {
 
 .tarjeta--valor {
   background: var(--turquesa);
+  color: #004c48;
   flex: 1;
   font-size: 15px;
   min-height: 128px;
@@ -541,8 +550,9 @@ body {
 
 .tarjeta--agendas {
   background: var(--coral);
+  color: #fff;
   flex: 1;
-  font-size: 17px;
+  font-size: 19px;
   min-height: 118px;
   padding: 24px 22px;
 }
