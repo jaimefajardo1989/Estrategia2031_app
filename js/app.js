@@ -31,30 +31,37 @@ document.getElementById('tl').innerHTML = TL.map(t=>
  '<div class="p'+(t.on?' on':'')+'"><b>'+esc(t.p)+'</b><span>'+esc(t.d)+'</span></div>').join('');
 
 /* ---------- COLLAGE ---------- */
+/* Cada pieza del collage lleva:
+     mov = cómo se mueve (vuela, aletea, mece, flota)
+     p   = profundidad para el paralaje, de 0 (al fondo) a 1 (al frente)
+     d   = retraso, para que no se muevan todas al mismo tiempo         */
 const COLLAGE = [
-  {s:IMG.wash_teal, l:'-2%', b:'-6%', h:'62%', o:.5, z:0},
-  {s:IMG.tree_b,    l:'50%', b:'0',   h:'96%', z:2},
-  {s:IMG.tree_a,    l:'70%', b:'0',   h:'82%', z:1},
-  {s:IMG.grass_tall,l:'40%', b:'0',   h:'46%', z:2},
-  {s:IMG.pampas,    l:'88%', b:'0',   h:'52%', z:1},
-  {s:IMG.grass,     l:'30%', b:'0',   h:'26%', z:3},
-  {s:IMG.grass,     l:'63%', b:'0',   h:'22%', z:3},
-  {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3},
-  {s:IMG.p_students,l:'23%', b:'0',   h:'62%', z:3},
-  {s:IMG.p_skate,   l:'80%', b:'0',   h:'58%', z:3},
-  {s:IMG.macaw,     l:'36%', b:'62%', h:'19%', z:4},
-  {s:IMG.hummingbird,l:'92%',b:'70%', h:'13%', z:4},
-  {s:IMG.butterfly_b,l:'17%',b:'52%', h:'11%', z:4},
-  {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1},
-  {s:IMG.dots_coral, l:'2%', b:'34%', h:'11%', o:.8,  z:1},
-  {s:IMG.squig_yellow,l:'12%',b:'2%', h:'13%', o:.95, z:0}
+  {s:IMG.wash_teal, l:'-2%', b:'-6%', h:'62%', o:.5, z:0, p:.05},
+  {s:IMG.tree_b,    l:'50%', b:'0',   h:'96%', z:2, mov:'mece', p:.2, d:0},
+  {s:IMG.tree_a,    l:'70%', b:'0',   h:'82%', z:1, mov:'mece', p:.15, d:1.4},
+  {s:IMG.grass_tall,l:'40%', b:'0',   h:'46%', z:2, mov:'mece', p:.3, d:.7},
+  {s:IMG.pampas,    l:'88%', b:'0',   h:'52%', z:1, mov:'mece', p:.25, d:2.1},
+  {s:IMG.grass,     l:'30%', b:'0',   h:'26%', z:3, mov:'mece', p:.4, d:1.1},
+  {s:IMG.grass,     l:'63%', b:'0',   h:'22%', z:3, mov:'mece', p:.4, d:2.6},
+  {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3, p:.5},
+  {s:IMG.p_students,l:'23%', b:'0',   h:'62%', z:3, p:.5},
+  {s:IMG.p_skate,   l:'80%', b:'0',   h:'58%', z:3, p:.55},
+  {s:IMG.macaw,     l:'36%', b:'62%', h:'19%', z:4, mov:'vuela', p:.8, d:0},
+  {s:IMG.hummingbird,l:'92%',b:'70%', h:'13%', z:4, mov:'aletea', p:.85, d:.5},
+  {s:IMG.butterfly_b,l:'17%',b:'52%', h:'11%', z:4, mov:'revolotea', p:.9, d:1.2},
+  {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1, mov:'flota', p:.35, d:.4},
+  {s:IMG.dots_coral, l:'2%', b:'34%', h:'11%', o:.8,  z:1, mov:'flota', p:.3, d:1.8},
+  {s:IMG.squig_yellow,l:'12%',b:'2%', h:'13%', o:.95, z:0, mov:'flota', p:.2, d:1}
 ];
 const col = document.getElementById('collage');
 col.insertAdjacentHTML('beforeend','<div class="sun" style="left:58%;bottom:24%;width:clamp(140px,19vw,250px);aspect-ratio:1;z-index:0"></div>');
 COLLAGE.forEach(c=>{
   const i = document.createElement('img');
   i.src = c.s; i.alt = '';
+  i.className = 'pieza' + (c.mov ? ' mov-' + c.mov : '');
   i.style.cssText = 'left:'+c.l+';bottom:'+c.b+';height:'+c.h+';width:auto;max-width:none;z-index:'+(c.z||1)+';opacity:'+(c.o||1);
+  i.style.setProperty('--d', (c.d||0) + 's');
+  i.dataset.p = c.p || 0;
   col.appendChild(i);
 });
 col.insertAdjacentHTML('beforeend','<div class="ground"></div>');
@@ -146,6 +153,29 @@ let ti = 0;
 
 function decoHTML(list){ return list.map(d=>'<img class="tdeco" src="'+d.s+'" style="'+d.st+'" alt="">').join(''); }
 
+/**
+ * Rejilla en la que se puede hacer clic. Cada casilla muestra solo su título;
+ * al pulsarla, la explicación aparece en el panel de abajo. Arranca con la
+ * primera abierta, para que no quede un hueco vacío.
+ * items = [{titulo, texto, color, textoColor}]
+ */
+function rejillaHTML(items, columnas){
+  const casillas = items.map((it,k)=>
+    '<button type="button" class="it" data-exp="'+k+'" aria-pressed="'+(k===0)+'"'
+    + ' style="background:'+it.color+(it.textoColor?';color:'+it.textoColor:'')+'">'
+    + esc(it.titulo) + '<span class="it-mas" aria-hidden="true">+</span></button>'
+  ).join('');
+
+  const paneles = items.map((it,k)=>
+    '<div class="texp-uno'+(k===0?' on':'')+'" data-exp="'+k+'">'
+    + '<b style="color:'+(it.textoColor && it.textoColor!=='#fff' ? it.textoColor : it.color)+'">'+esc(it.titulo)+'</b>'
+    + '<p>'+esc(it.texto)+'</p></div>'
+  ).join('');
+
+  return '<div class="tgrid tgrid--clic" style="grid-template-columns:repeat('+columnas+',1fr)">'+casillas+'</div>'
+    + '<div class="texp">'+paneles+'</div>';
+}
+
 function buildTour(){
   tstage.innerHTML = TOUR.map((s,i)=>{
     let inner = '';
@@ -162,10 +192,15 @@ function buildTour(){
           {s:IMG.squig_teal, st:'right:2%;top:4%;height:9%;opacity:.9'}
         ]);
     } else if(s.kind === 'trans'){
+      const colores = ['var(--green-d)','var(--yellow-d)','var(--teal-d)','var(--coral-d)'];
       inner = '<div class="inner"><div class="kick">Contexto</div><h3>Cuatro <em>transiciones</em> que abren oportunidades</h3>'
-        + '<div class="tgrid" style="grid-template-columns:repeat(4,1fr)">'
-        + TRANS.map((t,k)=>'<div class="it" style="background:'+['var(--green-d)','var(--yellow-d)','var(--teal-d)','var(--coral-d)'][k]+'">'+esc(t.lab.replace('Transición ',''))+'<small>'+esc(t.txt)+'</small></div>').join('')
-        + '</div></div>'
+        + '<p class="tpista">Hacé clic en cada transición para ver de qué se trata.</p>'
+        + rejillaHTML(TRANS.map((t,k)=>({
+            titulo: t.lab.replace('Transición ',''),
+            texto: t.txt,
+            color: colores[k]
+          })), 4)
+        + '</div>'
         + decoHTML([{s:IMG.butterfly_a, st:'right:5%;top:8%;height:14%'},{s:IMG.dots_teal, st:'left:1%;bottom:6%;height:8%;opacity:.8'}]);
     } else if(s.kind === 'goal'){
       inner = '<div class="inner"><div class="kick">Objetivo al 2031</div>'
@@ -177,20 +212,28 @@ function buildTour(){
           {s:IMG.dots_green, st:'left:0;top:10%;height:9%;opacity:.85'}
         ]);
     } else if(s.kind === 'attrs'){
+      const colores = ['var(--coral-d)','var(--yellow-d)','var(--green-d)'];
       inner = '<div class="inner"><div class="kick">Objetivo al 2031</div><h3>Tres atributos de la <em>región que queremos</em></h3>'
-        + '<div class="tgrid" style="grid-template-columns:repeat(3,1fr);margin-top:30px">'
-        + ['t-res','t-int','t-pro'].map((id,k)=>{const d=byId(id);
-            return '<div class="it" style="background:'+['var(--coral-d)','var(--yellow-d)','var(--green-d)'][k]+';font-size:22px">'+esc(d.t)+'<small style="font-size:13px">'+esc(d.lead)+'</small></div>';}).join('')
-        + '</div></div>'
+        + '<p class="tpista">Hacé clic en cada atributo para ver qué significa.</p>'
+        + rejillaHTML(['t-res','t-int','t-pro'].map((id,k)=>{
+            const d = byId(id);
+            return { titulo: d.t, texto: (d.lead||'') + ' ' + (d.what||''), color: colores[k] };
+          }), 3)
+        + '</div>'
         + decoHTML([{s:IMG.p_girljump, st:'right:3%;bottom:2%;height:36%;z-index:2'},{s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}]);
     } else if(s.kind === 'level'){
       const items = DATA.filter(d=>d.lvl===s.lvl);
       const bg = s.lvl===2?'var(--yellow)':(s.lvl===3?'var(--teal-d)':'var(--coral-d)');
       const fg = s.lvl===2?'#4A4322':'#fff';
       inner = '<div class="inner"><div class="kick">'+s.kick+'</div><h3>'+s.h+'</h3><p>'+s.p+'</p>'
-        + '<div class="tgrid" style="grid-template-columns:repeat('+(items.length>3?3:3)+',1fr);margin-top:26px">'
-        + items.map(d=>'<div class="it" style="background:'+bg+';color:'+fg+'">'+esc(d.t)+(d.sub?'<small>'+esc(d.sub)+'</small>':'')+'</div>').join('')
-        + '</div></div>'
+        + '<p class="tpista">Hacé clic en cada una para ver el detalle.</p>'
+        + rejillaHTML(items.map(d=>({
+            titulo: d.t,
+            texto: (d.lead||'') + ' ' + (d.what||''),
+            color: bg,
+            textoColor: fg
+          })), 3)
+        + '</div>'
         + decoHTML(s.lvl===2
             ? [{s:IMG.butterfly_b, st:'right:4%;top:6%;height:11%'},{s:IMG.dots_yellow, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
             : s.lvl===3
@@ -233,6 +276,19 @@ document.getElementById('tprev').onclick = ()=>showT(ti-1);
 document.getElementById('tnext').onclick = ()=>showT(ti+1);
 document.getElementById('tdots').addEventListener('click', e=>{ const b=e.target.closest('[data-t]'); if(b) showT(+b.dataset.t); });
 
+/* Rejillas en las que se puede hacer clic dentro del recorrido */
+tstage.addEventListener('click', e=>{
+  const casilla = e.target.closest('.tgrid--clic .it');
+  if(!casilla) return;
+  const rejilla = casilla.parentElement;
+  const panel = rejilla.nextElementSibling;   // el .texp que le corresponde
+  const k = casilla.dataset.exp;
+
+  rejilla.querySelectorAll('.it').forEach(b=>b.setAttribute('aria-pressed', b === casilla));
+  if(!panel) return;
+  panel.querySelectorAll('.texp-uno').forEach(p=>p.classList.toggle('on', p.dataset.exp === k));
+});
+
 document.addEventListener('keydown', e=>{
   if(tour.classList.contains('on')){
     if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();showT(ti+1);}
@@ -264,12 +320,20 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
 
   /* ---------- Aparición por scroll ---------- */
 
-  // Cada grupo se revela cuando entra en pantalla, con sus hijos escalonados
+  // Cada grupo se revela cuando entra en pantalla, con sus hijos escalonados.
+  // Se incluyen los encabezados de sección, la barra de herramientas y el pie,
+  // para que al bajar vaya apareciendo todo y no solo las tarjetas.
+  // Ojo: nada de anidar un grupo dentro de otro. #chips va dentro de .toolbar,
+  // así que se revela con ella y no aparece acá.
   const grupos = [
-    '#attrs', '#forces', '#valor', '#agendas', '#trans', '#stats', '#tl', '#chips'
+    '#attrs', '#forces', '#valor', '#agendas', '#trans', '#stats', '#tl'
   ];
+  document.querySelectorAll('.sec-head').forEach(e => grupos.push(e));
+  document.querySelectorAll('.toolbar').forEach(e => grupos.push(e));
+  document.querySelectorAll('footer.foot .wrap').forEach(e => grupos.push(e));
+
   grupos.forEach(sel => {
-    const el = document.querySelector(sel);
+    const el = typeof sel === 'string' ? document.querySelector(sel) : sel;
     if (!el) return;
     el.setAttribute('data-revelar', '');
     Array.prototype.forEach.call(el.children, (hijo, i) => {
@@ -277,11 +341,10 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
     });
   });
 
-  // El objetivo es una sola tarjeta: se envuelve para que reciba el mismo trato
+  // El objetivo es una tarjeta suelta: se revela él mismo, no sus hijos.
+  // Marcar a su contenedor dejaría a #attrs anidado dentro de otro revelado.
   const meta = document.querySelector('.goal');
-  if (meta && meta.parentElement) {
-    meta.parentElement.setAttribute('data-revelar', '');
-  }
+  if (meta) meta.setAttribute('data-revelar-uno', '');
 
   // Las etiquetas de fila entran una después de otra
   document.querySelectorAll('.row .rlabel').forEach((et, i) => {
@@ -289,7 +352,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   });
 
   if (reduce || !('IntersectionObserver' in window)) {
-    document.querySelectorAll('[data-revelar]').forEach(e => e.classList.add('visible'));
+    document.querySelectorAll('[data-revelar],[data-revelar-uno]').forEach(e => e.classList.add('visible'));
   } else {
     const vigia = new IntersectionObserver((entradas) => {
       entradas.forEach(e => {
@@ -299,7 +362,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
       });
     }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
 
-    document.querySelectorAll('[data-revelar]').forEach(e => vigia.observe(e));
+    document.querySelectorAll('[data-revelar],[data-revelar-uno]').forEach(e => vigia.observe(e));
   }
 
   /* ---------- Onda al hacer clic en una tarjeta ---------- */
@@ -383,4 +446,69 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   document.querySelectorAll('.tslide .inner').forEach(inner => {
     Array.prototype.forEach.call(inner.children, (hijo, i) => hijo.style.setProperty('--i', i));
   });
+})();
+
+/* =========================================================
+   PARALAJE DE LA PORTADA
+   Mueve cada pieza según su profundidad, con el mouse y con el
+   scroll. Escribe --px/--py, que los keyframes ya tienen en cuenta,
+   así el paralaje y el movimiento propio conviven sin pisarse.
+   ========================================================= */
+(function(){
+  'use strict';
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const escena = document.getElementById('collage');
+  const hero = document.querySelector('.hero');
+  if (!escena || !hero) return;
+
+  const piezas = Array.prototype.slice.call(escena.querySelectorAll('.pieza'));
+  const sol = escena.querySelector('.sun');
+  if (sol) sol.dataset.p = 0.1;
+  if (sol) piezas.push(sol);
+
+  let mx = 0, my = 0;      // posición del mouse, de -1 a 1
+  let scroll = 0;          // cuánto se bajó dentro de la portada
+  let pendiente = false;
+
+  function pintar(){
+    pendiente = false;
+    piezas.forEach(function(el){
+      const p = parseFloat(el.dataset.p) || 0;
+      const x = mx * p * 22;              // px
+      const y = my * p * 14 + scroll * p * 26;
+      el.style.setProperty('--px', x.toFixed(1) + 'px');
+      el.style.setProperty('--py', y.toFixed(1) + 'px');
+    });
+  }
+
+  function pedirPintado(){
+    if (pendiente) return;
+    pendiente = true;
+    window.requestAnimationFrame(pintar);
+  }
+
+  // El collage no recibe eventos (pointer-events:none), así que se escucha
+  // sobre la portada entera
+  hero.addEventListener('mousemove', function(e){
+    const caja = hero.getBoundingClientRect();
+    mx = ((e.clientX - caja.left) / caja.width - 0.5) * 2;
+    my = ((e.clientY - caja.top) / caja.height - 0.5) * 2;
+    pedirPintado();
+  });
+
+  hero.addEventListener('mouseleave', function(){
+    mx = 0; my = 0;
+    pedirPintado();
+  });
+
+  window.addEventListener('scroll', function(){
+    const caja = hero.getBoundingClientRect();
+    // 0 mientras la portada está arriba del todo, 1 cuando ya se fue
+    scroll = Math.max(0, Math.min(1, -caja.top / Math.max(1, caja.height)));
+    pedirPintado();
+  }, { passive: true });
+
+  pintar();
 })();
