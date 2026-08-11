@@ -44,6 +44,15 @@ const IMG = {
   ph_dem: 'img/ph_dem.webp',
 };
 
+/* Videos de aves con fondo transparente (WebM con canal alfa).
+   Se usan en la portada y en el recorrido. Si el navegador no los puede
+   reproducir, o si el sistema pide reducir movimiento, se muestra la
+   imagen fija equivalente de IMG. */
+const VID = {
+  guacamaya: 'video/guacamaya.webm',
+  ave: 'video/ave.webm',
+};
+
 /* ====================== DATA ====================== */
 const LEVELS = {
   1:{name:"Objetivo al 2031", color:"var(--green-d)", deco:IMG.macaw},

@@ -50,25 +50,50 @@ const COLLAGE = [
   {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3, p:.5, e:.78},
   {s:IMG.p_students,l:'23%', b:'0',   h:'62%', z:3, p:.5, e:.88},
   {s:IMG.p_skate,   l:'80%', b:'0',   h:'58%', z:3, p:.55, e:.98},
-  {s:IMG.macaw,     l:'36%', b:'62%', h:'19%', z:4, mov:'vuela', p:.8, e:1.20, d:0},
-  {s:IMG.hummingbird,l:'92%',b:'70%', h:'13%', z:4, mov:'aletea', p:.85, e:1.34, d:.5},
+  // v = video con fondo transparente; s queda como respaldo estático
+  {s:IMG.macaw, v:VID.guacamaya, l:'33%', b:'58%', h:'23%', z:4, mov:'vuela', p:.8, e:1.20, d:0},
+  {s:IMG.hummingbird, v:VID.ave, l:'88%', b:'62%', h:'19%', z:4, mov:'aletea', p:.85, e:1.34, d:.5},
   {s:IMG.butterfly_b,l:'17%',b:'52%', h:'11%', z:4, mov:'revolotea', p:.9, e:1.46, d:1.2},
   {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1, mov:'flota', p:.35, e:.66, d:.4},
   {s:IMG.dots_coral, l:'2%', b:'34%', h:'11%', o:.8,  z:1, mov:'flota', p:.3, e:.72, d:1.8},
   {s:IMG.squig_yellow,l:'12%',b:'2%', h:'13%', o:.95, z:0, mov:'flota', p:.2, e:.36, d:1}
 ];
+// Con "reducir movimiento" activado no se cargan los videos: va la imagen fija
+const SIN_MOVIMIENTO = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * Crea una pieza del collage. Si trae "v" se usa un video con fondo
+ * transparente; si no, la imagen de siempre.
+ */
+function crearPiezaCollage(c){
+  const usarVideo = c.v && !SIN_MOVIMIENTO;
+  const el = document.createElement(usarVideo ? 'video' : 'img');
+
+  if(usarVideo){
+    el.src = c.v;
+    el.poster = c.s;          // se ve la imagen mientras carga el video
+    el.autoplay = true; el.loop = true; el.muted = true;
+    el.playsInline = true;
+    el.setAttribute('playsinline','');   // hace falta explícito en iOS
+    el.setAttribute('muted','');
+    el.setAttribute('aria-hidden','true');
+    el.disablePictureInPicture = true;
+    el.preload = 'auto';
+  } else {
+    el.src = c.s; el.alt = '';
+  }
+
+  el.className = 'pieza' + (usarVideo ? ' pieza--video' : '') + (c.mov ? ' mov-' + c.mov : '');
+  el.style.cssText = 'left:'+c.l+';bottom:'+c.b+';height:'+c.h+';width:auto;max-width:none;z-index:'+(c.z||1)+';opacity:'+(c.o||1);
+  el.style.setProperty('--de', (c.e||0) + 's');
+  el.style.setProperty('--d', (c.d||0) + 's');
+  el.dataset.p = c.p || 0;
+  return el;
+}
+
 const col = document.getElementById('collage');
 col.insertAdjacentHTML('beforeend','<div class="sun" style="left:58%;bottom:24%;width:clamp(140px,19vw,250px);aspect-ratio:1;z-index:0;--de:.12s"></div>');
-COLLAGE.forEach(c=>{
-  const i = document.createElement('img');
-  i.src = c.s; i.alt = '';
-  i.className = 'pieza' + (c.mov ? ' mov-' + c.mov : '');
-  i.style.cssText = 'left:'+c.l+';bottom:'+c.b+';height:'+c.h+';width:auto;max-width:none;z-index:'+(c.z||1)+';opacity:'+(c.o||1);
-  i.style.setProperty('--de', (c.e||0) + 's');
-  i.style.setProperty('--d', (c.d||0) + 's');
-  i.dataset.p = c.p || 0;
-  col.appendChild(i);
-});
+COLLAGE.forEach(c=>col.appendChild(crearPiezaCollage(c)));
 col.insertAdjacentHTML('beforeend','<div class="ground"></div>');
 
 /* ---------- DRAWER ---------- */
@@ -156,8 +181,21 @@ document.getElementById('chips').addEventListener('click', e=>{
 const tour = document.getElementById('tour'), tstage = document.getElementById('tstage');
 let ti = 0;
 
-// El --i escalona la entrada de cada ilustración de la lámina
-function decoHTML(list){ return list.map((d,i)=>'<img class="tdeco" src="'+d.s+'" style="--i:'+i+';'+d.st+'" alt="">').join(''); }
+/**
+ * Ilustraciones de una lámina del recorrido. El --i escalona su entrada.
+ * Si el elemento trae "v" se dibuja como video con fondo transparente,
+ * salvo que el sistema pida reducir movimiento.
+ */
+function decoHTML(list){
+  return list.map((d,i)=>{
+    const est = '--i:' + i + ';' + d.st;
+    if(d.v && !SIN_MOVIMIENTO){
+      return '<video class="tdeco tdeco--video" style="'+est+'" src="'+d.v+'" poster="'+d.s+'"'
+        + ' autoplay loop muted playsinline aria-hidden="true" preload="auto"></video>';
+    }
+    return '<img class="tdeco" src="'+d.s+'" style="'+est+'" alt="">';
+  }).join('');
+}
 
 /**
  * Rejilla en la que se puede hacer clic. Cada casilla muestra solo su título;
@@ -193,7 +231,7 @@ function buildTour(){
           {s:IMG.tree_b, st:'right:2%;bottom:-3%;height:54%;z-index:1'},
           {s:IMG.tree_a, st:'right:20%;bottom:-3%;height:40%;z-index:0;opacity:.95'},
           {s:IMG.p_skate, st:'right:37%;bottom:-1%;height:30%;z-index:2'},
-          {s:IMG.macaw, st:'right:12%;top:10%;height:12%;z-index:2'},
+          {s:IMG.macaw, v:VID.guacamaya, st:'right:12%;top:8%;height:16%;z-index:2'},
           {s:IMG.dots_yellow, st:'left:2%;bottom:8%;height:9%;opacity:.9'},
           {s:IMG.squig_teal, st:'right:2%;top:4%;height:9%;opacity:.9'}
         ]);
@@ -214,7 +252,7 @@ function buildTour(){
         + decoHTML([
           {s:IMG.p_kidpaint, st:'right:6%;bottom:-2%;height:44%;z-index:2'},
           {s:IMG.grass, st:'right:2%;bottom:-2%;height:16%;z-index:1'},
-          {s:IMG.hummingbird2, st:'right:30%;top:14%;height:12%'},
+          {s:IMG.hummingbird2, v:VID.ave, st:'right:30%;top:12%;height:16%'},
           {s:IMG.dots_green, st:'left:0;top:10%;height:9%;opacity:.85'}
         ]);
     } else if(s.kind === 'attrs'){
@@ -243,7 +281,7 @@ function buildTour(){
         + decoHTML(s.lvl===2
             ? [{s:IMG.butterfly_b, st:'right:4%;top:6%;height:11%'},{s:IMG.dots_yellow, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
             : s.lvl===3
-            ? [{s:IMG.hummingbird, st:'right:4%;top:8%;height:10%'},{s:IMG.dots_teal, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
+            ? [{s:IMG.hummingbird, v:VID.ave, st:'right:4%;top:6%;height:15%'},{s:IMG.dots_teal, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
             : [{s:IMG.flamingo, st:'right:4%;bottom:2%;height:34%'},{s:IMG.dots_coral, st:'left:0;bottom:4%;height:8%;opacity:.8'}]);
     } else if(s.kind === 'close'){
       inner = '<div class="inner"><h3 style="font-size:clamp(30px,4.6vw,56px);max-width:min(720px,64%)">CAF — <em>Banco Verde</em><br>de América Latina y el Caribe</h3>'
@@ -252,7 +290,7 @@ function buildTour(){
           {s:IMG.tree_a, st:'right:3%;bottom:-3%;height:46%;z-index:1'},
           {s:IMG.p_wheelchair, st:'right:26%;bottom:3%;height:18%;z-index:2'},
           {s:IMG.flamingo, st:'left:1%;bottom:-2%;height:30%;z-index:2'},
-          {s:IMG.macaw, st:'left:22%;top:10%;height:11%'},
+          {s:IMG.macaw, v:VID.guacamaya, st:'left:22%;top:8%;height:15%'},
           {s:IMG.wash_teal, st:'left:0;bottom:0;height:46%;opacity:.35;z-index:0'}
         ]);
     } else {

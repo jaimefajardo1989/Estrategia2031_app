@@ -568,3 +568,28 @@ footer.foot strong{color:var(--ink-2)}
   .tslide{overflow-y:auto;padding-top:22px;padding-bottom:22px}
   .tslide.on{justify-content:flex-start}
 }
+
+/* =========================================================
+   AVES EN VIDEO
+   WebM con canal alfa: fondo transparente de verdad, así el ave
+   se apoya sobre cualquier color sin recuadro.
+   ========================================================= */
+
+.collage video.pieza,
+video.tdeco{
+  position:absolute;
+  width:auto;
+  max-width:none;
+  object-fit:contain;
+  pointer-events:none;
+  /* Mientras el video no arrancó se ve el poster, que es la imagen fija */
+  background:transparent;
+}
+
+/* El video hereda el mismo movimiento y paralaje que las imágenes:
+   el archivo aporta el aleteo y el CSS, el desplazamiento por el cielo. */
+.collage video.pieza{bottom:0}
+
+@media (prefers-reduced-motion:reduce){
+  .collage video.pieza,video.tdeco{animation:none !important;transform:none !important}
+}
