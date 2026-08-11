@@ -1,104 +1,172 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- El sitio es de acceso abierto para quien tenga el enlace, pero pedimos a los
          buscadores que no lo indexen ni lo muestren en resultados. -->
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
-    <title>Estrategia 2031 — Árbol estratégico</title>
+    <title>Estrategia 2026–2031 · Mapa estratégico interactivo · CAF</title>
     <meta
       name="description"
-      content="Árbol estratégico interactivo: objetivo al 2031, oportunidades, valor agregado y agendas institucionales."
+      content="Mapa estratégico interactivo de CAF: recorrido guiado, objetivo al 2031, oportunidades, valor agregado y agendas institucionales."
     />
     <!-- El ?v= obliga al navegador a bajar los archivos de nuevo cuando cambian.
          Si editás css/estilos.css, js/contenido.js o js/app.js, subí el número
-         en las tres líneas (acá y al final del body). Sin esto, quien ya visitó
-         la página sigue viendo la versión vieja hasta que se le venza la caché. -->
-    <link rel="stylesheet" href="css/estilos.css?v=10" />
+         en las tres líneas (acá y al final del body). -->
+    <link rel="stylesheet" href="css/estilos.css?v=11" />
   </head>
 
   <body>
-    <a class="salto-contenido" href="#arbol">Saltar al contenido</a>
+<a class="skip" href="#arbol">Saltar al mapa estratégico</a>
 
-    <header class="encabezado">
-      <div class="encabezado__texto">
-        <h1 class="encabezado__titulo" id="app-titulo">Estrategia 2031</h1>
-        <p class="encabezado__subtitulo" id="app-subtitulo">Árbol estratégico institucional</p>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><b>CAF</b><span>Estrategia 2026–2031</span></div>
+    <nav>
+      <a href="#arbol">Mapa estratégico</a>
+      <a href="#contexto">Contexto</a>
+      <a href="#donde">De dónde venimos</a>
+    </nav>
+    <button class="btn btn-main" id="btn-tour">▶ Recorrido guiado</button>
+  </div>
+</header>
+
+<div class="hero">
+  <img class="vlines" src="img/vlines.webp" alt="">
+  <div class="hero-in">
+    <h1><span class="t">Nuevo ciclo</span> estratégico de CAF</h1>
+    <div class="kicker">2026 – 2031</div>
+    <p class="lead">Mapa estratégico interactivo. Recorre el objetivo al 2031, las fuerzas que abren oportunidades, el valor agregado de CAF y las agendas institucionales que lo hacen posible.</p>
+    <div class="cta">
+      <button class="btn btn-main" id="btn-tour2">▶ Iniciar recorrido guiado</button>
+      <a class="btn btn-ghost" href="#arbol" style="text-decoration:none;display:inline-block">Explorar el mapa</a>
+    </div>
+    <div class="hint"><span class="dot"></span> Haz clic en cualquier tarjeta para ver el detalle</div>
+  </div>
+  <div class="collage" id="collage"></div>
+</div>
+
+<section id="arbol">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Mapa estratégico</div>
+      <h2>La <em>propuesta de valor</em> de CAF al 2031</h2>
+      <p>Cuatro niveles encadenados: el objetivo que perseguimos, las fuerzas y espacios donde se abren oportunidades, el valor agregado que aporta CAF y las agendas institucionales que lo habilitan.</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="q" placeholder="Buscar en el mapa: energía, pymes, integración, talento…" aria-label="Buscar en el mapa estratégico">
       </div>
-      <div class="buscador">
-        <div class="buscador__campo">
-          <svg class="buscador__lupa" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M16.5 16.5L21 21" />
-          </svg>
-          <input
-            class="buscador__entrada"
-            id="buscador"
-            type="text"
-            autocomplete="off"
-            spellcheck="false"
-            aria-label="Buscar un tema en el árbol estratégico"
-            aria-describedby="buscador-estado"
-          />
-          <button class="buscador__limpiar" id="buscador-limpiar" type="button" aria-label="Limpiar búsqueda" hidden>
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
+      <div class="chips" id="chips">
+        <button class="chip" data-l="1" aria-pressed="false"><i style="background:var(--green-d)"></i>Objetivo</button>
+        <button class="chip" data-l="2" aria-pressed="false"><i style="background:var(--yellow-d)"></i>Oportunidades</button>
+        <button class="chip" data-l="3" aria-pressed="false"><i style="background:var(--teal-d)"></i>Valor agregado</button>
+        <button class="chip" data-l="4" aria-pressed="false"><i style="background:var(--coral-d)"></i>Agendas</button>
+      </div>
+      <span class="count" id="count"></span>
+    </div>
+
+    <div id="tree">
+      <div class="row">
+        <div class="rlabel">Objetivo al 2031<small>Hacia dónde vamos</small></div>
+        <div>
+          <button class="card goal" data-id="obj"></button>
+          <div class="attrs" id="attrs"></div>
         </div>
-        <p class="buscador__estado" id="buscador-estado" role="status" aria-live="polite">
-          <span class="encabezado__punto" aria-hidden="true"></span>
-          <span id="app-ayuda">Hacé clic en cualquier tarjeta para ver el detalle</span>
-        </p>
-      </div>
-    </header>
-
-    <!-- El árbol se dibuja acá desde js/app.js con los datos de js/contenido.js -->
-    <main class="arbol" id="arbol"></main>
-
-    <footer class="pie">
-      <p id="app-pie"></p>
-    </footer>
-
-    <!-- Panel de detalle -->
-    <div class="fondo-panel" id="fondo-panel" hidden></div>
-
-    <aside
-      class="panel"
-      id="panel"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="panel-titulo"
-      hidden
-    >
-      <div class="panel__barra">
-        <div class="panel__meta">
-          <span class="panel__etiqueta" id="panel-etiqueta"></span>
-          <span class="panel__sello" id="panel-sello" hidden>Borrador</span>
-        </div>
-        <button class="panel__cerrar" id="panel-cerrar" type="button" aria-label="Cerrar detalle">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M6 6l12 12M18 6L6 18" />
-          </svg>
-        </button>
       </div>
 
-      <!-- El contenido lo arma js/app.js según el elemento que se abrió -->
-      <div class="panel__cuerpo" id="panel-cuerpo"></div>
+      <div class="row"><div></div><div class="flow" style="background-image:url('img/flow1.webp')"></div></div>
 
-      <nav class="panel__navegacion" aria-label="Navegar entre tarjetas">
-        <button class="nav-boton" id="nav-anterior" type="button">
-          <span aria-hidden="true">‹</span> Anterior
-        </button>
-        <span class="nav-posicion" id="nav-posicion"></span>
-        <button class="nav-boton" id="nav-siguiente" type="button">
-          Siguiente <span aria-hidden="true">›</span>
-        </button>
-      </nav>
-    </aside>
+      <div class="row">
+        <div class="rlabel">Fuerzas y espacios donde se abren oportunidades<small>Dónde está el potencial</small></div>
+        <div class="forces" id="forces"></div>
+      </div>
 
-    <script src="js/contenido.js?v=10"></script>
-    <script src="js/app.js?v=10"></script>
+      <div class="row"><div></div><div class="flow" style="background-image:url('img/flow2.webp')"></div></div>
+
+      <div class="row">
+        <div class="rlabel">Valor agregado<small>Qué aporta CAF</small></div>
+        <div class="group" id="valor"></div>
+      </div>
+
+      <div class="row"><div></div><div class="flow" style="background-image:url('img/flow3.webp')"></div></div>
+
+      <div class="row">
+        <div class="rlabel">Agendas institucionales<small>Qué nos habilita</small></div>
+        <div class="group coral" id="agendas"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contexto" style="background:var(--soft);border-radius:44px;margin:0 12px">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Contexto</div>
+      <h2>Cuatro <em>transiciones</em> que abren oportunidades</h2>
+      <p>La acción de los países y del Banco hacia 2031 se inscribe en cuatro grandes transiciones. En cada país se materializan de manera distinta; en todos abren espacio para más bienestar y prosperidad.</p>
+    </div>
+    <div class="trans" id="trans"></div>
+    <div class="stats" id="stats"></div>
+  </div>
+</section>
+
+<section id="donde">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">De dónde venimos</div>
+      <h2>El camino de <em>Corporación a Banco de Desarrollo</em></h2>
+      <p>Seis décadas de evolución institucional que explican la ambición del nuevo ciclo estratégico.</p>
+    </div>
+    <div class="tl" id="tl"></div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <strong>Dirección de Estrategia y Análisis Institucional · CAF – Banco de Desarrollo de América Latina y el Caribe</strong><br>
+    Pieza de trabajo para la presentación de la Estrategia 2026–2031. La estructura del mapa (objetivo, fuerzas y espacios, valor agregado y agendas institucionales) proviene de la lámina «La propuesta de valor de CAF al 2031». Los textos de detalle son una propuesta de redacción y deben validarse antes de su uso externo.
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title" tabindex="-1">
+  <div class="dr-head" id="dr-head">
+    <img class="deco" id="dr-deco" src="" alt="">
+    <button class="dr-close" id="dr-close" aria-label="Cerrar detalle">✕</button>
+    <span class="dr-tag" id="dr-tag"></span>
+    <h3 id="dr-title"></h3>
+    <p class="lead" id="dr-lead"></p>
+  </div>
+  <div class="dr-body">
+    <h4>Qué significa</h4>
+    <p id="dr-what"></p>
+    <h4>Cómo se traduce en acción</h4>
+    <ul class="acts" id="dr-acts"></ul>
+    <div id="dr-links-wrap"><h4>Se conecta con</h4><div class="links" id="dr-links"></div></div>
+    <div class="note">Texto de detalle en borrador. Para editarlo, modifica el bloque <b>DATA</b> en el código de esta pieza.</div>
+  </div>
+  <div class="dr-foot">
+    <button class="nav-btn" id="dr-prev">← Anterior</button>
+    <button class="nav-btn" id="dr-next">Siguiente →</button>
+    <span class="pos" id="dr-pos"></span>
+  </div>
+</aside>
+
+<div class="tour" id="tour" role="dialog" aria-modal="true" aria-label="Recorrido guiado de la Estrategia 2031">
+  <div class="tour-bar"><i id="tprog"></i></div>
+  <div class="tour-stage" id="tstage"></div>
+  <div class="tour-foot">
+    <button class="nav-btn" id="tprev">← Anterior</button>
+    <div class="tdots" id="tdots"></div>
+    <button class="nav-btn" id="tnext">Siguiente →</button>
+    <button class="btn btn-ghost" id="tclose" style="margin-left:10px">Salir ✕</button>
+  </div>
+</div>
+    <script src="js/contenido.js?v=11"></script>
+    <script src="js/app.js?v=11"></script>
   </body>
 </html>

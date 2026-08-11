@@ -1,205 +1,313 @@
-/**
- * Estrategia 2031 — lógica de la aplicación.
- *
- * Dibuja el árbol estratégico a partir de js/contenido.js, maneja el panel de
- * detalle y el buscador de temas. Normalmente no hace falta tocar este archivo:
- * para cambiar textos, editá js/contenido.js.
- */
-(function () {
+/* ====================== RENDER ====================== */
+const byId = id => DATA.find(d => d.id === id);
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+document.querySelector('.goal').innerHTML = esc(byId('obj').t) + '<span class="more">Ver detalle →</span>';
+
+const attrsEl = document.getElementById('attrs');
+['t-res','t-int','t-pro'].forEach((id,i)=>{
+  const d = byId(id);
+  const b = document.createElement('button');
+  b.className = 'card attr a'+(i+1); b.dataset.id = id;
+  b.innerHTML = esc(d.t);
+  attrsEl.appendChild(b);
+});
+
+function makeCard(d, cls){
+  const b = document.createElement('button');
+  b.className = 'card ' + cls; b.dataset.id = d.id;
+  b.innerHTML = '<span class="ttl">'+esc(d.t)+'</span>' + (d.sub ? '<span class="sub">'+esc(d.sub)+'</span>' : '') + '<span class="more">Ver detalle →</span>';
+  return b;
+}
+DATA.filter(d=>d.lvl===2).forEach(d=>document.getElementById('forces').appendChild(makeCard(d,'force')));
+DATA.filter(d=>d.lvl===3).forEach(d=>document.getElementById('valor').appendChild(makeCard(d,'seg')));
+DATA.filter(d=>d.lvl===4).forEach(d=>document.getElementById('agendas').appendChild(makeCard(d,'seg')));
+
+document.getElementById('trans').innerHTML = TRANS.map(t=>
+ '<div class="tcard"><div class="ph"><img src="'+t.img+'" alt=""></div><div class="bd"><span class="lab">'+esc(t.lab)+'</span><p>'+esc(t.txt)+'</p></div></div>').join('');
+document.getElementById('stats').innerHTML = STATS.map(s=>
+ '<div class="stat '+s.c+'"><b>'+esc(s.n)+'</b><span>'+esc(s.d)+'</span></div>').join('');
+document.getElementById('tl').innerHTML = TL.map(t=>
+ '<div class="p'+(t.on?' on':'')+'"><b>'+esc(t.p)+'</b><span>'+esc(t.d)+'</span></div>').join('');
+
+/* ---------- COLLAGE ---------- */
+const COLLAGE = [
+  {s:IMG.wash_teal, l:'-2%', b:'-6%', h:'62%', o:.5, z:0},
+  {s:IMG.tree_b,    l:'50%', b:'0',   h:'96%', z:2},
+  {s:IMG.tree_a,    l:'70%', b:'0',   h:'82%', z:1},
+  {s:IMG.grass_tall,l:'40%', b:'0',   h:'46%', z:2},
+  {s:IMG.pampas,    l:'88%', b:'0',   h:'52%', z:1},
+  {s:IMG.grass,     l:'30%', b:'0',   h:'26%', z:3},
+  {s:IMG.grass,     l:'63%', b:'0',   h:'22%', z:3},
+  {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3},
+  {s:IMG.p_students,l:'23%', b:'0',   h:'62%', z:3},
+  {s:IMG.p_skate,   l:'80%', b:'0',   h:'58%', z:3},
+  {s:IMG.macaw,     l:'36%', b:'62%', h:'19%', z:4},
+  {s:IMG.hummingbird,l:'92%',b:'70%', h:'13%', z:4},
+  {s:IMG.butterfly_b,l:'17%',b:'52%', h:'11%', z:4},
+  {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1},
+  {s:IMG.dots_coral, l:'2%', b:'34%', h:'11%', o:.8,  z:1},
+  {s:IMG.squig_yellow,l:'12%',b:'2%', h:'13%', o:.95, z:0}
+];
+const col = document.getElementById('collage');
+col.insertAdjacentHTML('beforeend','<div class="sun" style="left:58%;bottom:24%;width:clamp(140px,19vw,250px);aspect-ratio:1;z-index:0"></div>');
+COLLAGE.forEach(c=>{
+  const i = document.createElement('img');
+  i.src = c.s; i.alt = '';
+  i.style.cssText = 'left:'+c.l+';bottom:'+c.b+';height:'+c.h+';width:auto;max-width:none;z-index:'+(c.z||1)+';opacity:'+(c.o||1);
+  col.appendChild(i);
+});
+col.insertAdjacentHTML('beforeend','<div class="ground"></div>');
+
+/* ---------- DRAWER ---------- */
+const drawer = document.getElementById('drawer'), scrim = document.getElementById('scrim');
+let current = null, lastFocus = null;
+const ORDER = DATA.map(d=>d.id);
+
+function openCard(id, push){
+  const d = byId(id); if(!d) return;
+  if(!current) lastFocus = document.activeElement;
+  current = id;
+  const L = LEVELS[d.lvl];
+  document.getElementById('dr-tag').textContent = L.name;
+  document.getElementById('dr-tag').style.background = L.color;
+  document.getElementById('dr-deco').src = L.deco;
+  document.getElementById('dr-title').textContent = d.t;
+  document.getElementById('dr-title').style.fontSize = d.t.length > 70 ? '20px' : '26px';
+  document.getElementById('dr-lead').textContent = d.lead || '';
+  document.getElementById('dr-what').textContent = d.what || '';
+  document.getElementById('dr-acts').style.setProperty('--c', L.color);
+  document.getElementById('dr-acts').innerHTML = (d.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
+  const lw = document.getElementById('dr-links-wrap');
+  const ls = (d.links||[]).map(byId).filter(Boolean);
+  lw.style.display = ls.length ? '' : 'none';
+  document.getElementById('dr-links').innerHTML = ls.map(x=>
+    '<button class="lchip" data-go="'+x.id+'"><i style="background:'+LEVELS[x.lvl].color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
+  document.getElementById('dr-pos').textContent = (ORDER.indexOf(id)+1) + ' / ' + ORDER.length;
+  drawer.classList.add('on'); scrim.classList.add('on');
+  drawer.querySelector('.dr-body').scrollTop = 0;
+  drawer.focus();
+  if(push !== false) history.replaceState(null,'','#'+id);
+}
+function closeCard(){
+  drawer.classList.remove('on'); scrim.classList.remove('on'); current = null;
+  history.replaceState(null,'','#arbol');
+  if(lastFocus) lastFocus.focus();
+}
+function step(n){
+  const i = ORDER.indexOf(current);
+  openCard(ORDER[(i + n + ORDER.length) % ORDER.length]);
+}
+document.addEventListener('click', e=>{
+  const c = e.target.closest('.card'); if(c){ openCard(c.dataset.id); return; }
+  const g = e.target.closest('[data-go]'); if(g){ openCard(g.dataset.go); return; }
+});
+document.getElementById('dr-close').onclick = closeCard;
+scrim.onclick = closeCard;
+document.getElementById('dr-prev').onclick = ()=>step(-1);
+document.getElementById('dr-next').onclick = ()=>step(1);
+
+/* ---------- BUSCAR / FILTRAR ---------- */
+const q = document.getElementById('q'), countEl = document.getElementById('count');
+let activeLvl = 0;
+// Quita acentos para que "energia" encuentre "Energética"
+const norm = s => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+
+function applyFilter(){
+  const term = norm(q.value.trim());
+  let n = 0;
+  document.querySelectorAll('#tree .card').forEach(el=>{
+    const d = byId(el.dataset.id);
+    // "temas" agrega sinónimos que no están escritos en el texto visible,
+    // por ejemplo "agricultura" en la tarjeta Ambiental
+    const hay = norm(d.t+' '+(d.sub||'')+' '+(d.lead||'')+' '+(d.what||'')+' '+(d.acts||[]).join(' ')+' '+(d.temas||''));
+    // Con varias palabras se exige que estén todas
+    const okT = !term || term.split(/\s+/).every(w => hay.includes(w));
+    const okL = !activeLvl || d.lvl === activeLvl;
+    const ok = okT && okL;
+    el.classList.toggle('dim', !ok);
+    el.classList.toggle('hit', !!term && ok);
+    if(ok) n++;
+  });
+  countEl.textContent = (term || activeLvl) ? n + ' de ' + DATA.length : '';
+}
+q.addEventListener('input', applyFilter);
+document.getElementById('chips').addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c) return;
+  const l = +c.dataset.l;
+  activeLvl = (activeLvl === l) ? 0 : l;
+  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed', +x.dataset.l === activeLvl));
+  applyFilter();
+});
+
+/* ---------- RECORRIDO GUIADO ---------- */
+const tour = document.getElementById('tour'), tstage = document.getElementById('tstage');
+let ti = 0;
+
+function decoHTML(list){ return list.map(d=>'<img class="tdeco" src="'+d.s+'" style="'+d.st+'" alt="">').join(''); }
+
+function buildTour(){
+  tstage.innerHTML = TOUR.map((s,i)=>{
+    let inner = '';
+    if(s.kind === 'cover'){
+      inner = '<div class="inner"><div class="kick">CAF · Banco de Desarrollo de América Latina y el Caribe</div>'
+        + '<h3 style="font-size:clamp(32px,5.2vw,64px);color:var(--green-d);max-width:min(620px,52%)"><em>Nuevo ciclo</em> estratégico de CAF</h3>'
+        + '<p style="font-size:clamp(20px,2.6vw,32px);font-weight:700;color:var(--teal-d)">2026 – 2031</p></div>'
+        + decoHTML([
+          {s:IMG.tree_b, st:'right:2%;bottom:-3%;height:54%;z-index:1'},
+          {s:IMG.tree_a, st:'right:20%;bottom:-3%;height:40%;z-index:0;opacity:.95'},
+          {s:IMG.p_skate, st:'right:37%;bottom:-1%;height:30%;z-index:2'},
+          {s:IMG.macaw, st:'right:12%;top:10%;height:12%;z-index:2'},
+          {s:IMG.dots_yellow, st:'left:2%;bottom:8%;height:9%;opacity:.9'},
+          {s:IMG.squig_teal, st:'right:2%;top:4%;height:9%;opacity:.9'}
+        ]);
+    } else if(s.kind === 'trans'){
+      inner = '<div class="inner"><div class="kick">Contexto</div><h3>Cuatro <em>transiciones</em> que abren oportunidades</h3>'
+        + '<div class="tgrid" style="grid-template-columns:repeat(4,1fr)">'
+        + TRANS.map((t,k)=>'<div class="it" style="background:'+['var(--green-d)','var(--yellow-d)','var(--teal-d)','var(--coral-d)'][k]+'">'+esc(t.lab.replace('Transición ',''))+'<small>'+esc(t.txt)+'</small></div>').join('')
+        + '</div></div>'
+        + decoHTML([{s:IMG.butterfly_a, st:'right:5%;top:8%;height:14%'},{s:IMG.dots_teal, st:'left:1%;bottom:6%;height:8%;opacity:.8'}]);
+    } else if(s.kind === 'goal'){
+      inner = '<div class="inner"><div class="kick">Objetivo al 2031</div>'
+        + '<h3>Una región más <em>resiliente, integrada y próspera</em>, donde el desarrollo sostenible se traduce en bienestar para cada persona</h3></div>'
+        + decoHTML([
+          {s:IMG.p_kidpaint, st:'right:6%;bottom:-2%;height:44%;z-index:2'},
+          {s:IMG.grass, st:'right:2%;bottom:-2%;height:16%;z-index:1'},
+          {s:IMG.hummingbird2, st:'right:30%;top:14%;height:12%'},
+          {s:IMG.dots_green, st:'left:0;top:10%;height:9%;opacity:.85'}
+        ]);
+    } else if(s.kind === 'attrs'){
+      inner = '<div class="inner"><div class="kick">Objetivo al 2031</div><h3>Tres atributos de la <em>región que queremos</em></h3>'
+        + '<div class="tgrid" style="grid-template-columns:repeat(3,1fr);margin-top:30px">'
+        + ['t-res','t-int','t-pro'].map((id,k)=>{const d=byId(id);
+            return '<div class="it" style="background:'+['var(--coral-d)','var(--yellow-d)','var(--green-d)'][k]+';font-size:22px">'+esc(d.t)+'<small style="font-size:13px">'+esc(d.lead)+'</small></div>';}).join('')
+        + '</div></div>'
+        + decoHTML([{s:IMG.p_girljump, st:'right:3%;bottom:2%;height:36%;z-index:2'},{s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}]);
+    } else if(s.kind === 'level'){
+      const items = DATA.filter(d=>d.lvl===s.lvl);
+      const bg = s.lvl===2?'var(--yellow)':(s.lvl===3?'var(--teal-d)':'var(--coral-d)');
+      const fg = s.lvl===2?'#4A4322':'#fff';
+      inner = '<div class="inner"><div class="kick">'+s.kick+'</div><h3>'+s.h+'</h3><p>'+s.p+'</p>'
+        + '<div class="tgrid" style="grid-template-columns:repeat('+(items.length>3?3:3)+',1fr);margin-top:26px">'
+        + items.map(d=>'<div class="it" style="background:'+bg+';color:'+fg+'">'+esc(d.t)+(d.sub?'<small>'+esc(d.sub)+'</small>':'')+'</div>').join('')
+        + '</div></div>'
+        + decoHTML(s.lvl===2
+            ? [{s:IMG.butterfly_b, st:'right:4%;top:6%;height:11%'},{s:IMG.dots_yellow, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
+            : s.lvl===3
+            ? [{s:IMG.hummingbird, st:'right:4%;top:8%;height:10%'},{s:IMG.dots_teal, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
+            : [{s:IMG.flamingo, st:'right:4%;bottom:2%;height:34%'},{s:IMG.dots_coral, st:'left:0;bottom:4%;height:8%;opacity:.8'}]);
+    } else if(s.kind === 'close'){
+      inner = '<div class="inner"><h3 style="font-size:clamp(30px,4.6vw,56px);max-width:min(720px,64%)">CAF — <em>Banco Verde</em><br>de América Latina y el Caribe</h3>'
+        + '<p style="margin-top:18px">Estrategia 2026–2031 · Dirección de Estrategia y Análisis Institucional</p></div>'
+        + decoHTML([
+          {s:IMG.tree_a, st:'right:3%;bottom:-3%;height:46%;z-index:1'},
+          {s:IMG.p_wheelchair, st:'right:26%;bottom:3%;height:18%;z-index:2'},
+          {s:IMG.flamingo, st:'left:1%;bottom:-2%;height:30%;z-index:2'},
+          {s:IMG.macaw, st:'left:22%;top:10%;height:11%'},
+          {s:IMG.wash_teal, st:'left:0;bottom:0;height:46%;opacity:.35;z-index:0'}
+        ]);
+    } else {
+      inner = '<div class="inner"><div class="kick">'+s.kick+'</div><h3>'+s.h+'</h3><p>'+s.p+'</p>'
+        + (s.stats ? '<div class="tgrid" style="grid-template-columns:repeat(4,1fr);margin-top:28px">'
+            + STATS.slice(0,4).map((x,k)=>'<div class="it" style="background:'+['var(--teal-d)','var(--green-d)','var(--yellow-d)','var(--coral-d)'][k]+'">'+esc(x.n)+'<small>'+esc(x.d)+'</small></div>').join('')
+            + '</div>' : '')
+        + '</div>'
+        + decoHTML([{s:IMG.p_books, st:'right:5%;bottom:0;height:40%;opacity:.95'},{s:IMG.dots_coral, st:'left:0;top:12%;height:8%;opacity:.8'}]);
+    }
+    return '<div class="tslide" data-i="'+i+'">'+inner+'</div>';
+  }).join('');
+  document.getElementById('tdots').innerHTML = TOUR.map((s,i)=>'<button data-t="'+i+'" aria-label="Ir al paso '+(i+1)+'"></button>').join('');
+}
+function showT(n){
+  ti = Math.max(0, Math.min(TOUR.length-1, n));
+  tstage.querySelectorAll('.tslide').forEach((el,i)=>el.classList.toggle('on', i===ti));
+  document.querySelectorAll('#tdots button').forEach((b,i)=>b.setAttribute('aria-current', i===ti));
+  document.getElementById('tprog').style.width = ((ti+1)/TOUR.length*100)+'%';
+}
+function openTour(){ if(!tstage.children.length) buildTour(); tour.classList.add('on'); showT(0); tour.focus(); }
+function closeTour(){ tour.classList.remove('on'); }
+document.getElementById('btn-tour').onclick = openTour;
+document.getElementById('btn-tour2').onclick = openTour;
+document.getElementById('tclose').onclick = closeTour;
+document.getElementById('tprev').onclick = ()=>showT(ti-1);
+document.getElementById('tnext').onclick = ()=>showT(ti+1);
+document.getElementById('tdots').addEventListener('click', e=>{ const b=e.target.closest('[data-t]'); if(b) showT(+b.dataset.t); });
+
+document.addEventListener('keydown', e=>{
+  if(tour.classList.contains('on')){
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();showT(ti+1);}
+    if(e.key==='ArrowLeft'){e.preventDefault();showT(ti-1);}
+    if(e.key==='Escape') closeTour();
+    return;
+  }
+  if(drawer.classList.contains('on')){
+    if(e.key==='Escape') closeCard();
+    if(e.key==='ArrowRight') step(1);
+    if(e.key==='ArrowLeft') step(-1);
+  }
+});
+
+if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1), false);
+
+/* =========================================================
+   CAPA DE ANIMACIONES
+   Se agrega sobre la lógica base. No cambia qué se muestra,
+   solo cómo aparece.
+   ========================================================= */
+(function(){
   'use strict';
 
-  // --- Referencias al HTML ---------------------------------------------
+  // Marca que el JS está activo. Si no carga, nada queda escondido.
+  document.body.classList.add('js-anim');
 
-  const arbol = document.getElementById('arbol');
-  const panel = document.getElementById('panel');
-  const fondoPanel = document.getElementById('fondo-panel');
-  const cuerpoPanel = document.getElementById('panel-cuerpo');
-  const botonCerrar = document.getElementById('panel-cerrar');
-  const botonAnterior = document.getElementById('nav-anterior');
-  const botonSiguiente = document.getElementById('nav-siguiente');
-  const etiquetaPanel = document.getElementById('panel-etiqueta');
-  const selloPanel = document.getElementById('panel-sello');
-  const posicionPanel = document.getElementById('nav-posicion');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const entradaBusqueda = document.getElementById('buscador');
-  const botonLimpiar = document.getElementById('buscador-limpiar');
-  const estadoBusqueda = document.getElementById('buscador-estado');
-  const textoAyuda = document.getElementById('app-ayuda');
+  /* ---------- Aparición por scroll ---------- */
 
-  /**
-   * Todo lo que se puede abrir, en orden de lectura: la etiqueta de cada nivel
-   * y después sus tarjetas. Es lo que recorren los botones Anterior/Siguiente
-   * y también lo que revisa el buscador.
-   */
-  const abribles = [];
-
-  let focoPrevio = null;
-  let idAbierto = null;
-
-  // --- Utilidades -------------------------------------------------------
-
-  // Pasa a minúsculas y saca los acentos, para que "energetica" encuentre "Energética"
-  function normalizar(texto) {
-    return String(texto || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase();
-  }
-
-  // Junta todo el texto de un elemento en una sola cadena, para buscar dentro
-  function armarIndice(item) {
-    const partes = [item.titulo, item.temas, item.nivelEtiqueta];
-    const d = item.detalle || {};
-    partes.push(d.resumen);
-    (d.secciones || []).forEach(function (s) {
-      partes.push(s.titulo, s.texto);
+  // Cada grupo se revela cuando entra en pantalla, con sus hijos escalonados
+  const grupos = [
+    '#attrs', '#forces', '#valor', '#agendas', '#trans', '#stats', '#tl', '#chips'
+  ];
+  grupos.forEach(sel => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    el.setAttribute('data-revelar', '');
+    Array.prototype.forEach.call(el.children, (hijo, i) => {
+      hijo.style.setProperty('--i', i);
     });
-    if (d.indicador) {
-      partes.push(d.indicador.nombre, d.indicador.descripcion, d.indicador.meta);
-    }
-    return normalizar(partes.filter(Boolean).join(' '));
+  });
+
+  // El objetivo es una sola tarjeta: se envuelve para que reciba el mismo trato
+  const meta = document.querySelector('.goal');
+  if (meta && meta.parentElement) {
+    meta.parentElement.setAttribute('data-revelar', '');
   }
 
-  // --- Dibujar el árbol -------------------------------------------------
+  // Las etiquetas de fila entran una después de otra
+  document.querySelectorAll('.row .rlabel').forEach((et, i) => {
+    et.style.setProperty('--rd', (i * 0.12).toFixed(2) + 's');
+  });
 
-  /**
-   * Título en dos tonos: la parte indicada en "tituloResaltado" va en turquesa
-   * y el resto en gris, como los títulos de la presentación.
-   */
-  function pintarTitulo() {
-    const contenedor = document.getElementById('app-titulo');
-    const completo = ESTRATEGIA.meta.titulo;
-    const resaltado = ESTRATEGIA.meta.tituloResaltado;
-
-    contenedor.textContent = '';
-    const corte = resaltado ? completo.indexOf(resaltado) : -1;
-
-    if (corte === -1) {
-      contenedor.textContent = completo;
-      return;
-    }
-
-    if (corte > 0) {
-      contenedor.appendChild(document.createTextNode(completo.slice(0, corte)));
-    }
-    const acento = document.createElement('span');
-    acento.className = 'encabezado__acento';
-    acento.textContent = resaltado;
-    contenedor.appendChild(acento);
-    contenedor.appendChild(document.createTextNode(completo.slice(corte + resaltado.length)));
-  }
-
-  function dibujarArbol() {
-    pintarTitulo();
-    document.getElementById('app-subtitulo').textContent = ESTRATEGIA.meta.subtitulo;
-    textoAyuda.textContent = ESTRATEGIA.meta.ayuda;
-    document.getElementById('app-pie').textContent = ESTRATEGIA.meta.pieDePagina;
-    entradaBusqueda.placeholder = ESTRATEGIA.meta.marcadorBusqueda;
-    document.title = ESTRATEGIA.meta.titulo + ' — Árbol estratégico';
-
-    let retraso = 0.18; // segundos; se acumula para escalonar la entrada
-
-    ESTRATEGIA.niveles.forEach(function (nivel, indiceNivel) {
-      const fila = document.createElement('section');
-      fila.className = 'nivel';
-      fila.dataset.nivel = nivel.id;
-
-      fila.appendChild(crearEtiquetaNivel(nivel, indiceNivel * 0.14));
-
-      const grupo = document.createElement('div');
-      grupo.className =
-        'grupo grupo--' + nivel.estilo + (nivel.segmentado ? ' grupo--segmentado' : '');
-
-      nivel.elementos.forEach(function (elemento) {
-        grupo.appendChild(crearTarjeta(elemento, nivel, retraso));
-        retraso += 0.07;
+  if (reduce || !('IntersectionObserver' in window)) {
+    document.querySelectorAll('[data-revelar]').forEach(e => e.classList.add('visible'));
+  } else {
+    const vigia = new IntersectionObserver((entradas) => {
+      entradas.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('visible');
+        vigia.unobserve(e.target); // una sola vez
       });
-      retraso += 0.06; // respiro entre niveles
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
 
-      fila.appendChild(grupo);
-      arbol.appendChild(fila);
-    });
+    document.querySelectorAll('[data-revelar]').forEach(e => vigia.observe(e));
   }
 
-  /**
-   * La etiqueta del nivel. Si el nivel trae "detalle", se dibuja como botón:
-   * al hacerle clic explica qué es ese tipo de agenda.
-   */
-  function crearEtiquetaNivel(nivel, retraso) {
-    const abrible = Boolean(nivel.detalle);
-    const etiqueta = document.createElement(abrible ? 'button' : 'h2');
+  /* ---------- Onda al hacer clic en una tarjeta ---------- */
 
-    etiqueta.className = 'nivel__etiqueta';
-    etiqueta.style.setProperty('--retraso', retraso.toFixed(2) + 's');
-    etiqueta.appendChild(document.createTextNode(nivel.etiqueta));
+  document.addEventListener('click', function (evento) {
+    const tarjeta = evento.target.closest('.card');
+    if (!tarjeta || reduce) return;
 
-    if (!abrible) return etiqueta;
-
-    const id = 'nivel-' + nivel.id;
-    etiqueta.type = 'button';
-    etiqueta.id = id;
-    etiqueta.classList.add('nivel__etiqueta--abrible');
-    etiqueta.setAttribute('aria-haspopup', 'dialog');
-    etiqueta.setAttribute('aria-expanded', 'false');
-    etiqueta.title = 'Ver qué es este tipo de agenda';
-
-    const pista = document.createElement('span');
-    pista.className = 'nivel__pista';
-    pista.setAttribute('aria-hidden', 'true');
-    pista.textContent = 'i';
-    etiqueta.appendChild(pista);
-
-    etiqueta.addEventListener('click', function () {
-      abrirDetalle(id);
-    });
-
-    abribles.push({
-      id: id,
-      titulo: nivel.etiqueta,
-      detalle: nivel.detalle,
-      nivelId: nivel.id,
-      nivelEtiqueta: nivel.etiqueta,
-      esNivel: true,
-    });
-
-    return etiqueta;
-  }
-
-  function crearTarjeta(elemento, nivel, retraso) {
-    const abrible = Boolean(elemento.detalle);
-    // Si se puede abrir usamos <button>: funciona con teclado y lectores de pantalla
-    const tarjeta = document.createElement(abrible ? 'button' : 'div');
-
-    tarjeta.className = 'tarjeta tarjeta--' + nivel.estilo;
-    tarjeta.id = elemento.id;
-    tarjeta.textContent = elemento.titulo;
-    tarjeta.style.setProperty('--retraso', retraso.toFixed(2) + 's');
-
-    if (abrible) {
-      tarjeta.type = 'button';
-      tarjeta.setAttribute('aria-haspopup', 'dialog');
-      tarjeta.setAttribute('aria-expanded', 'false');
-      tarjeta.addEventListener('click', function (evento) {
-        dibujarOnda(tarjeta, evento);
-        abrirDetalle(elemento.id);
-      });
-
-      abribles.push({
-        id: elemento.id,
-        titulo: elemento.titulo,
-        temas: elemento.temas,
-        detalle: elemento.detalle,
-        nivelId: nivel.id,
-        nivelEtiqueta: nivel.etiqueta,
-        esNivel: false,
-      });
-    }
-
-    return tarjeta;
-  }
-
-  // Onda que sale del punto donde se hizo clic
-  function dibujarOnda(tarjeta, evento) {
     const caja = tarjeta.getBoundingClientRect();
     const lado = Math.max(caja.width, caja.height);
     // Si el clic vino del teclado no hay coordenadas: sale del centro
@@ -209,489 +317,70 @@
     const onda = document.createElement('span');
     onda.className = 'onda';
     onda.style.width = onda.style.height = lado + 'px';
-    onda.style.left = x - lado / 2 + 'px';
-    onda.style.top = y - lado / 2 + 'px';
-
+    onda.style.left = (x - lado / 2) + 'px';
+    onda.style.top = (y - lado / 2) + 'px';
     tarjeta.appendChild(onda);
-    window.setTimeout(function () {
-      onda.remove();
-    }, 640);
+    window.setTimeout(() => onda.remove(), 640);
+  }, true);
+
+  /* ---------- Marcar la tarjeta abierta ---------- */
+
+  function marcarActiva() {
+    const id = (location.hash || '').replace('#', '');
+    document.querySelectorAll('.card.activa').forEach(c => c.classList.remove('activa'));
+    const abierta = document.getElementById('drawer').classList.contains('on');
+    if (!abierta || !id) return;
+    const tarjeta = document.querySelector('.card[data-id="' + id + '"]');
+    if (tarjeta) tarjeta.classList.add('activa');
   }
 
-  // --- Panel de detalle -------------------------------------------------
+  // El panel cambia de estado sin avisar, así que observamos su clase
+  new MutationObserver(marcarActiva).observe(document.getElementById('drawer'), {
+    attributes: true, attributeFilter: ['class']
+  });
+  document.addEventListener('click', () => window.setTimeout(marcarActiva, 0), true);
 
-  function indiceDe(id) {
-    for (let i = 0; i < abribles.length; i++) {
-      if (abribles[i].id === id) return i;
-    }
-    return -1;
-  }
+  /* ---------- Escalonado del contenido del panel ---------- */
 
-  function abrirDetalle(id) {
-    const indice = indiceDe(id);
-    if (indice === -1) return;
-
-    const esPrimeraApertura = idAbierto === null;
-    if (esPrimeraApertura) focoPrevio = document.activeElement;
-
-    idAbierto = id;
-    llenarPanel(abribles[indice], indice);
-    marcarActivo(id);
-
-    if (esPrimeraApertura) {
-      panel.hidden = false;
-      fondoPanel.hidden = false;
-      // Un frame de espera para que se vea la transición de entrada
-      requestAnimationFrame(function () {
-        panel.classList.add('panel--abierto');
-        fondoPanel.classList.add('fondo-panel--visible');
-      });
-      arbol.classList.add('arbol--enfocado');
-      botonCerrar.focus();
-    }
-
-    // Deja lo abierto en la dirección: el enlace se puede compartir
-    if (history.replaceState) history.replaceState(null, '', '#' + id);
-  }
-
-  function llenarPanel(item, indice) {
-    const d = item.detalle;
-
-    panel.dataset.nivel = item.nivelId;
-    // En la etiqueta de un nivel el encabezado dice de qué se trata el panel
-    etiquetaPanel.textContent = item.esNivel ? 'Qué es este nivel' : item.nivelEtiqueta;
-    selloPanel.hidden = !ESTRATEGIA.meta.marcarBorrador;
-
-    cuerpoPanel.textContent = '';
-    const bloques = [];
-
-    const titulo = document.createElement('h2');
-    titulo.className = 'panel__titulo';
-    titulo.id = 'panel-titulo';
-    titulo.textContent = item.titulo;
-    bloques.push(titulo);
-
-    if (d.resumen) {
-      const resumen = document.createElement('p');
-      resumen.className = 'panel__resumen';
-      resumen.textContent = d.resumen;
-      bloques.push(resumen);
-    }
-
-    (d.secciones || []).forEach(function (seccion) {
-      bloques.push(crearBloque(seccion.titulo, seccion.texto, '→'));
+  function escalonarPanel() {
+    const cabeza = document.querySelector('.dr-head');
+    const cuerpo = document.querySelector('.dr-body');
+    [cabeza, cuerpo].forEach(cont => {
+      if (!cont) return;
+      Array.prototype.forEach.call(cont.children, (hijo, i) => hijo.style.setProperty('--i', i));
     });
-
-    if (d.indicador) bloques.push(crearBloqueIndicador(d.indicador));
-    if (d.metricas) bloques.push(crearBloqueMetricas(d.metricas));
-
-    // El índice --i escalona la animación de entrada de cada bloque
-    bloques.forEach(function (bloque, i) {
-      bloque.style.setProperty('--i', i);
-      cuerpoPanel.appendChild(bloque);
-    });
-
-    posicionPanel.textContent = indice + 1 + ' de ' + abribles.length;
-    botonAnterior.disabled = indice === 0;
-    botonSiguiente.disabled = indice === abribles.length - 1;
-    cuerpoPanel.scrollTop = 0;
-  }
-
-  function crearBloque(tituloTexto, cuerpoTexto, icono) {
-    const seccion = document.createElement('section');
-    seccion.className = 'bloque';
-
-    const titulo = document.createElement('h3');
-    titulo.className = 'bloque__titulo';
-
-    const marca = document.createElement('span');
-    marca.className = 'bloque__icono';
-    marca.setAttribute('aria-hidden', 'true');
-    marca.textContent = icono;
-    titulo.appendChild(marca);
-    titulo.appendChild(document.createTextNode(tituloTexto));
-
-    const parrafo = document.createElement('p');
-    parrafo.className = 'bloque__texto';
-    parrafo.textContent = cuerpoTexto;
-
-    seccion.appendChild(titulo);
-    seccion.appendChild(parrafo);
-    return seccion;
-  }
-
-  function crearBloqueIndicador(indicador) {
-    const seccion = crearBloque('Indicador de seguimiento', indicador.descripcion, '◆');
-    seccion.classList.add('bloque--indicador');
-
-    const nombre = document.createElement('p');
-    nombre.className = 'indicador__nombre';
-    nombre.textContent = indicador.nombre;
-    // El nombre va entre el encabezado y la descripción
-    seccion.insertBefore(nombre, seccion.children[1]);
-
-    if (indicador.grafico) seccion.appendChild(crearMedidor(indicador.grafico));
-
-    if (indicador.meta) {
-      const meta = document.createElement('p');
-      meta.className = 'indicador__meta';
-      meta.textContent = indicador.meta;
-      seccion.appendChild(meta);
-    }
-
-    return seccion;
-  }
-
-  // --- Barras de avance -------------------------------------------------
-
-  const formatoNumero = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
-
-  /**
-   * Cuánto se recorrió entre la línea base y la meta, de 0 a 1.
-   * La resta funciona igual si la meta es menor que la base (por ejemplo,
-   * bajar de 180 a 90 días): los dos signos se cancelan.
-   */
-  function calcularAvance(g) {
-    const recorrido = (g.hoy ? g.hoy.valor : g.desde.valor) - g.desde.valor;
-    const total = g.hasta.valor - g.desde.valor;
-    if (total === 0) return 0;
-    return Math.max(0, Math.min(1, recorrido / total));
+    document.querySelectorAll('.acts li').forEach((li, i) => li.style.setProperty('--i', i));
   }
 
   /**
-   * Barra de avance entre la línea base y la meta.
-   * Todos los valores van también como texto, así que la barra es decorativa
-   * para lectores de pantalla y no hace falta pasar el mouse para leer nada.
+   * Relanza la animación de entrada de los bloques del panel.
+   * No tocamos la clase "on" del panel: eso cortaría su propia transición de
+   * deslizamiento. Se reinicia la animación bloque por bloque.
    */
-  function crearMedidor(g) {
-    const avance = calcularAvance(g);
-    const actual = g.hoy || g.desde;
-
-    const figura = document.createElement('figure');
-    figura.className = 'medidor';
-
-    // Encabezado: valor actual grande, con su unidad al lado
-    const cabecera = document.createElement('div');
-    cabecera.className = 'medidor__cabecera';
-
-    const valor = document.createElement('span');
-    valor.className = 'medidor__valor';
-    valor.textContent = formatoNumero.format(actual.valor);
-    cabecera.appendChild(valor);
-
-    if (g.unidad) {
-      const unidad = document.createElement('span');
-      unidad.className = 'medidor__unidad';
-      unidad.textContent = g.unidad;
-      cabecera.appendChild(unidad);
-    }
-
-    const avanceTexto = document.createElement('span');
-    avanceTexto.className = 'medidor__avance';
-    avanceTexto.textContent = Math.round(avance * 100) + '% del camino';
-    cabecera.appendChild(avanceTexto);
-
-    figura.appendChild(cabecera);
-
-    const pista = document.createElement('div');
-    pista.className = 'medidor__pista';
-    pista.setAttribute('aria-hidden', 'true');
-    const relleno = document.createElement('div');
-    relleno.className = 'medidor__relleno';
-    relleno.style.width = (avance * 100).toFixed(1) + '%';
-    pista.appendChild(relleno);
-    figura.appendChild(pista);
-
-    // Pie: de dónde partimos y a dónde vamos
-    const pie = document.createElement('figcaption');
-    pie.className = 'medidor__pie';
-    pie.appendChild(crearExtremo(g.desde, 'medidor__extremo'));
-    pie.appendChild(crearExtremo(g.hasta, 'medidor__extremo medidor__extremo--meta'));
-    figura.appendChild(pie);
-
-    return figura;
-  }
-
-  function crearExtremo(punto, clase) {
-    const contenedor = document.createElement('span');
-    contenedor.className = clase;
-
-    const etiqueta = document.createElement('span');
-    etiqueta.className = 'medidor__etiqueta';
-    etiqueta.textContent = punto.etiqueta;
-
-    const cifra = document.createElement('strong');
-    cifra.className = 'medidor__cifra';
-    cifra.textContent = formatoNumero.format(punto.valor);
-
-    contenedor.appendChild(etiqueta);
-    contenedor.appendChild(cifra);
-    return contenedor;
-  }
-
-  // Bloque con los indicadores de toda la estrategia (va en el objetivo)
-  function crearBloqueMetricas(metricas) {
-    const seccion = document.createElement('section');
-    seccion.className = 'bloque bloque--metricas';
-
-    const titulo = document.createElement('h3');
-    titulo.className = 'bloque__titulo';
-    const marca = document.createElement('span');
-    marca.className = 'bloque__icono';
-    marca.setAttribute('aria-hidden', 'true');
-    marca.textContent = '▦';
-    titulo.appendChild(marca);
-    titulo.appendChild(document.createTextNode(metricas.titulo));
-    seccion.appendChild(titulo);
-
-    if (metricas.nota) {
-      const nota = document.createElement('p');
-      nota.className = 'bloque__texto bloque__texto--nota';
-      nota.textContent = metricas.nota;
-      seccion.appendChild(nota);
-    }
-
-    metricas.items.forEach(function (item) {
-      const medidor = crearMedidor(item);
-      const nombre = document.createElement('p');
-      nombre.className = 'medidor__nombre';
-      nombre.textContent = item.nombre;
-      medidor.insertBefore(nombre, medidor.firstChild);
-      seccion.appendChild(medidor);
-    });
-
-    if (ESTRATEGIA.meta.datosDeEjemplo) seccion.appendChild(crearSelloEjemplo());
-
-    return seccion;
-  }
-
-  function crearSelloEjemplo() {
-    const aviso = document.createElement('p');
-    aviso.className = 'aviso-ejemplo';
-    aviso.textContent =
-      'Datos de ejemplo. Las cifras son ilustrativas y hay que reemplazarlas por las reales.';
-    return aviso;
-  }
-
-  function marcarActivo(id) {
-    limpiarMarcas();
-
-    const elemento = document.getElementById(id);
-    if (!elemento) return;
-    elemento.classList.add('es-activa');
-    elemento.setAttribute('aria-expanded', 'true');
-
-    const fila = elemento.closest('.nivel');
-    if (fila) fila.classList.add('nivel--con-activa');
-  }
-
-  function limpiarMarcas() {
-    document.querySelectorAll('.es-activa').forEach(function (e) {
-      e.classList.remove('es-activa');
-      e.setAttribute('aria-expanded', 'false');
-    });
-    document.querySelectorAll('.nivel--con-activa').forEach(function (n) {
-      n.classList.remove('nivel--con-activa');
+  function relanzarPanel() {
+    escalonarPanel();
+    if (reduce) return;
+    document.querySelectorAll('.dr-head > *, .dr-body > *, .acts li').forEach(el => {
+      el.style.animation = 'none';
+      void el.offsetHeight; // fuerza el redibujado
+      el.style.animation = '';
     });
   }
 
-  function cerrarDetalle() {
-    if (idAbierto === null) return;
-
-    panel.classList.remove('panel--abierto');
-    fondoPanel.classList.remove('fondo-panel--visible');
-    arbol.classList.remove('arbol--enfocado');
-
-    const elemento = document.getElementById(idAbierto);
-    idAbierto = null;
-    limpiarMarcas();
-
-    // Ocultar del todo recién cuando termina la animación de salida
-    window.setTimeout(function () {
-      if (idAbierto === null) {
-        panel.hidden = true;
-        fondoPanel.hidden = true;
-      }
-    }, 520);
-
-    // El foco vuelve a lo que estaba abierto
-    const destino = elemento || (focoPrevio && document.contains(focoPrevio) ? focoPrevio : null);
-    if (destino && destino.focus) destino.focus();
-    focoPrevio = null;
-
-    if (history.replaceState) {
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
+  // openCard hace varios cambios seguidos dentro del panel; se agrupan en uno
+  const cuerpoPanel = document.querySelector('.dr-body');
+  if (cuerpoPanel) {
+    let pendiente = null;
+    new MutationObserver(() => {
+      window.clearTimeout(pendiente);
+      pendiente = window.setTimeout(relanzarPanel, 0);
+    }).observe(cuerpoPanel, { childList: true, subtree: true, characterData: true });
   }
+  escalonarPanel();
 
-  function mover(paso) {
-    const indice = indiceDe(idAbierto);
-    const siguiente = indice + paso;
-    if (indice === -1 || siguiente < 0 || siguiente >= abribles.length) return;
-    abrirDetalle(abribles[siguiente].id);
-  }
+  /* ---------- Escalonado de las diapositivas del recorrido ---------- */
 
-  // --- Buscador ---------------------------------------------------------
-
-  // Se arma una vez, al arrancar: id -> todo su texto normalizado
-  const indiceBusqueda = [];
-
-  function prepararBusqueda() {
-    abribles.forEach(function (item) {
-      // Las etiquetas de nivel no participan de la búsqueda: lo que se busca
-      // son temas concretos, y esos viven en las tarjetas
-      if (item.esNivel) return;
-      indiceBusqueda.push({ id: item.id, texto: armarIndice(item) });
-    });
-  }
-
-  function buscar(consulta) {
-    const terminos = normalizar(consulta).split(/\s+/).filter(Boolean);
-
-    if (terminos.length === 0 || normalizar(consulta).length < 2) {
-      limpiarResaltado();
-      return;
-    }
-
-    let encontrados = 0;
-    indiceBusqueda.forEach(function (entrada) {
-      // Tienen que estar todos los términos escritos, no alcanza con uno
-      const coincide = terminos.every(function (t) {
-        return entrada.texto.indexOf(t) !== -1;
-      });
-      const tarjeta = document.getElementById(entrada.id);
-      if (!tarjeta) return;
-      tarjeta.classList.toggle('tarjeta--hallada', coincide);
-      tarjeta.classList.toggle('tarjeta--descartada', !coincide);
-      if (coincide) encontrados++;
-    });
-
-    arbol.classList.add('arbol--buscando');
-    botonLimpiar.hidden = false;
-    mostrarEstado(encontrados, consulta.trim());
-  }
-
-  function mostrarEstado(encontrados, consulta) {
-    estadoBusqueda.classList.add('buscador__estado--resultado');
-    if (encontrados === 0) {
-      estadoBusqueda.textContent = 'Sin coincidencias para «' + consulta + '»';
-      estadoBusqueda.classList.add('buscador__estado--vacio');
-    } else {
-      estadoBusqueda.textContent =
-        encontrados === 1 ? '1 tarjeta encontrada' : encontrados + ' tarjetas encontradas';
-      estadoBusqueda.classList.remove('buscador__estado--vacio');
-    }
-  }
-
-  function limpiarResaltado() {
-    arbol.classList.remove('arbol--buscando');
-    document.querySelectorAll('.tarjeta--hallada, .tarjeta--descartada').forEach(function (t) {
-      t.classList.remove('tarjeta--hallada', 'tarjeta--descartada');
-    });
-    botonLimpiar.hidden = entradaBusqueda.value.length === 0;
-
-    // Vuelve el texto de ayuda original
-    estadoBusqueda.classList.remove('buscador__estado--resultado', 'buscador__estado--vacio');
-    estadoBusqueda.textContent = '';
-    const punto = document.createElement('span');
-    punto.className = 'encabezado__punto';
-    punto.setAttribute('aria-hidden', 'true');
-    const texto = document.createElement('span');
-    texto.id = 'app-ayuda';
-    texto.textContent = ESTRATEGIA.meta.ayuda;
-    estadoBusqueda.appendChild(punto);
-    estadoBusqueda.appendChild(texto);
-  }
-
-  function limpiarBusqueda() {
-    entradaBusqueda.value = '';
-    botonLimpiar.hidden = true;
-    limpiarResaltado();
-    entradaBusqueda.focus();
-  }
-
-  // --- Eventos ----------------------------------------------------------
-
-  botonCerrar.addEventListener('click', cerrarDetalle);
-  fondoPanel.addEventListener('click', cerrarDetalle);
-  botonAnterior.addEventListener('click', function () {
-    mover(-1);
+  document.querySelectorAll('.tslide .inner').forEach(inner => {
+    Array.prototype.forEach.call(inner.children, (hijo, i) => hijo.style.setProperty('--i', i));
   });
-  botonSiguiente.addEventListener('click', function () {
-    mover(1);
-  });
-
-  // Se espera a que la persona termine de escribir antes de filtrar
-  let temporizador = null;
-  entradaBusqueda.addEventListener('input', function () {
-    window.clearTimeout(temporizador);
-    temporizador = window.setTimeout(function () {
-      buscar(entradaBusqueda.value);
-    }, 140);
-  });
-
-  entradaBusqueda.addEventListener('keydown', function (evento) {
-    if (evento.key === 'Escape' && entradaBusqueda.value) {
-      evento.stopPropagation();
-      limpiarBusqueda();
-    }
-  });
-
-  botonLimpiar.addEventListener('click', limpiarBusqueda);
-
-  document.addEventListener('keydown', function (evento) {
-    if (idAbierto === null) return;
-
-    if (evento.key === 'Escape') {
-      evento.preventDefault();
-      cerrarDetalle();
-      return;
-    }
-
-    // Las flechas navegan, salvo mientras se está escribiendo
-    const etiqueta = document.activeElement && document.activeElement.tagName;
-    if (etiqueta === 'INPUT' || etiqueta === 'TEXTAREA') return;
-
-    if (evento.key === 'ArrowRight') {
-      evento.preventDefault();
-      mover(1);
-    } else if (evento.key === 'ArrowLeft') {
-      evento.preventDefault();
-      mover(-1);
-    }
-  });
-
-  // Mantiene el foco dentro del panel mientras está abierto
-  panel.addEventListener('keydown', function (evento) {
-    if (evento.key !== 'Tab') return;
-
-    const enfocables = panel.querySelectorAll(
-      'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    if (enfocables.length === 0) return;
-
-    const primero = enfocables[0];
-    const ultimo = enfocables[enfocables.length - 1];
-
-    if (evento.shiftKey && document.activeElement === primero) {
-      evento.preventDefault();
-      ultimo.focus();
-    } else if (!evento.shiftKey && document.activeElement === ultimo) {
-      evento.preventDefault();
-      primero.focus();
-    }
-  });
-
-  // --- Arranque ---------------------------------------------------------
-
-  dibujarArbol();
-  prepararBusqueda();
-
-  // Si la dirección trae algo (por ejemplo .../#oportunidad-digital), lo abre solo
-  const idInicial = window.location.hash.replace('#', '');
-  if (idInicial && indiceDe(idInicial) !== -1) {
-    window.setTimeout(function () {
-      abrirDetalle(idInicial);
-    }, 900);
-  }
 })();
