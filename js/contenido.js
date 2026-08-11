@@ -49,8 +49,8 @@ const IMG = {
    reproducir, o si el sistema pide reducir movimiento, se muestra la
    imagen fija equivalente de IMG. */
 const VID = {
-  guacamaya: 'video/guacamaya.webm',
-  ave: 'video/ave.webm',
+  guacamaya: 'video/guacamaya',
+  ave: 'video/ave',
 };
 
 /* ====================== DATA ====================== */

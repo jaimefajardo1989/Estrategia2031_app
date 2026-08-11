@@ -62,6 +62,23 @@ const COLLAGE = [
 const SIN_MOVIMIENTO = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
+ * Las dos fuentes de cada ave, en este orden a propósito:
+ *
+ *   1) .mov  HEVC con alfa. Es el único formato transparente que entiende
+ *            Safari. Va declarado como video/quicktime, que Chrome y Firefox
+ *            no reconocen, así que lo saltean sin descargarlo.
+ *   2) .webm VP9 con alfa, para Chrome, Firefox y Edge. Safari reproduce
+ *            WebM pero ignora su canal alfa, y por eso no puede ir primero:
+ *            mostraría el recuadro gris del fondo original.
+ *
+ * Cada navegador descarga solo el archivo que va a usar.
+ */
+function fuentesVideo(base){
+  return '<source src="' + base + '.mov" type="video/quicktime">'
+       + '<source src="' + base + '.webm" type="video/webm">';
+}
+
+/**
  * Crea una pieza del collage. Si trae "v" se usa un video con fondo
  * transparente; si no, la imagen de siempre.
  */
@@ -70,7 +87,6 @@ function crearPiezaCollage(c){
   const el = document.createElement(usarVideo ? 'video' : 'img');
 
   if(usarVideo){
-    el.src = c.v;
     el.poster = c.s;          // se ve la imagen mientras carga el video
     el.autoplay = true; el.loop = true; el.muted = true;
     el.playsInline = true;
@@ -79,6 +95,7 @@ function crearPiezaCollage(c){
     el.setAttribute('aria-hidden','true');
     el.disablePictureInPicture = true;
     el.preload = 'auto';
+    el.innerHTML = fuentesVideo(c.v);
   } else {
     el.src = c.s; el.alt = '';
   }
@@ -190,8 +207,9 @@ function decoHTML(list){
   return list.map((d,i)=>{
     const est = '--i:' + i + ';' + d.st;
     if(d.v && !SIN_MOVIMIENTO){
-      return '<video class="tdeco tdeco--video" style="'+est+'" src="'+d.v+'" poster="'+d.s+'"'
-        + ' autoplay loop muted playsinline aria-hidden="true" preload="auto"></video>';
+      return '<video class="tdeco tdeco--video" style="'+est+'" poster="'+d.s+'"'
+        + ' autoplay loop muted playsinline aria-hidden="true" preload="auto">'
+        + fuentesVideo(d.v) + '</video>';
     }
     return '<img class="tdeco" src="'+d.s+'" style="'+est+'" alt="">';
   }).join('');
