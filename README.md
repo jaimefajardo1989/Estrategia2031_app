@@ -72,6 +72,39 @@ abre al hacer clic en el nombre del nivel, y es donde se explica qué es ese tip
 Dos cuidados: no borres las comas al final de cada línea, y si un texto lleva apóstrofe
 escribilo como `\'`.
 
+### Las barras de avance
+
+Cada indicador puede mostrar una barra con cuánto se recorrió entre la línea base y la
+meta 2031. Se activa agregando un bloque `grafico` dentro de `indicador`:
+
+```js
+grafico: {
+  unidad: 'US$ miles de millones',
+  desde: { etiqueta: '2025', valor: 32.5 },      // punto de partida
+  hoy:   { etiqueta: '2026', valor: 34.8 },      // OPCIONAL: dónde estamos hoy
+  hasta: { etiqueta: 'Meta 2031', valor: 52 },   // a dónde queremos llegar
+},
+```
+
+Funciona igual para indicadores que **suben** (cartera, aprobaciones) y para los que
+**bajan** (días de respuesta, costo administrativo): si `hasta` es menor que `desde`, la
+barra lo detecta sola y sigue midiendo el avance hacia la meta.
+
+Los decimales se escriben con punto (`32.5`) y se muestran con coma (`32,5`). Si una
+tarjeta no necesita barra, borrá su bloque `grafico`.
+
+El **objetivo al 2031** tiene además un bloque `metricas` con los indicadores de toda la
+estrategia —cartera total, aprobaciones acumuladas, financiamiento verde, recursos
+movilizados—, con el mismo formato.
+
+> ⚠️ **Las cifras actuales son inventadas, puestas solo para que se vea cómo queda.**
+> Mientras `datosDeEjemplo: true`, el panel del objetivo muestra el aviso
+> "Datos de ejemplo". Cambialo a `false` recién cuando las cifras sean las reales.
+
+Un detalle de diseño: la barra se rellena con el tono **oscuro** del color de cada nivel,
+no con el claro del árbol. Los tonos claros no alcanzan el mínimo de contraste de 3:1
+sobre blanco —el amarillo queda en 1,6:1— y la barra sería prácticamente invisible.
+
 ### El buscador
 
 Cada tarjeta tiene un campo `temas` con las palabras por las que querés que se encienda:
@@ -125,5 +158,14 @@ js/app.js           Lógica: dibuja el árbol y maneja el panel
 ## Estado
 
 Todos los textos son preliminares y están pendientes de validación institucional; por eso
-el panel muestra el sello **Borrador**. Los indicadores de seguimiento de las tres agendas
-institucionales todavía no están definidos: falta el indicador, su línea base y su meta 2031.
+el panel muestra el sello **Borrador**.
+
+Los indicadores están redactados como **propuestas**: el nombre y la descripción indican
+qué debería medir cada uno, pero ninguno está validado. **Todas las cifras de las barras
+son inventadas** y existen solo para mostrar el formato.
+
+Para dejarlo listo hace falta, en [js/contenido.js](js/contenido.js):
+
+1. Validar los textos y poner `marcarBorrador: false`.
+2. Reemplazar cada `grafico` por la línea base, el valor actual y la meta reales, y poner
+   `datosDeEjemplo: false`.

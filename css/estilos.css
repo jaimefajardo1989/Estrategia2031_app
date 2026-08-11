@@ -857,6 +857,141 @@ body {
   font-weight: 800;
 }
 
+/* ---------- Barras de avance ---------- */
+
+.medidor {
+  margin: 18px 0 0;
+  padding: 0;
+}
+
+.medidor + .medidor {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid var(--linea);
+}
+
+.medidor__nombre {
+  margin: 0 0 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.medidor__cabecera {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 9px;
+}
+
+/* El número grande usa cifras proporcionales, no tabulares */
+.medidor__valor {
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.6px;
+  color: var(--tinta);
+}
+
+.medidor__unidad {
+  font-size: 12.5px;
+  color: var(--tinta-suave);
+}
+
+.medidor__avance {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tinta-suave);
+  white-space: nowrap;
+}
+
+/* La pista es un tinte claro del color del nivel; el relleno, el tono oscuro.
+   Se usa el tono oscuro porque los claros del árbol no llegan al mínimo de
+   3:1 sobre blanco (el amarillo queda en 1,6:1 y la barra no se vería). */
+.medidor__pista {
+  position: relative;
+  height: 9px;
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: #eef1f4;
+  background: color-mix(in srgb, var(--acento) 16%, #fff);
+}
+
+.medidor__relleno {
+  height: 100%;
+  border-radius: var(--radio);
+  background: var(--acento-txt);
+  animation: llenar 0.95s var(--rebote) backwards;
+  animation-delay: 0.35s;
+}
+
+@keyframes llenar {
+  from {
+    width: 0;
+  }
+}
+
+.medidor__pie {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 9px;
+  padding: 0;
+}
+
+.medidor__extremo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 12px;
+}
+
+.medidor__extremo--meta {
+  text-align: right;
+}
+
+.medidor__etiqueta {
+  color: var(--tinta-suave);
+}
+
+.medidor__cifra {
+  font-size: 13.5px;
+  color: var(--tinta);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bloque de metas de toda la estrategia, dentro del objetivo */
+.bloque--metricas {
+  background: var(--fondo-suave);
+  border: 1px solid var(--linea);
+  border-left: 4px solid var(--acento);
+  border-radius: var(--radio-caja);
+  padding: 20px 22px 22px;
+  margin-bottom: 0;
+}
+
+.bloque__texto--nota {
+  font-size: 13.5px;
+  color: var(--tinta-suave);
+  margin-bottom: 4px;
+}
+
+.bloque--metricas .medidor__pista {
+  background: #e7ebef;
+  background: color-mix(in srgb, var(--acento) 22%, #fff);
+}
+
+.aviso-ejemplo {
+  margin: 20px 0 0;
+  padding-top: 13px;
+  border-top: 1px dashed var(--linea);
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--tinta-suave);
+}
+
 .indicador__meta {
   margin: 14px 0 0;
   padding-top: 12px;
@@ -1073,5 +1208,9 @@ body {
   }
   .onda {
     display: none;
+  }
+  /* La barra aparece ya en su posición final, sin crecer */
+  .medidor__relleno {
+    animation: none;
   }
 }

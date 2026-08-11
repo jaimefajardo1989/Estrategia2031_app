@@ -26,8 +26,30 @@
  *     ],
  *     indicador: {                      // OPCIONAL: si no aplica, borrá el bloque
  *       nombre: '...', descripcion: '...', meta: '...',
+ *       grafico: { ... },               // OPCIONAL: dibuja la barra de avance
  *     },
  *   }
+ *
+ * LAS BARRAS (campo "grafico")
+ * ----------------------------
+ * Muestran cuánto se avanzó entre la línea base y la meta 2031:
+ *
+ *   grafico: {
+ *     unidad: 'US$ miles de millones',        // se muestra al lado del número
+ *     desde: { etiqueta: '2025', valor: 32.5 },      // punto de partida
+ *     hoy:   { etiqueta: '2026', valor: 34.8 },      // OPCIONAL: dónde estamos
+ *     hasta: { etiqueta: 'Meta 2031', valor: 52 },   // a dónde queremos llegar
+ *   }
+ *
+ * Sirve igual para indicadores que suben (cartera) y para los que bajan (días
+ * de respuesta, costo): si "hasta" es menor que "desde", la barra lo entiende
+ * sola y sigue midiendo el avance hacia la meta.
+ *
+ * Los decimales se escriben con punto (32.5) y se muestran con coma (32,5).
+ * Si una tarjeta no necesita barra, borrá su bloque "grafico" y listo.
+ *
+ * El objetivo al 2031 tiene además un bloque "metricas" con los indicadores de
+ * toda la estrategia, que usan exactamente el mismo formato.
  *
  * El campo "temas" alimenta el buscador de arriba a la derecha. Son palabras
  * por las que querés que esa tarjeta se encienda. El buscador también mira el
@@ -44,6 +66,8 @@ const ESTRATEGIA = {
     pieDePagina: 'Contenido preliminar — sujeto a revisión y validación institucional',
     // Poné false cuando los textos estén validados y desaparece el sello "Borrador"
     marcarBorrador: true,
+    // Poné false cuando las cifras de los gráficos sean las reales
+    datosDeEjemplo: true,
   },
 
   niveles: [
@@ -83,6 +107,45 @@ const ESTRATEGIA = {
                   'De arriba hacia abajo. El objetivo marca el destino. Las oportunidades muestran dónde está el terreno fértil. El valor agregado explica qué ponemos nosotros que otro no pone. Y las agendas institucionales definen cómo nos preparamos por dentro para lograrlo. Hacé clic en el nombre de cada nivel para ver a qué se refiere.',
               },
             ],
+
+            /**
+             * Indicadores de toda la estrategia, no de una agenda en particular.
+             * Se dibujan como barras de avance entre la línea base y la meta 2031.
+             */
+            metricas: {
+              titulo: 'Metas de toda la estrategia',
+              nota: 'Indicadores que se siguen a nivel institucional y que resumen el avance del conjunto.',
+              items: [
+                {
+                  nombre: 'Cartera total',
+                  unidad: 'US$ miles de millones',
+                  desde: { etiqueta: '2025', valor: 32.5 },
+                  hoy: { etiqueta: '2026', valor: 34.8 },
+                  hasta: { etiqueta: 'Meta 2031', valor: 52 },
+                },
+                {
+                  nombre: 'Aprobaciones acumuladas 2025–2031',
+                  unidad: 'US$ miles de millones',
+                  desde: { etiqueta: '2025', valor: 0 },
+                  hoy: { etiqueta: '2026', valor: 14.2 },
+                  hasta: { etiqueta: 'Meta 2031', valor: 90 },
+                },
+                {
+                  nombre: 'Financiamiento verde sobre la cartera',
+                  unidad: '% de la cartera total',
+                  desde: { etiqueta: '2025', valor: 24 },
+                  hoy: { etiqueta: '2026', valor: 27 },
+                  hasta: { etiqueta: 'Meta 2031', valor: 45 },
+                },
+                {
+                  nombre: 'Recursos de terceros movilizados',
+                  unidad: 'US$ miles de millones',
+                  desde: { etiqueta: '2025', valor: 2.1 },
+                  hoy: { etiqueta: '2026', valor: 2.8 },
+                  hasta: { etiqueta: 'Meta 2031', valor: 9 },
+                },
+              ],
+            },
           },
         },
       ],
@@ -137,7 +200,13 @@ const ESTRATEGIA = {
               nombre: 'Financiamiento verde y de adaptación aprobado',
               descripcion:
                 'Monto anual destinado a proyectos con beneficio climático verificable, distinguiendo mitigación de adaptación, y proporción que representa sobre la cartera total.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'US$ mil millones por año',
+                desde: { etiqueta: '2025', valor: 3.2 },
+                hoy: { etiqueta: '2026', valor: 3.9 },
+                hasta: { etiqueta: 'Meta 2031', valor: 8.5 },
+              },
             },
           },
         },
@@ -160,7 +229,13 @@ const ESTRATEGIA = {
               nombre: 'Capacidad renovable y de transmisión habilitada',
               descripcion:
                 'Megavatios de generación limpia y kilómetros de red financiados o habilitados por operaciones de CAF, incluyendo proyectos de interconexión entre países.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'MW acumulados',
+                desde: { etiqueta: '2025', valor: 0 },
+                hoy: { etiqueta: '2026', valor: 1850 },
+                hasta: { etiqueta: 'Meta 2031', valor: 12000 },
+              },
             },
           },
         },
@@ -183,7 +258,13 @@ const ESTRATEGIA = {
               nombre: 'Población alcanzada por servicios digitales financiados',
               descripcion:
                 'Personas con acceso nuevo o mejorado a conectividad, servicios públicos digitales o instrumentos de pago digital gracias a operaciones de CAF.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'millones de personas',
+                desde: { etiqueta: '2025', valor: 0 },
+                hoy: { etiqueta: '2026', valor: 6.4 },
+                hasta: { etiqueta: 'Meta 2031', valor: 40 },
+              },
             },
           },
         },
@@ -206,7 +287,13 @@ const ESTRATEGIA = {
               nombre: 'Personas con acceso a formación, empleo o cuidados',
               descripcion:
                 'Beneficiarios directos de programas financiados por CAF en formación técnica, inserción laboral y servicios de cuidado, con apertura por género y por tramo de edad.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'millones de personas',
+                desde: { etiqueta: '2025', valor: 0 },
+                hoy: { etiqueta: '2026', valor: 1.1 },
+                hasta: { etiqueta: 'Meta 2031', valor: 8 },
+              },
             },
           },
         },
@@ -229,7 +316,13 @@ const ESTRATEGIA = {
               nombre: 'Hogares con acceso mejorado a servicios básicos',
               descripcion:
                 'Hogares que acceden a agua potable, saneamiento, movilidad o vivienda adecuada mediante proyectos financiados por CAF, diferenciando ámbito urbano y rural.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'millones de hogares',
+                desde: { etiqueta: '2025', valor: 0 },
+                hoy: { etiqueta: '2026', valor: 0.9 },
+                hasta: { etiqueta: 'Meta 2031', valor: 6.5 },
+              },
             },
           },
         },
@@ -252,7 +345,13 @@ const ESTRATEGIA = {
               nombre: 'Empresas alcanzadas y exportaciones habilitadas',
               descripcion:
                 'Número de empresas —con foco en pymes— que acceden a financiamiento o asistencia técnica de CAF, y valor exportado asociado a proyectos de infraestructura logística financiada.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'miles de empresas',
+                desde: { etiqueta: '2025', valor: 0 },
+                hoy: { etiqueta: '2026', valor: 18 },
+                hasta: { etiqueta: 'Meta 2031', valor: 120 },
+              },
             },
           },
         },
@@ -309,7 +408,13 @@ const ESTRATEGIA = {
               nombre: 'Recursos de terceros movilizados por unidad de capital propio',
               descripcion:
                 'Relación entre el financiamiento externo atraído y el aporte propio de CAF en las operaciones, medida por año y por tipo de fuente.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'veces el capital propio',
+                desde: { etiqueta: '2025', valor: 0.6 },
+                hoy: { etiqueta: '2026', valor: 0.8 },
+                hasta: { etiqueta: 'Meta 2031', valor: 2 },
+              },
             },
           },
         },
@@ -332,7 +437,13 @@ const ESTRATEGIA = {
               nombre: 'Cartera con etiqueta verde, inclusiva o digital',
               descripcion:
                 'Proporción de la cartera total que cumple criterios verificables en al menos una de las tres dimensiones, evitando doble conteo entre categorías.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: '% de la cartera',
+                desde: { etiqueta: '2025', valor: 31 },
+                hoy: { etiqueta: '2026', valor: 35 },
+                hasta: { etiqueta: 'Meta 2031', valor: 60 },
+              },
             },
           },
         },
@@ -355,7 +466,13 @@ const ESTRATEGIA = {
               nombre: 'Proyectos binacionales o regionales en ejecución',
               descripcion:
                 'Cantidad y monto de operaciones que involucran a dos o más países, y reducción de tiempos o costos logísticos atribuible a esas obras.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'proyectos acumulados',
+                desde: { etiqueta: '2025', valor: 0 },
+                hoy: { etiqueta: '2026', valor: 7 },
+                hasta: { etiqueta: 'Meta 2031', valor: 45 },
+              },
             },
           },
         },
@@ -377,7 +494,13 @@ const ESTRATEGIA = {
               nombre: 'Uso efectivo del conocimiento producido',
               descripcion:
                 'Proporción de estudios y asistencias técnicas que derivan en una operación, una política pública adoptada o un cambio normativo verificable.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: '% de los estudios',
+                desde: { etiqueta: '2025', valor: 28 },
+                hoy: { etiqueta: '2026', valor: 33 },
+                hasta: { etiqueta: 'Meta 2031', valor: 60 },
+              },
             },
           },
         },
@@ -400,7 +523,13 @@ const ESTRATEGIA = {
               nombre: 'Ejecución efectiva de la cartera',
               descripcion:
                 'Velocidad de desembolso y proporción de proyectos que se completan en el plazo previsto, comparando operaciones con y sin acompañamiento técnico de CAF.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: '% que cierra en plazo',
+                desde: { etiqueta: '2025', valor: 54 },
+                hoy: { etiqueta: '2026', valor: 58 },
+                hasta: { etiqueta: 'Meta 2031', valor: 80 },
+              },
             },
           },
         },
@@ -423,7 +552,13 @@ const ESTRATEGIA = {
               nombre: 'Tiempo de respuesta y satisfacción de los países',
               descripcion:
                 'Plazo promedio entre la solicitud de un país y la aprobación de la operación, acompañado de una medición periódica de satisfacción de las contrapartes.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'días hasta la aprobación',
+                desde: { etiqueta: '2025', valor: 180 },
+                hoy: { etiqueta: '2026', valor: 165 },
+                hasta: { etiqueta: 'Meta 2031', valor: 90 },
+              },
             },
           },
         },
@@ -475,7 +610,13 @@ const ESTRATEGIA = {
               nombre: 'Capacidad de financiamiento sobre base patrimonial',
               descripcion:
                 'Relación entre el volumen de operaciones sostenible y los indicadores de solidez patrimonial, seguida junto con la evolución de la calificación crediticia.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'veces la base patrimonial',
+                desde: { etiqueta: '2025', valor: 2.4 },
+                hoy: { etiqueta: '2026', valor: 2.5 },
+                hasta: { etiqueta: 'Meta 2031', valor: 3.2 },
+              },
             },
           },
         },
@@ -498,7 +639,13 @@ const ESTRATEGIA = {
               nombre: 'Madurez digital y compromiso del equipo',
               descripcion:
                 'Avance de los procesos críticos digitalizados de punta a punta, combinado con la medición periódica de compromiso y la retención de perfiles clave.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: '% de procesos críticos',
+                desde: { etiqueta: '2025', valor: 22 },
+                hoy: { etiqueta: '2026', valor: 31 },
+                hasta: { etiqueta: 'Meta 2031', valor: 85 },
+              },
             },
           },
         },
@@ -520,7 +667,13 @@ const ESTRATEGIA = {
               nombre: 'Eficiencia operativa y cobertura de medición de impacto',
               descripcion:
                 'Costo administrativo por unidad de cartera gestionada, junto con la proporción de operaciones que cuentan con medición de resultados verificable al cierre.',
-              meta: 'Propuesta — línea base y meta 2031 pendientes de definición',
+              meta: 'Cifras ilustrativas: la línea base y la meta 2031 están pendientes de validación',
+              grafico: {
+                unidad: 'índice, base 100 en 2025',
+                desde: { etiqueta: '2025', valor: 100 },
+                hoy: { etiqueta: '2026', valor: 96 },
+                hasta: { etiqueta: 'Meta 2031', valor: 78 },
+              },
             },
           },
         },

@@ -257,6 +257,7 @@
     });
 
     if (d.indicador) bloques.push(crearBloqueIndicador(d.indicador));
+    if (d.metricas) bloques.push(crearBloqueMetricas(d.metricas));
 
     // El índice --i escalona la animación de entrada de cada bloque
     bloques.forEach(function (bloque, i) {
@@ -303,6 +304,8 @@
     // El nombre va entre el encabezado y la descripción
     seccion.insertBefore(nombre, seccion.children[1]);
 
+    if (indicador.grafico) seccion.appendChild(crearMedidor(indicador.grafico));
+
     if (indicador.meta) {
       const meta = document.createElement('p');
       meta.className = 'indicador__meta';
@@ -311,6 +314,137 @@
     }
 
     return seccion;
+  }
+
+  // --- Barras de avance -------------------------------------------------
+
+  const formatoNumero = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
+
+  /**
+   * Cuánto se recorrió entre la línea base y la meta, de 0 a 1.
+   * La resta funciona igual si la meta es menor que la base (por ejemplo,
+   * bajar de 180 a 90 días): los dos signos se cancelan.
+   */
+  function calcularAvance(g) {
+    const recorrido = (g.hoy ? g.hoy.valor : g.desde.valor) - g.desde.valor;
+    const total = g.hasta.valor - g.desde.valor;
+    if (total === 0) return 0;
+    return Math.max(0, Math.min(1, recorrido / total));
+  }
+
+  /**
+   * Barra de avance entre la línea base y la meta.
+   * Todos los valores van también como texto, así que la barra es decorativa
+   * para lectores de pantalla y no hace falta pasar el mouse para leer nada.
+   */
+  function crearMedidor(g) {
+    const avance = calcularAvance(g);
+    const actual = g.hoy || g.desde;
+
+    const figura = document.createElement('figure');
+    figura.className = 'medidor';
+
+    // Encabezado: valor actual grande, con su unidad al lado
+    const cabecera = document.createElement('div');
+    cabecera.className = 'medidor__cabecera';
+
+    const valor = document.createElement('span');
+    valor.className = 'medidor__valor';
+    valor.textContent = formatoNumero.format(actual.valor);
+    cabecera.appendChild(valor);
+
+    if (g.unidad) {
+      const unidad = document.createElement('span');
+      unidad.className = 'medidor__unidad';
+      unidad.textContent = g.unidad;
+      cabecera.appendChild(unidad);
+    }
+
+    const avanceTexto = document.createElement('span');
+    avanceTexto.className = 'medidor__avance';
+    avanceTexto.textContent = Math.round(avance * 100) + '% del camino';
+    cabecera.appendChild(avanceTexto);
+
+    figura.appendChild(cabecera);
+
+    const pista = document.createElement('div');
+    pista.className = 'medidor__pista';
+    pista.setAttribute('aria-hidden', 'true');
+    const relleno = document.createElement('div');
+    relleno.className = 'medidor__relleno';
+    relleno.style.width = (avance * 100).toFixed(1) + '%';
+    pista.appendChild(relleno);
+    figura.appendChild(pista);
+
+    // Pie: de dónde partimos y a dónde vamos
+    const pie = document.createElement('figcaption');
+    pie.className = 'medidor__pie';
+    pie.appendChild(crearExtremo(g.desde, 'medidor__extremo'));
+    pie.appendChild(crearExtremo(g.hasta, 'medidor__extremo medidor__extremo--meta'));
+    figura.appendChild(pie);
+
+    return figura;
+  }
+
+  function crearExtremo(punto, clase) {
+    const contenedor = document.createElement('span');
+    contenedor.className = clase;
+
+    const etiqueta = document.createElement('span');
+    etiqueta.className = 'medidor__etiqueta';
+    etiqueta.textContent = punto.etiqueta;
+
+    const cifra = document.createElement('strong');
+    cifra.className = 'medidor__cifra';
+    cifra.textContent = formatoNumero.format(punto.valor);
+
+    contenedor.appendChild(etiqueta);
+    contenedor.appendChild(cifra);
+    return contenedor;
+  }
+
+  // Bloque con los indicadores de toda la estrategia (va en el objetivo)
+  function crearBloqueMetricas(metricas) {
+    const seccion = document.createElement('section');
+    seccion.className = 'bloque bloque--metricas';
+
+    const titulo = document.createElement('h3');
+    titulo.className = 'bloque__titulo';
+    const marca = document.createElement('span');
+    marca.className = 'bloque__icono';
+    marca.setAttribute('aria-hidden', 'true');
+    marca.textContent = '▦';
+    titulo.appendChild(marca);
+    titulo.appendChild(document.createTextNode(metricas.titulo));
+    seccion.appendChild(titulo);
+
+    if (metricas.nota) {
+      const nota = document.createElement('p');
+      nota.className = 'bloque__texto bloque__texto--nota';
+      nota.textContent = metricas.nota;
+      seccion.appendChild(nota);
+    }
+
+    metricas.items.forEach(function (item) {
+      const medidor = crearMedidor(item);
+      const nombre = document.createElement('p');
+      nombre.className = 'medidor__nombre';
+      nombre.textContent = item.nombre;
+      medidor.insertBefore(nombre, medidor.firstChild);
+      seccion.appendChild(medidor);
+    });
+
+    if (ESTRATEGIA.meta.datosDeEjemplo) seccion.appendChild(crearSelloEjemplo());
+
+    return seccion;
+  }
+
+  function crearSelloEjemplo() {
+    const aviso = document.createElement('p');
+    aviso.className = 'aviso-ejemplo';
+    aviso.textContent =
+      'Datos de ejemplo. Las cifras son ilustrativas y hay que reemplazarlas por las reales.';
+    return aviso;
   }
 
   function marcarActivo(id) {
