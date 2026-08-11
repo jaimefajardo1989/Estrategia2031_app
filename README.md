@@ -29,6 +29,16 @@ en `index.html`.
 
 El sitio se actualiza solo: cada `git push` a `main` vuelve a publicarlo en un par de minutos.
 
+### Importante al publicar cambios
+
+Los archivos se enlazan con un número de versión (`css/estilos.css?v=7`). **Cada vez que
+edites `css/estilos.css`, `js/contenido.js` o `js/app.js`, subí ese número en las tres
+líneas de `index.html`.**
+
+Si no lo hacés, quien ya visitó la página sigue viendo la versión anterior hasta que se le
+venza la caché del navegador, y va a parecer que el cambio no se aplicó. Para forzar la
+recarga en tu propio navegador: **Cmd + Shift + R**.
+
 ## Cómo abrirla localmente
 
 Doble clic en `index.html`. Se abre en el navegador y funciona sin internet.

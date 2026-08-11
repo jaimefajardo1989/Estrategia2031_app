@@ -11,7 +11,11 @@
       name="description"
       content="Árbol estratégico interactivo: objetivo al 2031, oportunidades, valor agregado y agendas institucionales."
     />
-    <link rel="stylesheet" href="css/estilos.css" />
+    <!-- El ?v= obliga al navegador a bajar los archivos de nuevo cuando cambian.
+         Si editás css/estilos.css, js/contenido.js o js/app.js, subí el número
+         en las tres líneas (acá y al final del body). Sin esto, quien ya visitó
+         la página sigue viendo la versión vieja hasta que se le venza la caché. -->
+    <link rel="stylesheet" href="css/estilos.css?v=7" />
   </head>
 
   <body>
@@ -94,7 +98,7 @@
       </nav>
     </aside>
 
-    <script src="js/contenido.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/contenido.js?v=7"></script>
+    <script src="js/app.js?v=7"></script>
   </body>
 </html>
