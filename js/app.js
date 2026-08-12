@@ -696,3 +696,81 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
     })
     .catch(() => {});
 })();
+
+/* =========================================================
+   ARRANQUE DE LOS VIDEOS
+   El atributo autoplay no siempre alcanza. En iPhone lo bloquean el modo
+   de bajo consumo y el ahorro de datos, y algunos navegadores exigen que
+   la reproducción empiece después de un gesto de la persona. Acá se
+   intenta arrancar cada video y, si no se puede, se reintenta con el
+   primer toque en la pantalla.
+
+   Si el video no arranca no se rompe nada: queda su imagen fija, que es
+   el poster y también tiene fondo transparente.
+   ========================================================= */
+(function(){
+  'use strict';
+
+  const fallos = [];
+
+  function intentar(v){
+    if (!v.paused) return Promise.resolve();
+    const p = v.play();
+    if (!p || !p.catch) return Promise.resolve();
+    return p.catch(err => {
+      fallos.push({ archivo: (v.currentSrc || '').split('/').pop(), motivo: err && err.name });
+    });
+  }
+
+  function arrancarTodos(){
+    document.querySelectorAll('video').forEach(intentar);
+  }
+
+  // Primer intento apenas carga la página
+  if (document.readyState === 'complete') arrancarTodos();
+  else window.addEventListener('load', arrancarTodos);
+
+  // Reintento con el primer gesto: es lo que destraba el bloqueo de iPhone
+  ['touchstart','pointerdown','click','keydown'].forEach(evt => {
+    window.addEventListener(evt, arrancarTodos, { once: true, passive: true });
+  });
+
+  // Al volver a la pestaña, iOS deja los videos pausados
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) arrancarTodos();
+  });
+
+  // Los videos del recorrido se crean después: se arrancan al abrirlo
+  const btns = ['btn-tour','btn-tour2'];
+  btns.forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.addEventListener('click', () => window.setTimeout(arrancarTodos, 60));
+  });
+
+  /* Diagnóstico: abrir la página con ?diag=1 al final de la dirección
+     muestra qué está pasando con cada video. Sirve para revisar en un
+     teléfono, donde no hay consola. */
+  if (/[?&]diag=1/.test(location.search)) {
+    window.setTimeout(function(){
+      const vs = Array.prototype.map.call(document.querySelectorAll('video'), v => ({
+        archivo: (v.currentSrc || v.getAttribute('src') || '—').split('/').pop(),
+        estado: v.paused ? 'PAUSADO' : 'reproduciendo',
+        listo: v.readyState,
+        error: v.error ? v.error.code : null
+      }));
+      const caja = document.createElement('pre');
+      caja.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:9999;'
+        + 'background:#0d2b30;color:#7ef;padding:12px;border-radius:12px;font-size:11px;'
+        + 'line-height:1.5;max-height:52vh;overflow:auto;white-space:pre-wrap;margin:0';
+      caja.textContent =
+          'Motor: ' + (USA_HEVC ? 'WebKit (usa HEVC)' : 'no WebKit (usa WebM)') + '\n'
+        + 'Videos: ' + vs.length + '\n\n'
+        + vs.map(v => v.archivo + '\n   ' + v.estado + ' · listo=' + v.listo
+            + (v.error ? ' · ERROR ' + v.error : '')).join('\n')
+        + (fallos.length ? '\n\nBloqueos:\n' + fallos.map(f => '  ' + f.archivo + ': ' + f.motivo).join('\n') : '')
+        + '\n\n(Tocá acá para cerrar)';
+      caja.addEventListener('click', () => caja.remove());
+      document.body.appendChild(caja);
+    }, 2500);
+  }
+})();
