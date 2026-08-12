@@ -29,6 +29,7 @@ const IMG = {
   lines_coral: 'img/lines_coral.webp',
   p_skate: 'img/p_skate.webp',
   p_students: 'img/p_students.webp',
+  p_ninos: 'img/p_ninos.webp',
   p_walk: 'img/p_walk.webp',
   p_kidpaint: 'img/p_kidpaint.webp',
   p_kidsline: 'img/p_kidsline.webp',
