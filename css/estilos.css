@@ -682,8 +682,10 @@ video.tdeco{
   .search input::placeholder{font-size:12.5px}
 }
 
-/* Texto explicativo de la portada del recorrido guiado */
-.tcover-texto{
+/* Texto explicativo de la portada del recorrido guiado.
+   Va con .tslide adelante a propósito: la regla base .tslide p impone
+   max-width 720px y le ganaría, dejando el texto por debajo de la ilustración. */
+.tslide p.tcover-texto{
   max-width:min(560px,52%);
   margin:26px 0 0;
   font-size:clamp(14px,1.5vw,17px);
@@ -693,5 +695,5 @@ video.tdeco{
   padding-left:18px;
 }
 @media(max-width:760px){
-  .tcover-texto{max-width:100%;font-size:14px;padding-left:14px;margin-top:20px}
+  .tslide p.tcover-texto{max-width:100%;font-size:14px;padding-left:14px;margin-top:20px}
 }

@@ -220,7 +220,7 @@ const TL = [
 const TOUR = [
  // El texto de la portada del recorrido se edita acá
  {kind:'cover',
-  p:'No se escribió en un escritorio. Esta estrategia se construyó junto a los países accionistas y sus equipos técnicos, con los equipos de CAF y con expertos internacionales, leyendo el contexto global que viene. De ese diálogo salió una hoja de ruta que persigue lo mismo por dos caminos: aprovechar las oportunidades que hoy se le abren a la región y saldar los desbalances históricos que todavía marcan su desarrollo.'},
+  p:'Esta estrategia se construyó junto a los países accionistas, sus equipos técnicos, los equipos de CAF y un grupo de expertos internacionales, con el propósito de entender el contexto global al que nos enfrentamos en los próximos años. De ese diálogo surgió una hoja de ruta para acompañar a los países en aprovechar las oportunidades que hoy se le abren a la región a partir de las transiciones socioeconómicas, y en saldar los desbalances históricos que todavía marcan su desarrollo. Para que la resiliencia, la integración y la prosperidad se traduzcan en desarrollo y bienestar para todos los latinoamericanos y caribeños.'},
  {kind:'trans'},
  {kind:'goal'},
  {kind:'attrs'},
