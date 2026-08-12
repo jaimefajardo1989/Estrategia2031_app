@@ -343,7 +343,11 @@ function buildTour(){
   tstage.innerHTML = TOUR.map((s,i)=>{
     let inner = '';
     if(s.kind === 'cover'){
-      inner = '<img class="tslide-logo" src="img/logo_caf.webp" alt="">'
+      inner = '<div class="marcas marcas--lamina">'
+        + '<img class="marca marca--caf" src="img/logo_caf.webp" alt="">'
+        + '<span class="marca-sep"></span>'
+        + '<img class="marca marca--region" src="img/logo_region.webp" alt="">'
+        + '</div>'
         + '<div class="inner"><div class="kick">CAF · Banco de Desarrollo de América Latina y el Caribe</div>'
         + '<h3 style="font-size:clamp(32px,5.2vw,64px);color:var(--green-d);max-width:min(620px,52%)"><em>Estrategia CAF</em> al 2031</h3>'
         + '<p style="font-size:clamp(18px,2.2vw,28px);font-weight:700;color:var(--teal-d)">por una región más resiliente, integrada y próspera</p>'
@@ -406,7 +410,11 @@ function buildTour(){
             ? [{s:IMG.hummingbird, v:VID.colibri, st:'right:2%;top:6%;height:13%'},{s:IMG.dots_teal, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
             : [{s:IMG.flamingo, v:VID.flamenco, st:'right:4%;bottom:2%;height:38%'},{s:IMG.dots_coral, st:'left:0;bottom:4%;height:8%;opacity:.8'}]);
     } else if(s.kind === 'close'){
-      inner = '<img class="tslide-logo" src="img/logo_caf.webp" alt="">'
+      inner = '<div class="marcas marcas--lamina">'
+        + '<img class="marca marca--caf" src="img/logo_caf.webp" alt="">'
+        + '<span class="marca-sep"></span>'
+        + '<img class="marca marca--region" src="img/logo_region.webp" alt="">'
+        + '</div>'
         + '<div class="inner"><h3 style="font-size:clamp(30px,4.6vw,56px);max-width:min(720px,64%)">CAF — <em>Banco Verde</em><br>de América Latina y el Caribe</h3>'
         + '<p style="margin-top:18px">Estrategia 2026–2031 · Dirección de Estrategia y Análisis Institucional</p></div>'
         + decoHTML([

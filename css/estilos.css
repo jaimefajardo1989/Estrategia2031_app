@@ -699,6 +699,125 @@ video.tdeco{
 }
 
 /* =========================================================
+   LOS DOS LOGOS
+   CAF y la marca región, juntos y con la misma altura.
+
+   Cada uno se dibuja al aparecer, con una animación acorde a su forma:
+   el de CAF revela primero la C, después la A, después la F y por último
+   el texto; el de la región descubre una a una las líneas del monograma.
+   En los dos casos es un recorte que avanza de izquierda a derecha, así
+   que se dibujan de verdad en vez de solo aparecer.
+   ========================================================= */
+
+.marcas{
+  display:flex;
+  align-items:center;
+  gap:clamp(12px,1.6vw,22px);
+}
+.marcas .marca{height:auto;width:auto}
+
+/* La línea fina que los separa, como en la portada de la presentación */
+.marca-sep{
+  width:1px;
+  align-self:stretch;
+  background:var(--line);
+  flex:none;
+}
+
+/* ---- Portada ---- */
+.marcas--portada{
+  position:absolute;
+  top:34px;
+  right:clamp(18px,4vw,56px);
+  z-index:4;
+  pointer-events:none;
+}
+.marcas--portada .marca--caf{width:clamp(150px,16vw,205px)}
+.marcas--portada .marca--region{width:clamp(86px,9.2vw,118px)}
+.marcas--portada .marca-sep{margin:4px 0}
+
+/* ---- Pie de página ---- */
+.marcas--pie{margin-bottom:20px}
+.marcas--pie .marca--caf{width:186px}
+.marcas--pie .marca--region{width:107px}
+.marcas--pie .marca-sep{margin:2px 0}
+
+@media(max-width:760px){
+  .marcas--portada{top:16px;right:14px;gap:10px}
+  .marcas--portada .marca--caf{width:118px}
+  .marcas--portada .marca--region{width:68px}
+  .marcas--pie .marca--caf{width:150px}
+  .marcas--pie .marca--region{width:86px}
+}
+
+/* ---- Cómo se dibuja el de CAF ----
+   Los cortes salen de medir la imagen: la C termina en el 12,7% del ancho,
+   la A en el 24,9% y la F en el 37,1%. El resto es el texto. */
+.marcas--portada .marca--caf{
+  animation:dibujarCaf 1.7s linear both;
+  animation-delay:.35s;
+}
+@keyframes dibujarCaf{
+  0%   {clip-path:inset(0 100%   0 0)}
+  11%  {clip-path:inset(0 87.3%  0 0)}   /* la C */
+  27%  {clip-path:inset(0 87.3%  0 0)}
+  38%  {clip-path:inset(0 75.1%  0 0)}   /* la A */
+  54%  {clip-path:inset(0 75.1%  0 0)}
+  65%  {clip-path:inset(0 62.9%  0 0)}   /* la F */
+  80%  {clip-path:inset(0 62.9%  0 0)}
+  100% {clip-path:inset(0 0      0 0)}   /* el texto */
+}
+
+/* La línea separadora entra cuando el logo de CAF ya terminó */
+.marcas--portada .marca-sep{
+  animation:crecerSep .5s var(--rebote) both;
+  animation-delay:2.05s;
+  transform-origin:center;
+}
+@keyframes crecerSep{
+  from{transform:scaleY(0);opacity:0}
+  to{transform:scaleY(1);opacity:1}
+}
+
+/* ---- Cómo se dibuja el de la región ----
+   El monograma ocupa hasta el 48,1% del ancho; el resto es el texto.
+   El recorte avanza despacio sobre el monograma para que las líneas
+   se vayan sumando una por una. */
+.marcas--portada .marca--region{
+  animation:dibujarRegion 1.5s cubic-bezier(.35,0,.25,1) both;
+  animation-delay:2.2s;
+}
+@keyframes dibujarRegion{
+  0%   {clip-path:inset(0 100%   0 0)}
+  62%  {clip-path:inset(0 51.9%  0 0)}   /* las líneas del monograma */
+  74%  {clip-path:inset(0 45%    0 0)}
+  100% {clip-path:inset(0 0      0 0)}   /* el texto */
+}
+
+/* En el pie no se animan: ahí ya son solo un crédito */
+.marcas--pie .marca,.marcas--pie .marca-sep{animation:none}
+
+@media (prefers-reduced-motion:reduce){
+  .marcas .marca,.marcas .marca-sep{animation:none;clip-path:none;transform:none;opacity:1}
+}
+
+/* Texto explicativo de la portada del recorrido guiado.
+   Va con .tslide adelante a propósito: la regla base .tslide p impone
+   max-width 720px y le ganaría, dejando el texto por debajo de la ilustración. */
+.tslide p.tcover-texto{
+  max-width:min(560px,52%);
+  margin:26px 0 0;
+  font-size:clamp(14px,1.5vw,17px);
+  line-height:1.62;
+  color:var(--ink-2);
+  border-left:3px solid var(--yellow);
+  padding-left:18px;
+}
+@media(max-width:760px){
+  .tslide p.tcover-texto{max-width:100%;font-size:14px;padding-left:14px;margin-top:20px}
+}
+
+/* =========================================================
    LOGO DE CAF
    Un solo archivo con transparencia, reutilizado en varios lugares.
    ========================================================= */
@@ -726,16 +845,22 @@ video.tdeco{
   margin-bottom:18px;
 }
 
-/* Láminas del recorrido guiado */
-.tslide-logo{
+@media(max-width:760px){
+  }
+
+/* Los dos logos en las láminas del recorrido guiado */
+.marcas--lamina{
   position:absolute;
-  top:clamp(22px,4vw,44px);
-  right:clamp(22px,4vw,52px);
-  width:clamp(120px,13vw,180px);
-  height:auto;
+  top:clamp(20px,3.6vw,42px);
+  right:clamp(20px,3.6vw,50px);
   z-index:4;
   pointer-events:none;
 }
+.marcas--lamina .marca--caf{width:clamp(112px,12vw,168px)}
+.marcas--lamina .marca--region{width:clamp(64px,6.9vw,96px)}
+.marcas--lamina .marca-sep{margin:3px 0}
 @media(max-width:760px){
-  .tslide-logo{top:14px;right:14px;width:110px}
+  .marcas--lamina{top:12px;right:12px;gap:9px}
+  .marcas--lamina .marca--caf{width:100px}
+  .marcas--lamina .marca--region{width:58px}
 }
