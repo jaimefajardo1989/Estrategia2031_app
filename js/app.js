@@ -318,8 +318,8 @@ function buildTour(){
     let inner = '';
     if(s.kind === 'cover'){
       inner = '<div class="inner"><div class="kick">CAF · Banco de Desarrollo de América Latina y el Caribe</div>'
-        + '<h3 style="font-size:clamp(32px,5.2vw,64px);color:var(--green-d);max-width:min(620px,52%)"><em>Nuevo ciclo</em> estratégico de CAF</h3>'
-        + '<p style="font-size:clamp(20px,2.6vw,32px);font-weight:700;color:var(--teal-d)">2026 – 2031</p></div>'
+        + '<h3 style="font-size:clamp(32px,5.2vw,64px);color:var(--green-d);max-width:min(620px,52%)"><em>Estrategia CAF</em> al 2031</h3>'
+        + '<p style="font-size:clamp(18px,2.2vw,28px);font-weight:700;color:var(--teal-d)">por una región más resiliente, integrada y próspera</p></div>'
         + decoHTML([
           {s:IMG.tree_b, st:'right:2%;bottom:-3%;height:54%;z-index:1'},
           {s:IMG.tree_a, st:'right:20%;bottom:-3%;height:40%;z-index:0;opacity:.95'},
@@ -649,4 +649,34 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   }, { passive: true });
 
   pintar();
+})();
+
+/* =========================================================
+   AVISO DE VERSIÓN NUEVA
+   GitHub Pages sirve el HTML con max-age=600, así que durante diez
+   minutos el navegador puede seguir mostrando la versión anterior aunque
+   ya se haya publicado otra. Esto compara la versión cargada contra
+   version.txt y, si hay una más nueva, recarga una sola vez con una
+   dirección distinta, que es lo que obliga a bajar el HTML de nuevo.
+   ========================================================= */
+(function(){
+  'use strict';
+
+  const cargada = document.documentElement.dataset.version || '0';
+
+  fetch('version.txt?_=' + Date.now(), { cache: 'no-store' })
+    .then(r => r.ok ? r.text() : null)
+    .then(txt => {
+      if (!txt) return;
+      const ultima = txt.trim();
+      if (!ultima || ultima === cargada) return;
+
+      // Una sola recarga por versión: si aun así no coincide, no insistimos
+      if (sessionStorage.getItem('recargadoPara') === ultima) return;
+      sessionStorage.setItem('recargadoPara', ultima);
+
+      // El parámetro distinto es lo que fuerza a pedir el HTML de nuevo
+      location.replace(location.pathname + '?v=' + ultima + location.hash);
+    })
+    .catch(() => {});
 })();
