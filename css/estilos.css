@@ -697,3 +697,45 @@ video.tdeco{
 @media(max-width:760px){
   .tslide p.tcover-texto{max-width:100%;font-size:14px;padding-left:14px;margin-top:20px}
 }
+
+/* =========================================================
+   LOGO DE CAF
+   Un solo archivo con transparencia, reutilizado en varios lugares.
+   ========================================================= */
+
+/* Portada: arriba a la derecha, donde antes estaban las líneas */
+.hero-logo{
+  position:absolute;
+  top:34px;
+  right:clamp(18px,4vw,56px);
+  width:clamp(150px,17vw,215px);
+  height:auto;
+  z-index:4;
+  pointer-events:none;
+  animation:bajar .8s var(--rebote) both;
+  animation-delay:.1s;
+}
+@media(max-width:760px){
+  .hero-logo{top:18px;width:132px;right:16px}
+}
+
+/* Pie de página, junto al crédito */
+.pie-logo{
+  width:200px;
+  height:auto;
+  margin-bottom:18px;
+}
+
+/* Láminas del recorrido guiado */
+.tslide-logo{
+  position:absolute;
+  top:clamp(22px,4vw,44px);
+  right:clamp(22px,4vw,52px);
+  width:clamp(120px,13vw,180px);
+  height:auto;
+  z-index:4;
+  pointer-events:none;
+}
+@media(max-width:760px){
+  .tslide-logo{top:14px;right:14px;width:110px}
+}
