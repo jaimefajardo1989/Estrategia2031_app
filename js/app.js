@@ -65,36 +65,35 @@ const COLLAGE = [
 const SIN_MOVIMIENTO = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * Qué formato de video transparente le toca a este navegador.
+ * Cómo se muestran los animales según el navegador.
  *
- * WebKit (Safari, y TODOS los navegadores del iPhone y el iPad, que por
- * política de Apple usan el mismo motor) reproduce WebM pero ignora su canal
- * alfa: mostraría el recuadro gris del fondo original. Necesita HEVC con alfa.
- * El resto —Chrome, Firefox, Edge— usa WebM VP9 con alfa.
+ *   Chrome, Firefox, Edge  ->  video WebM VP9 con alfa. Es lo más liviano.
+ *   Safari y todo iPhone   ->  WebP animado, que es una imagen.
  *
- * Antes esto se resolvía con dos <source> y el tipo video/quicktime, que
- * Chrome descarta. Funcionaba en Safari de escritorio pero no en iPhone,
- * porque ahí ese tipo no se reconoce y caía al WebM. Ahora se elige en
- * código, que no depende de cómo cada navegador interpreta el tipo.
+ * Por qué la diferencia: WebKit reproduce WebM pero ignora su canal alfa, así
+ * que mostraría el recuadro gris del fondo original. La alternativa era HEVC
+ * con alfa, que Safari de escritorio sí muestra, pero el iPhone no lo puede
+ * decodificar: devuelve error 3 y no aparece nada. Comprobado en un iPhone
+ * real con el diagnóstico de esta misma página.
+ *
+ * El WebP animado esquiva el problema entero: al ser una imagen no pasa por
+ * el decodificador de video ni por las reglas de reproducción automática, así
+ * que también anda con el modo de bajo consumo activado. Pesa algo más que el
+ * video, y ese es el precio de que funcione.
  */
 const ua = navigator.userAgent;
 
 // Se descarta por motor, no por plataforma. Mirar navigator.platform o los
 // puntos táctiles da falsos positivos: un Mac con pantalla táctil, o un
-// navegador emulando un teléfono, se hacen pasar por iPad y entonces Chrome
-// recibiría HEVC, que no sabe mostrar con transparencia.
+// navegador emulando un teléfono, se hacen pasar por iPad.
 const esChromium = /Chrome|Chromium|Edg|OPR/.test(ua);   // en iOS se llaman CriOS, EdgiOS…
 const esFirefox  = /Firefox/.test(ua);                   // en iOS se llama FxiOS
 // Lo que queda es WebKit: Safari de escritorio y todos los navegadores de
 // iPhone y iPad, que por política de Apple usan el mismo motor.
-const USA_HEVC = !esChromium && !esFirefox;
+const USA_ANIMADO = !esChromium && !esFirefox;
 
 function fuentesVideo(base){
-  // Para WebKit van las dos variantes de HEVC sin declarar tipo: si una no le
-  // sirve, prueba la otra. Sin atributo type no hay filtrado previo.
-  return USA_HEVC
-    ? '<source src="' + base + '.mp4"><source src="' + base + '.mov">'
-    : '<source src="' + base + '.webm" type="video/webm">';
+  return '<source src="' + base + '.webm" type="video/webm">';
 }
 
 /**
@@ -102,10 +101,16 @@ function fuentesVideo(base){
  * transparente; si no, la imagen de siempre.
  */
 function crearPiezaCollage(c){
-  const usarVideo = c.v && !SIN_MOVIMIENTO;
+  const anima = c.v && !SIN_MOVIMIENTO;
+  const usarVideo = anima && !USA_ANIMADO;
   const el = document.createElement(usarVideo ? 'video' : 'img');
 
-  if(usarVideo){
+  if(anima && !usarVideo){
+    // WebKit: imagen animada. Si no carga, queda la fija.
+    el.src = c.v + '_anim.webp';
+    el.alt = '';
+    el.onerror = () => { el.onerror = null; el.src = c.s; };
+  } else if(usarVideo){
     el.poster = c.s;          // se ve la imagen mientras carga el video
     el.autoplay = true; el.loop = true; el.muted = true;
     el.playsInline = true;
@@ -299,6 +304,10 @@ function decoHTML(list){
   return list.map((d,i)=>{
     const est = '--i:' + i + ';' + d.st;
     if(d.v && !SIN_MOVIMIENTO){
+      if(USA_ANIMADO){
+        return '<img class="tdeco" style="'+est+'" src="'+d.v+'_anim.webp" alt=""'
+          + ' onerror="this.onerror=null;this.src=\''+d.s+'\'">';
+      }
       return '<video class="tdeco tdeco--video" style="'+est+'" poster="'+d.s+'" data-fija="'+d.s+'"'
         + ' autoplay loop muted playsinline aria-hidden="true" preload="auto">'
         + fuentesVideo(d.v) + '</video>';
@@ -817,7 +826,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
         + 'background:#0d2b30;color:#7ef;padding:12px;border-radius:12px;font-size:11px;'
         + 'line-height:1.5;max-height:52vh;overflow:auto;white-space:pre-wrap;margin:0';
       caja.textContent =
-          'Motor: ' + (USA_HEVC ? 'WebKit (usa HEVC)' : 'no WebKit (usa WebM)') + '\n'
+          'Motor: ' + (USA_ANIMADO ? 'WebKit (usa WebP animado)' : 'no WebKit (usa video WebM)') + '\n'
         + 'Videos activos: ' + vs.length + '\n\n'
         + vs.map(v => v.archivo + '\n   ' + v.estado + ' · listo=' + v.listo
             + (v.error ? ' · ERROR ' + v.error : '')).join('\n')
