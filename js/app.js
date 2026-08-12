@@ -345,7 +345,9 @@ function buildTour(){
     if(s.kind === 'cover'){
       inner = '<div class="inner"><div class="kick">CAF · Banco de Desarrollo de América Latina y el Caribe</div>'
         + '<h3 style="font-size:clamp(32px,5.2vw,64px);color:var(--green-d);max-width:min(620px,52%)"><em>Estrategia CAF</em> al 2031</h3>'
-        + '<p style="font-size:clamp(18px,2.2vw,28px);font-weight:700;color:var(--teal-d)">por una región más resiliente, integrada y próspera</p></div>'
+        + '<p style="font-size:clamp(18px,2.2vw,28px);font-weight:700;color:var(--teal-d)">por una región más resiliente, integrada y próspera</p>'
+        + (s.p ? '<p class="tcover-texto">' + s.p + '</p>' : '')
+        + '</div>'
         + decoHTML([
           {s:IMG.tree_b, st:'right:2%;bottom:-3%;height:54%;z-index:1'},
           {s:IMG.tree_a, st:'right:20%;bottom:-3%;height:40%;z-index:0;opacity:.95'},

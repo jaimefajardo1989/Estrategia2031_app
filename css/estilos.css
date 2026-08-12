@@ -681,3 +681,17 @@ video.tdeco{
   .search input{font-size:13px;padding-left:34px}
   .search input::placeholder{font-size:12.5px}
 }
+
+/* Texto explicativo de la portada del recorrido guiado */
+.tcover-texto{
+  max-width:min(560px,52%);
+  margin:26px 0 0;
+  font-size:clamp(14px,1.5vw,17px);
+  line-height:1.62;
+  color:var(--ink-2);
+  border-left:3px solid var(--yellow);
+  padding-left:18px;
+}
+@media(max-width:760px){
+  .tcover-texto{max-width:100%;font-size:14px;padding-left:14px;margin-top:20px}
+}

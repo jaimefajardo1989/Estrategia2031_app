@@ -218,10 +218,9 @@ const TL = [
 
 
 const TOUR = [
- {kind:'cover'},
- {kind:'text', kick:'De dónde venimos', h:'De <em>Corporación</em> a <em>Banco de Desarrollo</em>',
-  p:'Seis décadas de evolución institucional. El ciclo 2021–2026 trajo la capitalización histórica de más de USD 7.000 millones, la primera estrategia plurianual y una nueva identidad como banco de desarrollo de América Latina y el Caribe.',
-  stats:true},
+ // El texto de la portada del recorrido se edita acá
+ {kind:'cover',
+  p:'No se escribió en un escritorio. Esta estrategia se construyó junto a los países accionistas y sus equipos técnicos, con los equipos de CAF y con expertos internacionales, leyendo el contexto global que viene. De ese diálogo salió una hoja de ruta que persigue lo mismo por dos caminos: aprovechar las oportunidades que hoy se le abren a la región y saldar los desbalances históricos que todavía marcan su desarrollo.'},
  {kind:'trans'},
  {kind:'goal'},
  {kind:'attrs'},
