@@ -114,6 +114,7 @@ function crearPiezaCollage(c){
     el.setAttribute('aria-hidden','true');
     el.disablePictureInPicture = true;
     el.preload = 'auto';
+    el.dataset.fija = c.s;    // a dónde volver si el video no se puede mostrar
     el.innerHTML = fuentesVideo(c.v);
   } else {
     el.src = c.s; el.alt = '';
@@ -298,7 +299,7 @@ function decoHTML(list){
   return list.map((d,i)=>{
     const est = '--i:' + i + ';' + d.st;
     if(d.v && !SIN_MOVIMIENTO){
-      return '<video class="tdeco tdeco--video" style="'+est+'" poster="'+d.s+'"'
+      return '<video class="tdeco tdeco--video" style="'+est+'" poster="'+d.s+'" data-fija="'+d.s+'"'
         + ' autoplay loop muted playsinline aria-hidden="true" preload="auto">'
         + fuentesVideo(d.v) + '</video>';
     }
@@ -712,19 +713,72 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   'use strict';
 
   const fallos = [];
+  const reemplazados = [];
+
+  /**
+   * Si el video no se puede mostrar, se pone en su lugar la imagen fija.
+   * Es la red de seguridad: pase lo que pase con el códec, el animal
+   * aparece. Conserva la posición, el tamaño y la animación de la pieza.
+   */
+  function ponerImagenFija(v, motivo){
+    if (!v.dataset.fija || !v.parentElement) return;
+    const img = document.createElement('img');
+    img.src = v.dataset.fija;
+    img.alt = '';
+    img.className = v.className.replace(' pieza--video', '').replace(' tdeco--video', '');
+    img.style.cssText = v.style.cssText;
+    if (v.dataset.p) img.dataset.p = v.dataset.p;
+    v.parentElement.replaceChild(img, v);
+    reemplazados.push({ archivo: (v.dataset.fija || '').split('/').pop(), motivo: motivo });
+  }
 
   function intentar(v){
     if (!v.paused) return Promise.resolve();
     const p = v.play();
     if (!p || !p.catch) return Promise.resolve();
     return p.catch(err => {
-      fallos.push({ archivo: (v.currentSrc || '').split('/').pop(), motivo: err && err.name });
+      const nombre = err && err.name;
+      fallos.push({ archivo: (v.currentSrc || '').split('/').pop(), motivo: nombre });
+      // NotAllowedError es bloqueo de reproducción automática: se reintenta con
+      // el primer toque. Cualquier otro error es del códec y no se va a
+      // resolver solo, así que se pasa a la imagen fija.
+      if (nombre && nombre !== 'NotAllowedError') ponerImagenFija(v, nombre);
     });
   }
 
   function arrancarTodos(){
     document.querySelectorAll('video').forEach(intentar);
   }
+
+  /* Vigilancia: si un video no llega a cargar ni un cuadro, se da por perdido
+     y va la imagen fija.
+
+     No alcanza con escuchar "error" en el video: cuando las fuentes se
+     declaran con <source>, el fallo se avisa en cada fuente y el video puede
+     quedar callado. Lo que sí es confiable es networkState === 3
+     (NETWORK_NO_SOURCE), que significa que ninguna fuente le sirvió. */
+  function vigilar(){
+    document.querySelectorAll('video[data-fija]').forEach(v => {
+      if (v.dataset.vigilado) return;
+      v.dataset.vigilado = '1';
+
+      v.addEventListener('error', () => ponerImagenFija(v, 'error de carga'), { once: true });
+
+      let intentos = 0;
+      const reloj = window.setInterval(() => {
+        if (!v.parentElement) return window.clearInterval(reloj);  // ya se reemplazó
+        if (v.readyState > 0) return window.clearInterval(reloj);  // hay imagen: todo bien
+
+        intentos++;
+        // 3 = NETWORK_NO_SOURCE: ninguna fuente se pudo usar
+        if (v.networkState === 3 || intentos >= 4) {
+          window.clearInterval(reloj);
+          ponerImagenFija(v, v.networkState === 3 ? 'ninguna fuente sirvió' : 'no cargó a tiempo');
+        }
+      }, 2500);
+    });
+  }
+  window.addEventListener('load', vigilar);
 
   // Primer intento apenas carga la página
   if (document.readyState === 'complete') arrancarTodos();
@@ -744,7 +798,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   const btns = ['btn-tour','btn-tour2'];
   btns.forEach(id => {
     const b = document.getElementById(id);
-    if (b) b.addEventListener('click', () => window.setTimeout(arrancarTodos, 60));
+    if (b) b.addEventListener('click', () => window.setTimeout(() => { arrancarTodos(); vigilar(); }, 60));
   });
 
   /* Diagnóstico: abrir la página con ?diag=1 al final de la dirección
@@ -764,10 +818,12 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
         + 'line-height:1.5;max-height:52vh;overflow:auto;white-space:pre-wrap;margin:0';
       caja.textContent =
           'Motor: ' + (USA_HEVC ? 'WebKit (usa HEVC)' : 'no WebKit (usa WebM)') + '\n'
-        + 'Videos: ' + vs.length + '\n\n'
+        + 'Videos activos: ' + vs.length + '\n\n'
         + vs.map(v => v.archivo + '\n   ' + v.estado + ' · listo=' + v.listo
             + (v.error ? ' · ERROR ' + v.error : '')).join('\n')
         + (fallos.length ? '\n\nBloqueos:\n' + fallos.map(f => '  ' + f.archivo + ': ' + f.motivo).join('\n') : '')
+        + (reemplazados.length ? '\n\nPasaron a imagen fija:\n'
+            + reemplazados.map(f => '  ' + f.archivo + ': ' + f.motivo).join('\n') : '')
         + '\n\n(Tocá acá para cerrar)';
       caja.addEventListener('click', () => caja.remove());
       document.body.appendChild(caja);
