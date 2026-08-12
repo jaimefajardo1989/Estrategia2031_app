@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-version="33">
+<html lang="es" data-version="34">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,7 +14,7 @@
     <!-- El ?v= obliga al navegador a bajar los archivos de nuevo cuando cambian.
          Si editas css/estilos.css, js/contenido.js o js/app.js, sube el número
          en las tres líneas (aquí y al final del body). -->
-    <link rel="stylesheet" href="css/estilos.css?v=33" />
+    <link rel="stylesheet" href="css/estilos.css?v=34" />
   </head>
 
   <body>
@@ -34,9 +34,21 @@
 
 <div class="hero">
   <div class="marcas marcas--portada">
-    <img class="marca marca--caf" src="img/logo_caf.webp" alt="CAF · Banco de Desarrollo de América Latina y el Caribe" width="369" height="105">
+    <span class="marca marca--caf" role="img" aria-label="CAF · Banco de Desarrollo de América Latina y el Caribe">
+      <span class="letra letra--c"><img src="img/logo_caf.webp" alt=""></span>
+      <span class="letra letra--a"><img src="img/logo_caf.webp" alt=""></span>
+      <span class="letra letra--f"><img src="img/logo_caf.webp" alt=""></span>
+      <span class="letra letra--txt"><img src="img/logo_caf.webp" alt=""></span>
+    </span>
     <span class="marca-sep" aria-hidden="true"></span>
-    <img class="marca marca--region" src="img/logo_region.webp" alt="América Latina y el Caribe · Cada camino, una oportunidad" width="212" height="105">
+    <span class="marca marca--region" role="img" aria-label="América Latina y el Caribe · Cada camino, una oportunidad">
+      <img class="capa capa--naranja" src="img/marca/naranja.webp" alt="">
+      <img class="capa capa--azul"    src="img/marca/azul.webp" alt="">
+      <img class="capa capa--verde"   src="img/marca/verde.webp" alt="">
+      <img class="capa capa--rojo"    src="img/marca/rojo.webp" alt="">
+      <img class="capa capa--punta"   src="img/marca/punta.webp" alt="">
+      <img class="capa capa--texto"   src="img/marca/texto.webp" alt="">
+    </span>
   </div>
   <div class="hero-in">
     <h1><span class="t">Estrategia CAF</span> al 2031</h1>
@@ -177,7 +189,7 @@
     <button class="btn btn-ghost" id="tclose" style="margin-left:10px">Salir ✕</button>
   </div>
 </div>
-    <script src="js/contenido.js?v=33"></script>
-    <script src="js/app.js?v=33"></script>
+    <script src="js/contenido.js?v=34"></script>
+    <script src="js/app.js?v=34"></script>
   </body>
 </html>

@@ -755,48 +755,69 @@ video.tdeco{
   .marcas--pie .marca--region{width:86px}
 }
 
-/* ---- Cómo se dibuja el de CAF ----
-   Los cortes salen de medir la imagen: la C termina en el 12,7% del ancho,
-   la A en el 24,9% y la F en el 37,1%. El resto es el texto. */
-.marcas--portada .marca--caf{
-  animation:dibujarCaf 1.7s linear both;
-  animation-delay:.35s;
+/* ---- Los dos logos se dibujan de abajo hacia arriba ----
+   Es el mismo gesto en los dos, para que se lean como una secuencia:
+   el de CAF levanta la C, después la A, después la F y por último el texto;
+   el de la región va sumando un color por vez hasta armar el monograma. */
+
+/* CAF: cada letra es una copia del logo recortada a su franja.
+   Las tres letras están unidas en el archivo, así que no se pueden separar
+   como piezas; las franjas salen de medir dónde termina cada una. */
+.marcas--portada .marca--caf{position:relative;display:block;aspect-ratio:369/105}
+.marcas--portada .marca--caf .letra{
+  position:absolute;top:0;bottom:0;overflow:hidden;display:block;
 }
-@keyframes dibujarCaf{
-  0%   {clip-path:inset(0 100%   0 0)}
-  11%  {clip-path:inset(0 87.3%  0 0)}   /* la C */
-  27%  {clip-path:inset(0 87.3%  0 0)}
-  38%  {clip-path:inset(0 75.1%  0 0)}   /* la A */
-  54%  {clip-path:inset(0 75.1%  0 0)}
-  65%  {clip-path:inset(0 62.9%  0 0)}   /* la F */
-  80%  {clip-path:inset(0 62.9%  0 0)}
-  100% {clip-path:inset(0 0      0 0)}   /* el texto */
+.marcas--portada .marca--caf .letra img{
+  position:absolute;top:0;left:0;height:100%;width:auto;max-width:none;
+  animation:levantar .55s cubic-bezier(.2,.9,.3,1.2) both;
+}
+.marcas--portada .marca--caf .letra--c{left:0;width:12.9%}
+.marcas--portada .marca--caf .letra--a  {left:12.9%;width:12%}
+.marcas--portada .marca--caf .letra--f  {left:24.9%;width:12.2%}
+.marcas--portada .marca--caf .letra--txt{left:37.1%;width:62.9%}
+/* Cada copia se corre para que por su ventana asome la parte que le toca */
+.marcas--portada .marca--caf .letra--a img  {left:-107.5%}
+.marcas--portada .marca--caf .letra--f img  {left:-204%}
+.marcas--portada .marca--caf .letra--txt img{left:-59%}
+
+.marcas--portada .marca--caf .letra--c   img{animation-delay:.35s}
+.marcas--portada .marca--caf .letra--a   img{animation-delay:.52s}
+.marcas--portada .marca--caf .letra--f   img{animation-delay:.69s}
+.marcas--portada .marca--caf .letra--txt img{animation-delay:.90s}
+
+@keyframes levantar{
+  from{transform:translateY(42%);opacity:0}
+  to  {transform:translateY(0);opacity:1}
 }
 
-/* La línea separadora entra cuando el logo de CAF ya terminó */
+/* Marca región: una capa por color, cada una crece desde su base */
+.marcas--portada .marca--region{position:relative;display:block;aspect-ratio:212/105}
+.marcas--portada .marca--region .capa{
+  position:absolute;top:0;left:0;width:100%;height:auto;
+  animation:crecerCapa .5s cubic-bezier(.2,.9,.3,1.2) both;
+}
+.marcas--portada .marca--region .capa--naranja{animation-delay:1.35s}
+.marcas--portada .marca--region .capa--azul   {animation-delay:1.50s}
+.marcas--portada .marca--region .capa--verde  {animation-delay:1.65s}
+.marcas--portada .marca--region .capa--rojo   {animation-delay:1.80s}
+.marcas--portada .marca--region .capa--punta  {animation-delay:1.98s}
+.marcas--portada .marca--region .capa--texto  {animation-delay:2.15s}
+
+@keyframes crecerCapa{
+  from{clip-path:inset(100% 0 0 0);opacity:0}
+  60% {opacity:1}
+  to  {clip-path:inset(0 0 0 0);opacity:1}
+}
+
+/* La línea separadora entra entre los dos logos */
 .marcas--portada .marca-sep{
-  animation:crecerSep .5s var(--rebote) both;
-  animation-delay:2.05s;
+  animation:crecerSep .45s var(--rebote) both;
+  animation-delay:1.15s;
   transform-origin:center;
 }
 @keyframes crecerSep{
   from{transform:scaleY(0);opacity:0}
   to{transform:scaleY(1);opacity:1}
-}
-
-/* ---- Cómo se dibuja el de la región ----
-   El monograma ocupa hasta el 48,1% del ancho; el resto es el texto.
-   El recorte avanza despacio sobre el monograma para que las líneas
-   se vayan sumando una por una. */
-.marcas--portada .marca--region{
-  animation:dibujarRegion 1.5s cubic-bezier(.35,0,.25,1) both;
-  animation-delay:2.2s;
-}
-@keyframes dibujarRegion{
-  0%   {clip-path:inset(0 100%   0 0)}
-  62%  {clip-path:inset(0 51.9%  0 0)}   /* las líneas del monograma */
-  74%  {clip-path:inset(0 45%    0 0)}
-  100% {clip-path:inset(0 0      0 0)}   /* el texto */
 }
 
 /* En el pie no se animan: ahí ya son solo un crédito */
