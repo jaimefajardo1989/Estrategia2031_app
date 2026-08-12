@@ -494,7 +494,9 @@ footer.foot strong{color:var(--ink-2)}
 .tpista{font-size:13px;color:var(--mute);margin:14px 0 0;display:flex;align-items:center;gap:8px}
 .tpista::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--yellow);flex:none;animation:latido 2.4s ease-in-out infinite}
 
-.tgrid--clic{margin-top:20px}
+/* Ancho acotado para que las píldoras no se crucen con la ilustración
+   de la derecha, que en algunas láminas es grande. */
+.tgrid--clic{margin-top:20px;max-width:min(880px,78%)}
 .tgrid--clic .it{
   position:relative;border:none;cursor:pointer;font-family:inherit;text-align:left;
   padding:18px 40px 18px 20px;font-size:clamp(15px,1.6vw,19px);
@@ -517,7 +519,10 @@ footer.foot strong{color:var(--ink-2)}
 /* Panel de explicación */
 .texp{position:relative;margin-top:22px;min-height:112px}
 .texp-uno{
-  position:absolute;inset:0;
+  /* Ancho acotado a propósito: con inset:0 el fondo blanco del panel se
+     extendía hasta el borde y tapaba la ilustración de la derecha. */
+  position:absolute;top:0;bottom:0;left:0;right:auto;
+  width:min(740px,62%);
   border-left:3px solid var(--line);padding-left:20px;
   visibility:hidden;opacity:0;transform:translateY(10px);
   transition:opacity .35s var(--curva),transform .4s var(--rebote),visibility .35s;

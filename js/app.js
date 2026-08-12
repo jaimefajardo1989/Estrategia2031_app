@@ -390,7 +390,7 @@ function buildTour(){
             return { titulo: d.t, texto: (d.lead||'') + ' ' + (d.what||''), color: colores[k] };
           }), 3)
         + '</div>'
-        + decoHTML([{s:IMG.p_girljump, v:VID.nina, st:'right:3%;bottom:0;height:52%;z-index:2'},{s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}]);
+        + decoHTML([{s:IMG.p_girljump, v:VID.nina, st:'right:2%;bottom:0;height:46%;z-index:2'},{s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}]);
     } else if(s.kind === 'level'){
       const items = DATA.filter(d=>d.lvl===s.lvl);
       const bg = s.lvl===2?'var(--yellow)':(s.lvl===3?'var(--teal-d)':'var(--coral-d)');
