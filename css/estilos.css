@@ -796,12 +796,23 @@ video.tdeco{
   position:absolute;top:0;left:0;width:100%;height:auto;
   animation:crecerCapa .5s cubic-bezier(.2,.9,.3,1.2) both;
 }
-.marcas--portada .marca--region .capa--naranja{animation-delay:1.35s}
-.marcas--portada .marca--region .capa--azul   {animation-delay:1.50s}
-.marcas--portada .marca--region .capa--verde  {animation-delay:1.65s}
-.marcas--portada .marca--region .capa--rojo   {animation-delay:1.80s}
-.marcas--portada .marca--region .capa--punta  {animation-delay:1.98s}
-.marcas--portada .marca--region .capa--texto  {animation-delay:2.15s}
+/* Del centro hacia afuera, en el orden real de la marca:
+   naranja (la punta), rojo, verde, azul, rojo y naranja. */
+.marcas--portada .marca--region .capa--c1 {animation-delay:1.35s}
+.marcas--portada .marca--region .capa--c2 {animation-delay:1.49s}
+.marcas--portada .marca--region .capa--c3 {animation-delay:1.63s}
+.marcas--portada .marca--region .capa--c4 {animation-delay:1.77s}
+.marcas--portada .marca--region .capa--c5 {animation-delay:1.91s}
+.marcas--portada .marca--region .capa--c6 {animation-delay:2.05s}
+.marcas--portada .marca--region .capa--txt{animation-delay:2.24s}
+
+/* La punta del centro baja desde arriba; el resto crece desde su base */
+.marcas--portada .marca--region .capa--c1{animation-name:bajarPunta}
+@keyframes bajarPunta{
+  from{clip-path:inset(0 0 100% 0);opacity:0}
+  60%{opacity:1}
+  to{clip-path:inset(0 0 0 0);opacity:1}
+}
 
 @keyframes crecerCapa{
   from{clip-path:inset(100% 0 0 0);opacity:0}
