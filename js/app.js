@@ -360,7 +360,7 @@ function buildTour(){
     } else if(s.kind === 'trans'){
       const colores = ['var(--green-d)','var(--yellow-d)','var(--teal-d)','var(--coral-d)'];
       inner = '<div class="inner"><div class="kick">Contexto</div><h3>Cuatro <em>transiciones</em> que abren oportunidades</h3>'
-        + '<p class="tpista">Hacé clic en cada transición para ver de qué se trata.</p>'
+        + '<p class="tpista">Haz clic en cada transición para ver de qué se trata.</p>'
         + rejillaHTML(TRANS.map((t,k)=>({
             titulo: t.lab.replace('Transición ',''),
             texto: t.txt,
@@ -380,7 +380,7 @@ function buildTour(){
     } else if(s.kind === 'attrs'){
       const colores = ['var(--coral-d)','var(--yellow-d)','var(--green-d)'];
       inner = '<div class="inner"><div class="kick">Objetivo al 2031</div><h3>Tres atributos de la <em>región que queremos</em></h3>'
-        + '<p class="tpista">Hacé clic en cada atributo para ver qué significa.</p>'
+        + '<p class="tpista">Haz clic en cada atributo para ver qué significa.</p>'
         + rejillaHTML(['t-res','t-int','t-pro'].map((id,k)=>{
             const d = byId(id);
             return { titulo: d.t, texto: (d.lead||'') + ' ' + (d.what||''), color: colores[k] };
@@ -392,7 +392,7 @@ function buildTour(){
       const bg = s.lvl===2?'var(--yellow)':(s.lvl===3?'var(--teal-d)':'var(--coral-d)');
       const fg = s.lvl===2?'#4A4322':'#fff';
       inner = '<div class="inner"><div class="kick">'+s.kick+'</div><h3>'+s.h+'</h3><p>'+s.p+'</p>'
-        + '<p class="tpista">Hacé clic en cada una para ver el detalle.</p>'
+        + '<p class="tpista">Haz clic en cada una para ver el detalle.</p>'
         + rejillaHTML(items.map(d=>({
             titulo: d.t,
             texto: (d.lead||'') + ' ' + (d.what||''),
@@ -491,7 +491,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   // Se incluyen los encabezados de sección, la barra de herramientas y el pie,
   // para que al bajar vaya apareciendo todo y no solo las tarjetas.
   // Ojo: nada de anidar un grupo dentro de otro. #chips va dentro de .toolbar,
-  // así que se revela con ella y no aparece acá.
+  // así que se revela con ella y no aparece aquí.
   const grupos = [
     '#attrs', '#forces', '#valor', '#agendas', '#trans', '#stats', '#tl'
   ];
@@ -715,7 +715,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
    ARRANQUE DE LOS VIDEOS
    El atributo autoplay no siempre alcanza. En iPhone lo bloquean el modo
    de bajo consumo y el ahorro de datos, y algunos navegadores exigen que
-   la reproducción empiece después de un gesto de la persona. Acá se
+   la reproducción empiece después de un gesto de la persona. Aquí se
    intenta arrancar cada video y, si no se puede, se reintenta con el
    primer toque en la pantalla.
 
@@ -837,7 +837,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
         + (fallos.length ? '\n\nBloqueos:\n' + fallos.map(f => '  ' + f.archivo + ': ' + f.motivo).join('\n') : '')
         + (reemplazados.length ? '\n\nPasaron a imagen fija:\n'
             + reemplazados.map(f => '  ' + f.archivo + ': ' + f.motivo).join('\n') : '')
-        + '\n\n(Tocá acá para cerrar)';
+        + '\n\n(Toca aquí para cerrar)';
       caja.addEventListener('click', () => caja.remove());
       document.body.appendChild(caja);
     }, 2500);

@@ -3,8 +3,8 @@
 Micrositio de una sola página con cuatro tramos, en este orden:
 
 1. **Portada** con el collage ilustrado y el acceso al recorrido guiado.
-2. **Recorrido guiado**: nueve pantallas a pantalla completa que cuentan la estrategia
-   antes de entrar al mapa.
+2. **Recorrido guiado**: ocho pantallas completas que cuentan la estrategia antes de
+   entrar al mapa.
 3. **Mapa estratégico**: los cuatro niveles del árbol, con buscador y filtros por nivel.
    Cada tarjeta abre un panel lateral con el detalle.
 4. **Contexto y trayectoria**: las cuatro transiciones, las cifras alcanzadas y la línea
@@ -25,10 +25,15 @@ El sitio se actualiza solo: cada `git push` a `main` vuelve a publicarlo en un p
 
 ### Importante al publicar cambios
 
-Los archivos se enlazan con un número de versión (`css/estilos.css?v=11`). **Cada vez que
-edites el CSS o los JS, subí ese número en las tres líneas de `index.html`.** Si no, quien
-ya visitó la página sigue viendo la versión anterior. Para forzar la recarga en tu
-navegador: **Cmd + Shift + R**.
+Usa el atajo, que se encarga de todo:
+
+```bash
+./publicar.sh "qué cambiaste"
+```
+
+Sube el número de versión en los tres lugares que corresponde, guarda los cambios y los
+publica. Quien tenga la página abierta la recarga sola, porque la página compara su
+versión contra `version.txt` y se actualiza si detecta una más nueva.
 
 ## Estructura de archivos
 
@@ -37,7 +42,8 @@ index.html          Estructura de la página y textos de los encabezados de secc
 css/estilos.css     Diseño base + una capa de animaciones al final, separada y comentada
 js/contenido.js     👈 CONTENIDO — tarjetas, transiciones, cifras, hitos y recorrido
 js/app.js           Lógica: dibuja todo, maneja el panel, el buscador y el recorrido
-img/                47 imágenes del collage, las franjas y las fotos de contexto
+img/                49 imágenes: collage, franjas, fotos de contexto y el logo
+video/              Los animales, en video WebM y en WebP animado
 ```
 
 ## Cómo cambiar los textos
@@ -60,15 +66,15 @@ Cada una de las 19 tarjetas es una entrada de `DATA`:
  links:["v-fin","a-tal"]},         // tarjetas relacionadas, por id
 ```
 
-El campo `lvl` define el nivel (1 objetivo, 2 oportunidades, 3 valor agregado,
-4 agendas institucionales) y con él, el color.
+El campo `lvl` define el nivel (1 objetivo, 2 oportunidades, 3 transversales,
+4 habilitadoras) y con él, el color.
 
 ### El buscador
 
 `temas` alimenta el buscador con sinónimos que no están escritos en el texto visible:
 por eso la tarjeta **Ambiental** se enciende al buscar `agricultura`, aunque esa palabra
 no aparezca en su párrafo. El buscador no distingue mayúsculas ni acentos (`energia`
-encuentra `Energética`) y, si escribís varias palabras, exige que estén todas.
+encuentra `Energética`) y, si escribes varias palabras, exige que estén todas.
 
 ### Las otras secciones
 

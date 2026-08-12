@@ -227,7 +227,7 @@ footer.foot strong{color:var(--ink-2)}
 
 /* =========================================================
    CAPA DE ANIMACIONES
-   Todo lo de abajo se agregó sobre el diseño base. Nada de acá
+   Todo lo de abajo se agregó sobre el diseño base. Nada de aquí
    cambia colores ni medidas: solo movimiento.
    ========================================================= */
 
@@ -650,7 +650,7 @@ video.tdeco{
 /* =========================================================
    RECORRIDO GUIADO EN CELULAR
    En pantalla chica las ilustraciones se cruzaban con el título y el
-   texto largo quedaba cortado. Acá se prioriza que se lea.
+   texto largo quedaba cortado. Aquí se prioriza que se lea.
    ========================================================= */
 
 @media(max-width:760px){

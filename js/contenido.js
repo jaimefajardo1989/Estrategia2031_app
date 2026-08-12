@@ -218,7 +218,7 @@ const TL = [
 
 
 const TOUR = [
- // El texto de la portada del recorrido se edita acá
+ // El texto de la portada del recorrido se edita aquí
  {kind:'cover',
   p:'Esta estrategia se construyó junto a los países accionistas, sus equipos técnicos, los equipos de CAF y un grupo de expertos internacionales, con el propósito de entender el contexto global al que nos enfrentamos en los próximos años. De ese diálogo surgió un rumbo compartido para acompañar a los países en aprovechar las oportunidades que hoy se le abren a la región a partir de las transiciones socioeconómicas, y en saldar los desbalances históricos que todavía marcan su desarrollo. Para que la resiliencia, la integración y la prosperidad se traduzcan en desarrollo y bienestar para todos los latinoamericanos y caribeños.'},
  {kind:'trans'},
