@@ -55,7 +55,6 @@ const COLLAGE = [
   // quede tapado por el árbol rojo.
   {s:IMG.flamingo, v:VID.flamenco, l:'34%', b:'0', h:'42%', z:3, p:.45, e:1.05},
   // v = video con fondo transparente; s queda como respaldo estático
-  {s:IMG.macaw, v:VID.guacamaya, l:'33%', b:'58%', h:'23%', z:4, mov:'vuela', p:.8, e:1.20, d:0},
   {s:IMG.hummingbird, v:VID.ave, l:'88%', b:'62%', h:'19%', z:4, mov:'aletea', p:.85, e:1.34, d:.5},
   {s:IMG.hummingbird, v:VID.colibri, l:'15%', b:'64%', h:'14%', z:4, mov:'aletea', p:.9, e:1.46, d:1.2},
   {s:IMG.dots_yellow,l:'44%',b:'46%', h:'12%', o:.85, z:1, mov:'flota', p:.35, e:.66, d:.4},
@@ -339,7 +338,7 @@ function buildTour(){
             color: colores[k]
           })), 4)
         + '</div>'
-        + decoHTML([{s:IMG.butterfly_a, st:'right:5%;top:8%;height:14%'},{s:IMG.dots_teal, st:'left:1%;bottom:6%;height:8%;opacity:.8'}]);
+        + decoHTML([{s:IMG.hummingbird, v:VID.ave, st:'right:4%;top:6%;height:20%'},{s:IMG.dots_teal, st:'left:1%;bottom:6%;height:8%;opacity:.8'}]);
     } else if(s.kind === 'goal'){
       inner = '<div class="inner"><div class="kick">Objetivo al 2031</div>'
         + '<h3>Una región más <em>resiliente, integrada y próspera</em>, donde el desarrollo sostenible se traduce en bienestar para cada persona</h3></div>'
