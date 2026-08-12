@@ -65,20 +65,36 @@ const COLLAGE = [
 const SIN_MOVIMIENTO = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * Las dos fuentes de cada ave, en este orden a propósito:
+ * Qué formato de video transparente le toca a este navegador.
  *
- *   1) .mov  HEVC con alfa. Es el único formato transparente que entiende
- *            Safari. Va declarado como video/quicktime, que Chrome y Firefox
- *            no reconocen, así que lo saltean sin descargarlo.
- *   2) .webm VP9 con alfa, para Chrome, Firefox y Edge. Safari reproduce
- *            WebM pero ignora su canal alfa, y por eso no puede ir primero:
- *            mostraría el recuadro gris del fondo original.
+ * WebKit (Safari, y TODOS los navegadores del iPhone y el iPad, que por
+ * política de Apple usan el mismo motor) reproduce WebM pero ignora su canal
+ * alfa: mostraría el recuadro gris del fondo original. Necesita HEVC con alfa.
+ * El resto —Chrome, Firefox, Edge— usa WebM VP9 con alfa.
  *
- * Cada navegador descarga solo el archivo que va a usar.
+ * Antes esto se resolvía con dos <source> y el tipo video/quicktime, que
+ * Chrome descarta. Funcionaba en Safari de escritorio pero no en iPhone,
+ * porque ahí ese tipo no se reconoce y caía al WebM. Ahora se elige en
+ * código, que no depende de cómo cada navegador interpreta el tipo.
  */
+const ua = navigator.userAgent;
+
+// Se descarta por motor, no por plataforma. Mirar navigator.platform o los
+// puntos táctiles da falsos positivos: un Mac con pantalla táctil, o un
+// navegador emulando un teléfono, se hacen pasar por iPad y entonces Chrome
+// recibiría HEVC, que no sabe mostrar con transparencia.
+const esChromium = /Chrome|Chromium|Edg|OPR/.test(ua);   // en iOS se llaman CriOS, EdgiOS…
+const esFirefox  = /Firefox/.test(ua);                   // en iOS se llama FxiOS
+// Lo que queda es WebKit: Safari de escritorio y todos los navegadores de
+// iPhone y iPad, que por política de Apple usan el mismo motor.
+const USA_HEVC = !esChromium && !esFirefox;
+
 function fuentesVideo(base){
-  return '<source src="' + base + '.mov" type="video/quicktime">'
-       + '<source src="' + base + '.webm" type="video/webm">';
+  // Para WebKit van las dos variantes de HEVC sin declarar tipo: si una no le
+  // sirve, prueba la otra. Sin atributo type no hay filtrado previo.
+  return USA_HEVC
+    ? '<source src="' + base + '.mp4"><source src="' + base + '.mov">'
+    : '<source src="' + base + '.webm" type="video/webm">';
 }
 
 /**

@@ -646,3 +646,38 @@ video.tdeco{
 @media (prefers-reduced-motion:reduce){
   .meta-pista i{animation:none}
 }
+
+/* =========================================================
+   RECORRIDO GUIADO EN CELULAR
+   En pantalla chica las ilustraciones se cruzaban con el título y el
+   texto largo quedaba cortado. Acá se prioriza que se lea.
+   ========================================================= */
+
+@media(max-width:760px){
+  /* Las ilustraciones se ocultan: en este ancho compiten con el texto y no
+     hay lugar donde ponerlas sin taparlo */
+  .tslide .tdeco{display:none}
+
+  /* El panel de explicación deja de estar superpuesto y pasa a fluir con el
+     contenido, así el texto largo se ve entero y la lámina se desplaza */
+  .texp{min-height:0;position:static}
+  .texp-uno{position:static;display:none;opacity:1;visibility:visible;transform:none}
+  .texp-uno.on{display:block}
+
+  /* Los botones del pie se salían del ancho */
+  .tour-foot{padding:10px 12px;gap:6px;flex-wrap:nowrap}
+  .tour-foot .nav-btn{padding:8px 11px;font-size:12px;white-space:nowrap}
+  .tour-foot #tclose{margin-left:6px !important;padding:8px 11px;font-size:12px}
+  .tdots{gap:5px;margin:0 4px}
+  .tdots button{width:6px;height:6px}
+  .tdots button[aria-current="true"]{width:16px}
+
+  .tslide h3{font-size:clamp(24px,6.4vw,34px)}
+  .tslide .inner{max-width:100%}
+}
+
+/* En pantallas muy angostas el buscador del mapa mostraba el texto cortado */
+@media(max-width:420px){
+  .search input{font-size:13px;padding-left:34px}
+  .search input::placeholder{font-size:12.5px}
+}
