@@ -791,7 +791,7 @@ video.tdeco{
 }
 
 /* Marca región: una capa por color, cada una crece desde su base */
-.marcas--portada .marca--region{position:relative;display:block;aspect-ratio:212/105}
+.marcas--portada .marca--region{position:relative;display:block;aspect-ratio:480/228}
 .marcas--portada .marca--region .capa{
   position:absolute;top:0;left:0;width:100%;height:auto;
   animation:crecerCapa .5s cubic-bezier(.2,.9,.3,1.2) both;
