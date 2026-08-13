@@ -906,10 +906,15 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
    * Suelta un ave dentro de un contenedor.
    *   alto  = de cuántos píxeles puede ser, para variar la distancia
    *   pausa = cuánto espera entre una pasada y la siguiente
+   *   banda = franja de altura, en % del contenedor, por donde puede volar.
+   *           Importa: el ave va detrás del contenido, así que si cruza por
+   *           donde hay tarjetas opacas no se ve. La banda la mantiene en las
+   *           zonas despejadas de cada sección.
    */
-  function soltarAve(contenedor, base, respaldo, alto, pausa){
+  function soltarAve(contenedor, base, respaldo, alto, pausa, banda){
     if (!contenedor) return;
     contenedor.style.position = 'relative';
+    const franja = banda || [6, 78];
 
     const capa = document.createElement('span');
     capa.className = 'ave-libre';
@@ -920,8 +925,8 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
 
     function cruzar(){
       const haciaLaDerecha = Math.random() < 0.5;
-      const y0 = azar(6, 78);
-      const y1 = Math.min(88, Math.max(2, y0 + azar(-14, 14)));
+      const y0 = azar(franja[0], franja[1]);
+      const y1 = Math.min(franja[1], Math.max(franja[0], y0 + azar(-10, 10)));
 
       ave.style.transform = haciaLaDerecha ? 'scaleX(1)' : 'scaleX(-1)';
       capa.style.height = azar(alto[0], alto[1]) + 'px';
@@ -938,10 +943,13 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
     window.setTimeout(cruzar, azar(2500, 7000));
   }
 
-  // El mapa estratégico: la guacamaya
-  soltarAve(document.getElementById('tree'), VID.guacamaya, IMG.macaw, [38,62], [5000,13000]);
-  // Las cuatro transiciones: el colibrí, más pequeño
-  soltarAve(document.querySelector('#contexto .wrap'), VID.colibri, IMG.hummingbird, [26,42], [6000,14000]);
-  // La trayectoria de CAF: el ave en blanco y negro
-  soltarAve(document.querySelector('#donde .wrap'), VID.ave, IMG.hummingbird2, [30,48], [6000,15000]);
+  // El mapa estratégico: la guacamaya. Aquí las filas dejan aire entre sí, así
+  // que puede cruzar por casi toda la altura.
+  soltarAve(document.getElementById('tree'), VID.guacamaya, IMG.macaw, [38,62], [5000,13000], [6,78]);
+  // Las cuatro transiciones: el colibrí, más pequeño. Las tarjetas son blancas y
+  // opacas de la mitad para abajo, así que vuela por la franja del encabezado.
+  soltarAve(document.querySelector('#contexto .wrap'), VID.colibri, IMG.hummingbird, [26,42], [5000,11000], [2,38]);
+  // La trayectoria de CAF: el ave en blanco y negro. Se cuelga de la sección
+  // entera (no del .wrap) para aprovechar también el aire de arriba.
+  soltarAve(document.getElementById('donde'), VID.ave, IMG.hummingbird2, [38,58], [4000,9000], [1,25]);
 })();
