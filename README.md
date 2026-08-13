@@ -133,6 +133,27 @@ encuentra `Energética`) y, si escribes varias palabras, exige que estén todas.
 - `TOUR` — las pantallas del recorrido guiado.
 - `IMG` — el catálogo de imágenes; los nombres apuntan a los archivos de `img/`.
 
+## Cómo se preparan los animales y las figuras animadas
+
+Cada animación va dos veces: **WebM con canal alfa** para Chrome, Firefox y Edge, y
+**WebP animado** para Safari y todos los navegadores de iPhone, que ignoran el alfa
+del WebM. La imagen fija de `img/` queda de respaldo y de póster.
+
+El WebP animado es el archivo caro: comprime mal el movimiento con transparencia y
+la calidad casi no cambia su peso, porque lo que pesa es el canal alfa cuadro a
+cuadro. Lo que sí lo baja, en orden de efecto:
+
+1. **Recortar el ciclo.** Buscar dos cuadros parecidos y quedarse con lo que hay
+   entre ellos. En los niños, el ciclo útil eran 6 de los 10 segundos.
+2. **Cerrar la costura con un fundido.** Los últimos cuadros se mezclan con los
+   primeros, con el peso de la cola bajando de 1 a 0. Si la rampa va al revés el
+   salto se sigue viendo.
+3. **Bajar a 10 cuadros por segundo**, descartando uno de cada cinco.
+4. **Reducir el ancho**, que es lo último porque es lo que se nota.
+
+Entre lo primero y lo segundo, los niños pasaron de 1.140 KB a 602 KB, y de paso
+dejaron de dar un salto cada vez que el ciclo volvía a empezar.
+
 ## Las animaciones
 
 Están todas al final de `css/estilos.css`, en un bloque separado, y en el bloque final de
