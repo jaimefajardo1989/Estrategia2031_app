@@ -6,7 +6,9 @@ const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'
    Antes eran tres tarjetas aparte debajo; ahora están donde se leen. */
 (function(){
   const attrs = ['t-res','t-int','t-pro'].map(byId);
-  const colores = ['var(--coral-d)','#ba8d0c','#6fa234'];
+  /* Tonos oscuros de cada atributo: son los únicos que se leen sobre el
+     verde de la tarjeta. Los claros del sitio quedan en 1,3 y 1,4 a 1. */
+  const colores = ['#711d14','#4d3900','#2b430f'];
   let frase = esc(byId('obj').t);
   attrs.forEach((d,k)=>{
     frase = frase.replace(esc(d.t),
@@ -869,65 +871,77 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
 })();
 
 /* =========================================================
-   UN AVE CRUZA EL MAPA
-   Aparece cada tanto en un punto al azar del árbol, lo cruza planeando y
-   se desvanece. Va detrás de las tarjetas y delante del fondo, para que
-   dé vida sin estorbar la lectura.
+   AVES QUE CRUZAN LAS SECCIONES
+   Cada tanto aparece un ave en un punto al azar, cruza planeando y se
+   desvanece. Va detrás del contenido y delante del fondo, así da vida
+   sin estorbar la lectura. Se usa en el mapa y en las dos secciones
+   siguientes, con un ave distinta en cada una.
    ========================================================= */
 (function(){
   'use strict';
-
-  const arbol = document.getElementById('tree');
-  if (!arbol || SIN_MOVIMIENTO) return;
-
-  arbol.style.position = 'relative';
-
-  const capa = document.createElement('span');
-  capa.className = 'ave-libre';
-  capa.setAttribute('aria-hidden','true');
-
-  // Mismo criterio que en la portada: video donde se puede, imagen animada en WebKit
-  let ave;
-  if (USA_ANIMADO) {
-    ave = document.createElement('img');
-    ave.src = VID.guacamaya + '_anim.webp';
-    ave.alt = '';
-    ave.onerror = () => { ave.onerror = null; ave.src = IMG.macaw; };
-  } else {
-    ave = document.createElement('video');
-    ave.autoplay = true; ave.loop = true; ave.muted = true; ave.playsInline = true;
-    ave.setAttribute('playsinline',''); ave.setAttribute('muted','');
-    ave.poster = IMG.macaw;
-    ave.dataset.fija = IMG.macaw;
-    ave.innerHTML = fuentesVideo(VID.guacamaya);
-  }
-  capa.appendChild(ave);
-  arbol.appendChild(capa);
+  if (SIN_MOVIMIENTO) return;
 
   const azar = (a,b) => a + Math.random() * (b - a);
 
-  function cruzar(){
-    const haciaLaDerecha = Math.random() < 0.5;
-    // Altura de entrada y de salida: el vuelo cae o sube un poco, nunca recto
-    const y0 = azar(6, 78);
-    const y1 = Math.min(88, Math.max(2, y0 + azar(-14, 14)));
-    const x0 = haciaLaDerecha ? -14 : 104;
-    const x1 = haciaLaDerecha ? 104 : -14;
-
-    ave.style.transform = haciaLaDerecha ? 'scaleX(1)' : 'scaleX(-1)';
-    capa.style.height = azar(38, 62) + 'px';   // algunas pasadas más cerca que otras
-
-    const vuelo = capa.animate([
-      { left: x0 + '%', top: y0 + '%', opacity: 0 },
-      { opacity: 0.9, offset: 0.16 },
-      { opacity: 0.9, offset: 0.82 },
-      { left: x1 + '%', top: y1 + '%', opacity: 0 }
-    ], { duration: azar(11000, 17000), easing: 'ease-in-out', fill: 'forwards' });
-
-    // Entre pasada y pasada se toma su tiempo, para que no resulte repetitivo
-    vuelo.onfinish = () => window.setTimeout(cruzar, azar(5000, 13000));
+  /* Crea el ave con el formato que le sirva a este navegador, igual que
+     en la portada: video donde se puede, imagen animada en WebKit. */
+  function crearAve(base, respaldo){
+    if (USA_ANIMADO) {
+      const img = document.createElement('img');
+      img.src = base + '_anim.webp';
+      img.alt = '';
+      img.onerror = () => { img.onerror = null; img.src = respaldo; };
+      return img;
+    }
+    const v = document.createElement('video');
+    v.autoplay = true; v.loop = true; v.muted = true; v.playsInline = true;
+    v.setAttribute('playsinline',''); v.setAttribute('muted','');
+    v.poster = respaldo;
+    v.dataset.fija = respaldo;
+    v.innerHTML = fuentesVideo(base);
+    return v;
   }
 
-  // La primera pasada no arranca de inmediato: primero se lee el mapa
-  window.setTimeout(cruzar, azar(2500, 6000));
+  /**
+   * Suelta un ave dentro de un contenedor.
+   *   alto  = de cuántos píxeles puede ser, para variar la distancia
+   *   pausa = cuánto espera entre una pasada y la siguiente
+   */
+  function soltarAve(contenedor, base, respaldo, alto, pausa){
+    if (!contenedor) return;
+    contenedor.style.position = 'relative';
+
+    const capa = document.createElement('span');
+    capa.className = 'ave-libre';
+    capa.setAttribute('aria-hidden','true');
+    const ave = crearAve(base, respaldo);
+    capa.appendChild(ave);
+    contenedor.appendChild(capa);
+
+    function cruzar(){
+      const haciaLaDerecha = Math.random() < 0.5;
+      const y0 = azar(6, 78);
+      const y1 = Math.min(88, Math.max(2, y0 + azar(-14, 14)));
+
+      ave.style.transform = haciaLaDerecha ? 'scaleX(1)' : 'scaleX(-1)';
+      capa.style.height = azar(alto[0], alto[1]) + 'px';
+
+      const vuelo = capa.animate([
+        { left: (haciaLaDerecha ? -14 : 104) + '%', top: y0 + '%', opacity: 0 },
+        { opacity: 0.9, offset: 0.16 },
+        { opacity: 0.9, offset: 0.82 },
+        { left: (haciaLaDerecha ? 104 : -14) + '%', top: y1 + '%', opacity: 0 }
+      ], { duration: azar(11000, 17000), easing: 'ease-in-out', fill: 'forwards' });
+
+      vuelo.onfinish = () => window.setTimeout(cruzar, azar(pausa[0], pausa[1]));
+    }
+    window.setTimeout(cruzar, azar(2500, 7000));
+  }
+
+  // El mapa estratégico: la guacamaya
+  soltarAve(document.getElementById('tree'), VID.guacamaya, IMG.macaw, [38,62], [5000,13000]);
+  // Las cuatro transiciones: el colibrí, más pequeño
+  soltarAve(document.querySelector('#contexto .wrap'), VID.colibri, IMG.hummingbird, [26,42], [6000,14000]);
+  // La trayectoria de CAF: el ave en blanco y negro
+  soltarAve(document.querySelector('#donde .wrap'), VID.ave, IMG.hummingbird2, [30,48], [6000,15000]);
 })();

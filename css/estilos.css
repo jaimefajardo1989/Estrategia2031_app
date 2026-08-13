@@ -920,34 +920,66 @@ video.tdeco{
 
 /* =========================================================
    LAS TRES PALABRAS DENTRO DE LA TARJETA DEL OBJETIVO
-   La tarjeta es verde con texto blanco, así que los colores no se pueden
-   aplicar a la letra: el verde sobre verde desaparecería. Cada palabra va
-   en una pastilla blanca con su color, que además la señala como pulsable.
+   Van sin pastilla: solo la letra, en un tono oscuro de su propio color.
+   Sobre el verde de la tarjeta los tonos claros del sitio no se leen
+   (1,3:1 el amarillo, 1,4:1 el coral); estos llegan a 4,5:1.
+
+   Cada palabra lleva un destello que la recorre cada tanto, para que se
+   note que se puede pulsar sin agregar bordes ni fondos.
    ========================================================= */
 
 .goal{position:relative}
 
 .palabra--enTarjeta{
-  display:inline-block;
   font:inherit;
   color:var(--c);
-  background:#fff;
+  background:none;
   border:0;
-  border-radius:var(--r);
-  padding:.06em .42em;
-  margin:0 .04em;
+  padding:0 .04em;
+  margin:0;
   cursor:pointer;
+  position:relative;
   line-height:inherit;
-  box-shadow:0 2px 6px rgba(31,58,64,.14);
-  transition:transform .3s var(--rebote),box-shadow .3s var(--curva);
+  transition:color .25s var(--curva);
 }
-.palabra--enTarjeta:hover,
-.palabra--enTarjeta:focus-visible{
-  transform:translateY(-2px) scale(1.04);
-  box-shadow:0 6px 16px rgba(31,58,64,.24);
-  outline:none;
+
+/* El destello: un barrido claro que cruza la palabra y vuelve cada tanto */
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .palabra--enTarjeta{
+    color:transparent;
+    background-image:linear-gradient(100deg,
+      var(--c) 0 42%, rgba(255,255,255,.92) 50%, var(--c) 58% 100%);
+    background-size:280% 100%;
+    background-position:100% 0;
+    -webkit-background-clip:text;
+    background-clip:text;
+    animation:destelloPalabra 5.5s ease-in-out infinite;
+    animation-delay:var(--dp,0s);
+  }
 }
-.palabra--enTarjeta:focus-visible{box-shadow:0 6px 16px rgba(31,58,64,.24),0 0 0 3px #fff}
+@keyframes destelloPalabra{
+  0%      {background-position:100% 0}
+  32%,100%{background-position:0 0}
+}
+/* Cada una destella en su momento, no las tres a la vez */
+.goal .palabra--enTarjeta:nth-of-type(1){--dp:0s}
+.goal .palabra--enTarjeta:nth-of-type(2){--dp:.5s}
+.goal .palabra--enTarjeta:nth-of-type(3){--dp:1s}
+
+/* Subrayado que aparece al pasar el cursor, como en el recorrido */
+.palabra--enTarjeta::after{
+  content:"";
+  position:absolute;
+  left:.04em; right:.04em; bottom:-.06em;
+  height:.08em;
+  background:var(--c);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .32s var(--rebote);
+}
+.palabra--enTarjeta:hover::after,
+.palabra--enTarjeta:focus-visible::after{transform:scaleX(1)}
+.palabra--enTarjeta:focus-visible{outline:3px solid var(--c);outline-offset:3px;border-radius:4px}
 
 /* El "Ver detalle" pasa a ser un botón, para poder llegar con el teclado */
 .goal .more{
@@ -961,11 +993,9 @@ video.tdeco{
   padding:2px 6px;
 }
 
-@media(max-width:600px){
-  .palabra--enTarjeta{padding:.04em .3em}
-}
 @media (prefers-reduced-motion:reduce){
-  .palabra--enTarjeta{transition:none}
+  .palabra--enTarjeta{animation:none;background-image:none;color:var(--c)}
+  .palabra--enTarjeta::after{transition:none}
 }
 
 /* El ave que cruza el mapa: por detrás de las tarjetas, por delante del fondo */
@@ -984,8 +1014,10 @@ video.tdeco{
   max-width:none;
   display:block;
 }
-/* Las filas del árbol quedan por encima del ave */
-#tree .row{position:relative;z-index:1}
+/* El contenido de cada sección queda por encima del ave */
+#tree .row,
+#contexto .sec-head,#contexto .trans,
+#donde .sec-head,#donde .tl,#donde .stats{position:relative;z-index:1}
 
 @media(max-width:760px){
   .ave-libre{display:none}   /* en pantalla chica solo estorbaría */
