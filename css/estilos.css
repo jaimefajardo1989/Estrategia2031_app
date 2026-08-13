@@ -5,6 +5,11 @@
   --green:#8DC63F; --green-d:#7CB63A;
   --ink:#3F4A50; --ink-2:#5C6970; --mute:#8A979E;
   --line:#E6EDEF; --soft:#F5FAFA; --white:#fff;
+  /* Versión oscura de cada color de nivel, para cuando el color va en el texto
+     y no en un fondo. Los de arriba se ven bien como relleno pero sobre blanco
+     se quedan cortos: el amarillo llega a 1,6 a 1. Estos cuatro dan 4,5 a 1
+     sobre --soft, manteniendo el mismo tono. */
+  --teal-tx:#008075; --coral-tx:#DC2814; --yellow-tx:#906D09; --green-tx:#547C27;
   --r:26px; --shadow:0 10px 30px rgba(31,58,64,.10);
   --shadow-lg:0 24px 60px rgba(31,58,64,.18);
   --ff:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",system-ui,sans-serif;
@@ -626,6 +631,54 @@ video.tdeco{
 .meta-pie b{font-size:13.5px;color:var(--ink);font-variant-numeric:tabular-nums}
 .meta-fin{text-align:right;align-items:flex-end}
 .meta-flecha{font-size:15px;color:var(--mute);align-self:center}
+
+/* ---- Agendas con varios indicadores ----------------------------------
+   Cada meta es una ficha: la cifra cuenta desde cero y debajo se llena una
+   barra o se dibuja un anillo. Entran una tras otra, no todas a la vez. */
+.metas{display:grid;gap:12px}
+.meta2{
+  background:var(--soft);border:1px solid var(--line);border-radius:16px;
+  padding:16px 18px 15px;
+  opacity:0;transform:translateY(14px);
+  transition:opacity .5s ease, transform .5s var(--rebote);
+}
+.meta2.va{opacity:1;transform:none}
+
+.meta2-cifra{
+  display:block;font-size:34px;font-weight:700;letter-spacing:-.035em;line-height:1;
+  color:var(--c);font-variant-numeric:tabular-nums;
+}
+/* Una raya que se traza bajo la cifra. A propósito no tiene canal de fondo:
+   con canal se leería como una barra de avance, y estas dos metas son montos
+   totales, no un porcentaje cumplido. */
+.meta2-raya{margin-top:12px;height:3px}
+.meta2-raya i{
+  display:block;height:100%;width:56px;border-radius:3px;background:var(--c);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 1s cubic-bezier(.22,.9,.25,1);
+  transition-delay:.15s;
+}
+.meta2.va .meta2-raya i{transform:scaleX(1)}
+
+/* El anillo sí mide algo real: el indicador es un porcentaje. */
+.meta2-anillo{position:relative;width:80px;height:80px;margin-bottom:8px}
+.meta2-anillo svg{width:100%;height:100%;transform:rotate(-90deg)}
+.meta2-anillo circle{fill:none;stroke-width:8;stroke-linecap:round}
+.meta2-anillo .pista{stroke:#fff}
+.meta2-anillo .linea{stroke:var(--c);transition:stroke-dashoffset 1.4s cubic-bezier(.22,.9,.25,1) .15s}
+.meta2-anillo .meta2-cifra{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:21px;letter-spacing:-.02em;
+}
+
+.meta2-uni{display:block;margin-top:5px;font-size:12.5px;color:var(--ink-2)}
+.meta2-nombre{margin:11px 0 0;font-size:13px;line-height:1.4;color:var(--mute)}
+
+@media(prefers-reduced-motion:reduce){
+  .meta2{opacity:1;transform:none}
+  .meta2-raya i{transform:scaleX(1);transition:none}
+  .meta2-anillo .linea{transition:none}
+}
 
 /* La etiqueta de fila del mapa, ahora es un botón */
 .rlabel--abrible{

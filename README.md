@@ -69,6 +69,31 @@ Cada una de las 19 tarjetas es una entrada de `DATA`:
 El campo `lvl` define el nivel (1 objetivo, 2 oportunidades, 3 transversales,
 4 habilitadoras) y con él, el color.
 
+### Los indicadores y metas de una agenda
+
+Una agenda puede tener **una** meta (`meta`, la barra que va del punto de partida
+al destino) o **varias** (`metas`, las fichas con la cifra que cuenta desde cero).
+La segunda es la forma que conviene cuando los indicadores ya están validados:
+
+```js
+metas:[
+ {nombre:"Financiamiento aprobado para operaciones de integración regional",
+  valor:10000, pre:"USD ", uni:"millones", forma:"barra"},
+ {nombre:"Países de ALC con al menos una operación de integración regional",
+  valor:100, suf:"%", uni:"de los países de la región", forma:"anillo"}
+]
+```
+
+- `forma:"barra"` → cifra grande y una raya que se traza debajo. Para montos.
+- `forma:"anillo"` → un anillo que se dibuja hasta el valor. Solo para porcentajes,
+  porque ahí el anillo mide algo real.
+- `pre` y `suf` se pegan antes y después del número (`USD `, `%`).
+- `validado:true` en la tarjeta cambia la nota del pie: deja de advertir que el
+  contenido es un borrador.
+
+Al 2026-08-13 la única agenda con indicadores validados es **Integración regional
+pragmática**. Las demás siguen con cifras de ejemplo.
+
 ### El buscador
 
 `temas` alimenta el buscador con sinónimos que no están escritos en el texto visible:

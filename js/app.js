@@ -159,10 +159,79 @@ const fmt = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
  * Todos los valores van también como texto, así que la barra no esconde
  * ninguna información.
  */
+/**
+ * Cuenta un número desde cero hasta su valor, con frenada al final.
+ * Reserva el ancho del número completo antes de empezar, para que la fila
+ * no baile mientras las cifras crecen.
+ */
+function contarHasta(nodo, valor, pre, suf){
+  const escribir = v => { nodo.textContent = (pre||'') + fmt.format(v) + (suf||''); };
+  if (SIN_MOVIMIENTO){ escribir(valor); return; }
+  nodo.style.minWidth = '';
+  escribir(valor);
+  nodo.style.minWidth = nodo.getBoundingClientRect().width + 'px';
+
+  const dura = 1400, t0 = performance.now();
+  (function paso(t){
+    const p = Math.min(1, (t - t0) / dura);
+    const suave = 1 - Math.pow(1 - p, 3);          // frena al acercarse
+    escribir(valor <= 100 ? Math.round(valor*suave) : Math.round(valor*suave/10)*10);
+    if (p < 1) requestAnimationFrame(paso); else escribir(valor);
+  })(t0);
+}
+
+/**
+ * Dibuja las metas al 2031 de una agenda que tiene varios indicadores.
+ * Cada una es una cifra que cuenta desde cero, acompañada de una barra que se
+ * llena o de un anillo que se dibuja, según convenga al indicador.
+ *
+ * La animación no se dispara al abrir el panel sino cuando el bloque entra en
+ * pantalla: casi siempre queda por debajo del pliegue y, si no, nadie la vería.
+ */
+function pintarMetas(lista, color){
+  const caja = document.getElementById('dr-meta-wrap');
+  caja.style.display = '';
+  caja.querySelector('h4').textContent = lista.length > 1 ? 'Las metas al 2031' : 'La meta al 2031';
+
+  const R = 34, C = 2 * Math.PI * R;               // radio y perímetro del anillo
+  document.getElementById('dr-meta').innerHTML =
+    '<div class="metas" style="--c:' + color + '">' + lista.map((m,i) =>
+      '<div class="meta2" style="--i:' + i + '">'
+      + (m.forma === 'anillo'
+          ? '<div class="meta2-anillo"><svg viewBox="0 0 80 80" aria-hidden="true">'
+            + '<circle class="pista" cx="40" cy="40" r="' + R + '"/>'
+            + '<circle class="linea" cx="40" cy="40" r="' + R + '"'
+            + ' style="stroke-dasharray:' + C.toFixed(1) + ';stroke-dashoffset:' + C.toFixed(1) + '"/>'
+            + '</svg><b class="meta2-cifra" data-v="' + m.valor + '"></b></div>'
+            + '<span class="meta2-uni">' + esc(m.uni || '') + '</span>'
+          : '<b class="meta2-cifra meta2-cifra--sola" data-v="' + m.valor + '"></b>'
+            + '<span class="meta2-uni">' + esc(m.uni || '') + '</span>'
+            + '<div class="meta2-raya"><i></i></div>')
+      + '<p class="meta2-nombre">' + esc(m.nombre) + '</p>'
+      + '</div>').join('') + '</div>';
+
+  const bloque = document.getElementById('dr-meta');
+  const ver = new IntersectionObserver(es => {
+    if(!es.some(e => e.isIntersecting)) return;
+    ver.disconnect();
+    bloque.querySelectorAll('.meta2').forEach((n,i) => window.setTimeout(() => {
+      n.classList.add('va');
+      const cifra = n.querySelector('.meta2-cifra');
+      contarHasta(cifra, +cifra.dataset.v, lista[i].pre, lista[i].suf);
+      const linea = n.querySelector('.linea');
+      if (linea) linea.style.strokeDashoffset = (C * (1 - lista[i].valor/100)).toFixed(1);
+    }, i * 260));
+  }, { root: drawer.querySelector('.dr-body'), threshold: 0.35 });
+  ver.observe(bloque);
+  // Si el panel se cierra antes de que el bloque llegue a verse, el observer
+  // muere con el próximo pintado; no hace falta desconectarlo a mano.
+}
+
 function pintarMeta(m, color){
   const caja = document.getElementById('dr-meta-wrap');
   if(!m){ caja.style.display = 'none'; return; }
   caja.style.display = '';
+  caja.querySelector('h4').textContent = 'La meta al 2031';
 
   const baja = m.hasta.valor < m.desde.valor;
   document.getElementById('dr-meta').innerHTML =
@@ -201,7 +270,14 @@ function openCard(id, push){
   lw.style.display = ls.length ? '' : 'none';
   document.getElementById('dr-links').innerHTML = ls.map(x=>
     '<button class="lchip" data-go="'+x.id+'"><i style="background:'+LEVELS[x.lvl].color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
-  pintarMeta(d.meta, L.color);
+  // Aquí el color va en el texto y en trazos finos, no de relleno: por eso el
+  // tono oscuro del nivel y no el de las tarjetas.
+  if (d.metas && d.metas.length) pintarMetas(d.metas, L.tono || L.color);
+  else pintarMeta(d.meta, L.color);
+  // Las agendas ya validadas no llevan la advertencia de borrador.
+  document.getElementById('dr-note').innerHTML = d.validado
+    ? 'Texto e indicadores validados para esta agenda.'
+    : 'Textos en borrador y cifras de ejemplo. Para editarlos, modifica el bloque <b>DATA</b> en <b>js/contenido.js</b>.';
 
   document.getElementById('dr-pos').textContent = (ORDER.indexOf(id)+1) + ' / ' + ORDER.length;
   document.getElementById('dr-prev').disabled = false;
@@ -239,6 +315,8 @@ function openLevel(lvl){
   document.getElementById('dr-what').textContent = e.what || '';
   document.getElementById('dr-acts').style.setProperty('--c', L.color);
   document.getElementById('dr-acts').innerHTML = (e.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
+  document.getElementById('dr-note').innerHTML =
+    'Textos en borrador. Para editarlos, modifica el bloque <b>LEVELS</b> en <b>js/contenido.js</b>.';
 
   // Las tarjetas de ese nivel quedan como accesos directos
   const ls = DATA.filter(d=>d.lvl===lvl);

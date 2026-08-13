@@ -62,28 +62,28 @@ const VID = {
    "explica" es lo que se abre al hacer clic en el nombre de la fila, a la
    izquierda del mapa: qué es ese tipo de agenda. */
 const LEVELS = {
-  1:{name:"Objetivo al 2031", color:"var(--green-d)", deco:IMG.macaw,
+  1:{name:"Objetivo al 2031", color:"var(--green-d)", tono:"var(--green-tx)", deco:IMG.macaw,
      explica:{
        t:"Objetivo al 2031",
        lead:"El punto de llegada que ordena todo el ciclo estratégico.",
        what:"No es una consigna: es el criterio con el que se decide qué priorizar cuando hay que elegir. Todo lo que está más abajo en el mapa existe para acercarnos a él. Los tres atributos —resiliente, integrada y próspera— describen la región que queremos ver, y el cierre de la frase marca la vara: que el desarrollo se traduzca en bienestar para cada persona, no solo en indicadores agregados.",
        acts:["Traducir el crecimiento del Banco en bienestar concreto","Medir el avance por impacto y no solo por volumen","Sostener la cercanía con los países como ancla de la agenda"]}},
 
-  2:{name:"Oportunidades",    color:"var(--yellow-d)",deco:IMG.butterfly_a,
+  2:{name:"Oportunidades",    color:"var(--yellow-d)", tono:"var(--yellow-tx)",deco:IMG.butterfly_a,
      explica:{
        t:"Oportunidades",
        lead:"Dónde está el potencial de la región hacia 2031.",
        what:"Seis transformaciones estructurales que ya están en marcha y que van a ocurrir con nosotros o sin nosotros: ambiental, energética, digital, demográfica, territorial y productiva. No son sectores ni áreas de negocio, son terrenos donde una intervención bien puesta tiene efecto multiplicador. Funcionan como filtro: una institución con recursos limitados no puede estar en todo, y estas seis indican dónde concentrar el esfuerzo.",
        acts:["Identificar y anticipar oportunidades en cada frente","Materializarlas en operaciones de crédito y cooperación técnica","Llegar temprano, que es donde se marca la diferencia"]}},
 
-  3:{name:"Transversales",   color:"var(--teal-d)",  deco:IMG.hummingbird2,
+  3:{name:"Transversales",   color:"var(--teal-d)", tono:"var(--teal-tx)",  deco:IMG.hummingbird2,
      explica:{
        t:"Agendas transversales",
        lead:"Lo que CAF aporta y que atraviesa todas las agendas.",
        what:"No son áreas de negocio ni líneas de producto: son las seis capacidades que se activan igual esté el proyecto en energía, en agua o en educación. Responden a una sola pregunta: qué ponemos nosotros que otro no pone. Porque el financiamiento solo es una mercancía —hay muchas fuentes de capital y varias más baratas—; lo que diferencia a una institución de desarrollo es lo que viene con el dinero.",
        acts:["Conocimiento, capacidad de convocar y acompañamiento en la ejecución","Se combinan entre sí: un proyecto bien hecho activa varias a la vez","Deben permear toda la acción del Banco, no algunas operaciones"]}},
 
-  4:{name:"Habilitadoras", color:"var(--coral-d)", deco:IMG.flamingo,
+  4:{name:"Habilitadoras", color:"var(--coral-d)", tono:"var(--coral-tx)", deco:IMG.flamingo,
      explica:{
        t:"Agendas habilitadoras",
        lead:"Las condiciones internas que hacen posible todo lo demás.",
@@ -152,10 +152,22 @@ const DATA = [
  what:"En el ciclo anterior CAF amplió su portafolio con instrumentos como el Financiamiento Extraordinario de Liquidez y la Línea de Crédito Contingente Verde. Hacia 2031 se trata de profundizar esa lógica: productos a la medida, garantías, moneda local e intermediarios financieros que llevan el financiamiento hasta la última milla.",
  acts:["Líneas contingentes verdes y financiamiento de liquidez","Garantías, moneda local y mitigación de riesgos","Financiamiento a través de intermediarios y pymes","Trazabilidad del impacto verde, social y digital"],
  links:["a-sos","f-amb","f-pro"]},
-{id:"v-int", meta:{nombre:"Proyectos binacionales o regionales",unidad:"cantidad acumulada",desde:{etiqueta:"2025",valor:0},hasta:{etiqueta:"Meta 2031",valor:45}},temas:"fronteras pasos fronterizos corredores logística interconexión comercio regional cuencas compartidas aduanas bienes públicos regionales cooperación técnica",lvl:3,t:"Integración regional pragmática",sub:"Integración por proyectos, no por declaraciones",
- lead:"Entre 2021 y 2025 CAF aprobó cerca de USD 4.489 millones para la integración de la región.",
- what:"La integración avanza cuando se traduce en obras y reglas concretas: corredores viales y pasos de frontera, cable submarino, interconexión energética, expansión ferroviaria y facilitación del comercio. Es una integración pragmática, que empieza por proyectos con retorno visible para más de un país.",
- acts:["Corredores logísticos y pasos de frontera","Interconexión energética y digital","Facilitación de comercio y armonización regulatoria","Bienes públicos regionales y cooperación técnica"],
+/* Esta agenda ya tiene texto e indicadores validados: por eso usa "metas" (en
+   plural, la tarjeta de cifras animadas) y lleva validado:true, que cambia la
+   nota del pie para no marcarla como borrador. */
+{id:"v-int", validado:true,
+ metas:[
+  {nombre:"Financiamiento aprobado para operaciones de integración regional",
+   valor:10000, pre:"USD ", uni:"millones", forma:"barra"},
+  {nombre:"Recursos movilizados en asistencia técnica para integración regional",
+   valor:240, pre:"USD ", uni:"millones", forma:"barra"},
+  {nombre:"Países de ALC con al menos una operación de crédito o cooperación técnica de integración regional",
+   valor:100, suf:"%", uni:"de los países de la región", forma:"anillo"}
+ ],
+ temas:"fronteras pasos fronterizos corredores logística interconexión comercio regional cuencas compartidas aduanas bienes públicos regionales cooperación técnica interoperabilidad convergencia regulatoria cadenas de valor proveedores proyectos multinacionales corredores de alto valor estratégico",lvl:3,t:"Integración regional pragmática",sub:"Integración por proyectos, no por declaraciones",
+ lead:"Conectar, comerciar y coproducir: tres frentes para una integración tangible.",
+ what:"Al 2031, CAF impulsará una agenda de integración regional pragmática para transformar la integración en proyectos, inversiones y resultados concretos para los países. Su acción se concentrará en tres frentes complementarios: conectar, mediante corredores estratégicos que integren transporte, energía, conectividad digital, logística y fronteras; comerciar, facilitando el intercambio regional a través de mayor interoperabilidad y convergencia regulatoria; y coproducir, promoviendo cadenas regionales de valor, inversión y desarrollo de proveedores. Para hacerlo posible, CAF fortalecerá la preparación y financiamiento de proyectos multinacionales y actuará como articulador entre países, combinando financiamiento, conocimiento y coordinación institucional para consolidar Corredores de Alto Valor Estratégico y una integración regional más tangible, competitiva y efectiva.",
+ acts:["Conectar: corredores estratégicos que integren transporte, energía, conectividad digital, logística y fronteras","Comerciar: interoperabilidad y convergencia regulatoria que faciliten el intercambio regional","Coproducir: cadenas regionales de valor, inversión y desarrollo de proveedores","Preparación y financiamiento de proyectos multinacionales, con CAF como articulador entre países","Consolidación de Corredores de Alto Valor Estratégico"],
  links:["t-int","f-ene","f-ter"]},
 {id:"v-con", meta:{nombre:"Estudios que derivan en una decisión",unidad:"% de los estudios",desde:{etiqueta:"2025",valor:28},hasta:{etiqueta:"Meta 2031",valor:60}},temas:"estudios investigación datos evidencia análisis prospectiva políticas públicas evaluación de impacto conocimiento publicaciones diálogo",lvl:3,t:"Conocimiento prospectivo",sub:"Anticipar las transiciones con evidencia",
  lead:"Conocimiento que se convierte en mejores decisiones de política pública y mejores operaciones.",
