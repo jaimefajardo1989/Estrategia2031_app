@@ -297,9 +297,19 @@ function verMapa(d){
     + '<p class="mdet-pie">' + esc(d.pie) + '</p>';
 }
 
-/** Enciende los países del mapa en desorden, llevando la cuenta al lado. */
-function encenderMapa(caja){
-  const paises = Array.from(caja.querySelectorAll('svg path'));
+/**
+ * Enciende los países del mapa en desorden, llevando la cuenta al lado.
+ * Solo se encienden los de la lista; el resto de la región queda dibujado en
+ * gris, para que se vea dónde están los accionistas dentro del continente.
+ */
+function encenderMapa(caja, lista){
+  const todos = Array.from(caja.querySelectorAll('svg path'));
+  const marcados = lista && lista.length ? new Set(lista) : null;
+  const paises = marcados
+    ? todos.filter(p => marcados.has(p.dataset.p))
+    : todos;
+  todos.forEach(p => { if (marcados && !marcados.has(p.dataset.p)) p.classList.add('fuera'); });
+
   const cuenta = caja.querySelector('.mdet-cuenta b');
   caja.querySelector('.mdet-cuenta i').textContent = paises.length;
   if (SIN_MOVIMIENTO){
@@ -341,7 +351,7 @@ document.addEventListener('click', e => {
   // mismo, el navegador junta los dos estados y no se ve la transición.
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     panel.classList.add('va');
-    if (d.tipo === 'mapa') encenderMapa(panel);
+    if (d.tipo === 'mapa') encenderMapa(panel, d.encender);
   }));
   panel.scrollIntoView({behavior:'smooth', block:'nearest'});
 });

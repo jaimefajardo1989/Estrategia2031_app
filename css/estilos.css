@@ -737,10 +737,12 @@ video.tdeco{
 .mdet-mapa{position:relative}
 .mdet-mapa svg{display:block;width:100%;height:auto;max-height:52vh;margin:0 auto}
 .mdet-mapa path{
-  fill:#E9F1F1;stroke:#fff;stroke-width:1;
+  fill:#DBE7E7;stroke:#fff;stroke-width:1;
   transition:fill .5s ease;
 }
 .mdet-mapa path.on{fill:var(--c)}
+/* Los países de la región que no son accionistas: quedan de contexto */
+.mdet-mapa path.fuera{fill:#F0F3F3}
 .mdet-cuenta{
   position:absolute;right:0;top:0;font-size:12.5px;color:var(--mute);
   background:rgba(255,255,255,.86);border-radius:20px;padding:3px 10px;

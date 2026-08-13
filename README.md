@@ -99,9 +99,15 @@ Cada meta puede además abrirse y mostrar algo que se dibuja, con `detalle`:
 | `palanca` | Dos círculos a escala de área | Se quiere mostrar la relación entre dos metas |
 | `mapa` | El mapa de ALC, encendiéndose país por país | El indicador habla de cobertura por países |
 
-El mapa vive en `js/mapa-lac.js`: son los 33 países de América Latina y el Caribe,
+El mapa vive en `js/mapa-lac.js`: los 33 países de América Latina y el Caribe,
 generados a partir de Natural Earth (dominio público) y guardados como texto para
 que el sitio siga abriéndose con doble clic, sin servidor.
+
+La lista `encender` del `detalle` decide cuáles se iluminan; los demás quedan en
+gris como contexto geográfico. Hoy son los **23 países accionistas de CAF en la
+región** —con España y Portugal, CAF llega a 25—, y el último en incorporarse fue
+Santa Lucía. Los nombres deben coincidir exactamente con el `data-p` de cada trazo
+del mapa; si uno no coincide, ese país simplemente no se enciende.
 
 ### Resaltar palabras dentro de un párrafo
 

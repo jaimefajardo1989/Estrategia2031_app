@@ -177,8 +177,16 @@ const DATA = [
   {nombre:"Países de ALC con al menos una operación de crédito o cooperación técnica de integración regional",
    valor:100, suf:"%", uni:"de los países de la región", forma:"anillo",
    detalle:{tipo:"mapa", boton:"Ver el mapa de la región",
-     titulo:"Los 33 países de América Latina y el Caribe",
-     pie:"Al 2031, todos con al menos una operación de crédito o cooperación técnica de integración regional."}}
+     titulo:"Los 23 países accionistas de CAF en la región",
+     /* Los 23 accionistas de ALC. Con España y Portugal, CAF llega a 25 países.
+        El último en incorporarse fue Santa Lucía.
+        En el mapa se dibujan los 33 países de la región: los que no son
+        accionistas quedan en gris, como contexto geográfico. */
+     encender:["Antigua y Barbuda","Argentina","Bahamas","Barbados","Bolivia","Brasil",
+       "Chile","Colombia","Costa Rica","Ecuador","El Salvador","Granada","Honduras",
+       "Jamaica","México","Panamá","Paraguay","Perú","República Dominicana",
+       "Santa Lucía","Trinidad y Tobago","Uruguay","Venezuela"],
+     pie:"Al 2031, los 23 países accionistas de la región con al menos una operación de crédito o cooperación técnica de integración regional. El último en incorporarse fue Santa Lucía. En gris, los países de la región que no son accionistas."}}
  ],
  /* Los tres frentes de la agenda, resaltados dentro del párrafo */
  resalta:["conectar","comerciar","coproducir"],
