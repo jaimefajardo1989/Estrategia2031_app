@@ -223,8 +223,8 @@ const TOUR = [
  {kind:'cover',
   p:'Esta estrategia se construyó junto a los países accionistas, sus equipos técnicos, los equipos de CAF y un grupo de expertos internacionales, con el propósito de entender el contexto global al que nos enfrentamos en los próximos años. De ese diálogo surgió un rumbo compartido para acompañar a los países en aprovechar las oportunidades que hoy se le abren a la región a partir de las transiciones socioeconómicas, y en saldar los desbalances históricos que todavía marcan su desarrollo. Para que la resiliencia, la integración y la prosperidad se traduzcan en desarrollo y bienestar para todos los latinoamericanos y caribeños.'},
  {kind:'trans'},
+ // El objetivo y sus tres atributos, juntos en una sola lámina
  {kind:'goal'},
- {kind:'attrs'},
  {kind:'level', lvl:2, kick:'Nivel 2', h:'Las <em>oportunidades</em> de la región',
   p:'Seis frentes donde se concentra el potencial de la región hacia 2031.'},
  {kind:'level', lvl:3, kick:'Nivel 3', h:'Las agendas <em>transversales</em> de CAF',

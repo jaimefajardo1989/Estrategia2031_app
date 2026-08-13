@@ -370,24 +370,35 @@ function buildTour(){
         + '</div>'
         + decoHTML([{s:IMG.hummingbird, v:VID.ave, st:'right:4%;top:6%;height:20%'},{s:IMG.dots_teal, st:'left:1%;bottom:6%;height:8%;opacity:.8'}]);
     } else if(s.kind === 'goal'){
+      /* El objetivo y sus tres atributos en una sola lámina: las palabras
+         resiliente, integrada y próspera van coloreadas dentro de la frase y
+         se pueden pulsar para ver qué significa cada una. */
+      const attrs = ['t-res','t-int','t-pro'].map(byId);
+      const colores = ['#e42713','#957108','#588228'];   // legibles sobre blanco
+
+      let frase = esc(byId('obj').t);
+      attrs.forEach((d,k)=>{
+        frase = frase.replace(esc(d.t),
+          '<button type="button" class="palabra" data-exp="'+k+'"'
+          + ' aria-pressed="'+(k===0)+'" style="--c:'+colores[k]+'">'
+          + esc(d.t) + '</button>');
+      });
+
+      const paneles = attrs.map((d,k)=>
+        '<div class="texp-uno'+(k===0?' on':'')+'" data-exp="'+k+'">'
+        + '<b style="color:'+colores[k]+'">'+esc(d.t)+'</b>'
+        + '<p>'+esc((d.lead||'') + ' ' + (d.what||''))+'</p></div>').join('');
+
       inner = '<div class="inner"><div class="kick">Objetivo al 2031</div>'
-        + '<h3>Una región más <em>resiliente, integrada y próspera</em>, donde el desarrollo sostenible se traduce en bienestar para cada persona</h3></div>'
+        + '<h3 class="objetivo">'+frase+'</h3>'
+        + '<p class="tpista">Haz clic en cada palabra para ver qué significa.</p>'
+        + '<div class="texp texp--objetivo">'+paneles+'</div></div>'
         + decoHTML([
-          {s:IMG.p_kidpaint, st:'right:6%;bottom:-2%;height:44%;z-index:2'},
-          {s:IMG.grass, st:'right:2%;bottom:-2%;height:16%;z-index:1'},
-          {s:IMG.hummingbird2, v:VID.colibri, st:'right:26%;top:12%;height:14%'},
-          {s:IMG.dots_green, st:'left:0;top:10%;height:9%;opacity:.85'}
+          {s:IMG.p_girljump, v:VID.nina, st:'right:2%;bottom:0;height:46%;z-index:2'},
+          {s:IMG.hummingbird2, v:VID.colibri, st:'right:30%;top:10%;height:14%'},
+          {s:IMG.dots_green, st:'left:0;top:10%;height:9%;opacity:.85'},
+          {s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}
         ]);
-    } else if(s.kind === 'attrs'){
-      const colores = ['var(--coral-d)','var(--yellow-d)','var(--green-d)'];
-      inner = '<div class="inner"><div class="kick">Objetivo al 2031</div><h3>Tres atributos de la <em>región que queremos</em></h3>'
-        + '<p class="tpista">Haz clic en cada atributo para ver qué significa.</p>'
-        + rejillaHTML(['t-res','t-int','t-pro'].map((id,k)=>{
-            const d = byId(id);
-            return { titulo: d.t, texto: (d.lead||'') + ' ' + (d.what||''), color: colores[k] };
-          }), 3)
-        + '</div>'
-        + decoHTML([{s:IMG.p_girljump, v:VID.nina, st:'right:2%;bottom:0;height:46%;z-index:2'},{s:IMG.squig_coral, st:'left:1%;bottom:8%;height:8%'}]);
     } else if(s.kind === 'level'){
       const items = DATA.filter(d=>d.lvl===s.lvl);
       const bg = s.lvl===2?'var(--yellow)':(s.lvl===3?'var(--teal-d)':'var(--coral-d)');
@@ -443,17 +454,21 @@ document.getElementById('tprev').onclick = ()=>showT(ti-1);
 document.getElementById('tnext').onclick = ()=>showT(ti+1);
 document.getElementById('tdots').addEventListener('click', e=>{ const b=e.target.closest('[data-t]'); if(b) showT(+b.dataset.t); });
 
-/* Rejillas en las que se puede hacer clic dentro del recorrido */
+/* Elementos que se pueden pulsar dentro del recorrido: las casillas de las
+   rejillas y las palabras coloreadas del objetivo. En los dos casos el panel
+   con la explicación es el .texp que está dentro de la misma lámina. */
 tstage.addEventListener('click', e=>{
-  const casilla = e.target.closest('.tgrid--clic .it');
-  if(!casilla) return;
-  const rejilla = casilla.parentElement;
-  const panel = rejilla.nextElementSibling;   // el .texp que le corresponde
-  const k = casilla.dataset.exp;
+  const disparador = e.target.closest('.tgrid--clic .it, .palabra');
+  if(!disparador) return;
 
-  rejilla.querySelectorAll('.it').forEach(b=>b.setAttribute('aria-pressed', b === casilla));
+  const lamina = disparador.closest('.tslide');
+  const panel = lamina && lamina.querySelector('.texp');
+  const k = disparador.dataset.exp;
+
+  lamina.querySelectorAll('.tgrid--clic .it, .palabra')
+        .forEach(b => b.setAttribute('aria-pressed', b === disparador));
   if(!panel) return;
-  panel.querySelectorAll('.texp-uno').forEach(p=>p.classList.toggle('on', p.dataset.exp === k));
+  panel.querySelectorAll('.texp-uno').forEach(p => p.classList.toggle('on', p.dataset.exp === k));
 });
 
 document.addEventListener('keydown', e=>{
