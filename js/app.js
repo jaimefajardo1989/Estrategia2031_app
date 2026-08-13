@@ -374,7 +374,10 @@ function buildTour(){
          resiliente, integrada y próspera van coloreadas dentro de la frase y
          se pueden pulsar para ver qué significa cada una. */
       const attrs = ['t-res','t-int','t-pro'].map(byId);
-      const colores = ['#e42713','#957108','#588228'];   // legibles sobre blanco
+      /* Los mismos colores del resto del sitio. El coral va tal cual;
+         el amarillo y el verde apenas oscurecidos, lo mínimo para que se
+         lean sobre blanco: sin eso quedan en 1,8:1 y 2,4:1. */
+      const colores = ['var(--coral-d)','#ba8d0c','#6fa234'];
 
       let frase = esc(byId('obj').t);
       attrs.forEach((d,k)=>{
