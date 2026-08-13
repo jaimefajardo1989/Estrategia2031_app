@@ -158,12 +158,30 @@ const DATA = [
 {id:"v-int", validado:true,
  metas:[
   {nombre:"Financiamiento aprobado para operaciones de integración regional",
-   valor:10000, pre:"USD ", uni:"millones", forma:"barra"},
+   valor:10000, pre:"USD ", uni:"millones", forma:"barra",
+   detalle:{tipo:"comparar", boton:"Comparar con el ciclo anterior",
+     titulo:"Frente a lo aprobado entre 2021 y 2025",
+     barras:[{et:"2021–2025 · aprobado", v:4489},
+             {et:"Meta 2031", v:10000, fuerte:true}],
+     uni:"USD millones",
+     pie:"Más del doble de lo que CAF aprobó para integración regional en el ciclo anterior."}},
+
   {nombre:"Recursos movilizados en asistencia técnica para integración regional",
-   valor:240, pre:"USD ", uni:"millones", forma:"barra"},
+   valor:240, pre:"USD ", uni:"millones", forma:"barra",
+   detalle:{tipo:"palanca", boton:"Ver qué moviliza",
+     titulo:"Lo que acompaña cada dólar de asistencia técnica",
+     chico:{v:240, et:"Asistencia técnica"},
+     grande:{v:10000, et:"Financiamiento aprobado"},
+     pie:"Relación entre las dos metas: cerca de USD 1 de asistencia técnica por cada USD 42 de financiamiento. La asistencia técnica es lo que prepara los proyectos multinacionales y los deja en condiciones de financiarse."}},
+
   {nombre:"Países de ALC con al menos una operación de crédito o cooperación técnica de integración regional",
-   valor:100, suf:"%", uni:"de los países de la región", forma:"anillo"}
+   valor:100, suf:"%", uni:"de los países de la región", forma:"anillo",
+   detalle:{tipo:"mapa", boton:"Ver el mapa de la región",
+     titulo:"Los 33 países de América Latina y el Caribe",
+     pie:"Al 2031, todos con al menos una operación de crédito o cooperación técnica de integración regional."}}
  ],
+ /* Los tres frentes de la agenda, resaltados dentro del párrafo */
+ resalta:["conectar","comerciar","coproducir"],
  temas:"fronteras pasos fronterizos corredores logística interconexión comercio regional cuencas compartidas aduanas bienes públicos regionales cooperación técnica interoperabilidad convergencia regulatoria cadenas de valor proveedores proyectos multinacionales corredores de alto valor estratégico",lvl:3,t:"Integración regional pragmática",sub:"Integración por proyectos, no por declaraciones",
  lead:"Conectar, comerciar y coproducir: tres frentes para una integración tangible.",
  what:"Al 2031, CAF impulsará una agenda de integración regional pragmática para transformar la integración en proyectos, inversiones y resultados concretos para los países. Su acción se concentrará en tres frentes complementarios: conectar, mediante corredores estratégicos que integren transporte, energía, conectividad digital, logística y fronteras; comerciar, facilitando el intercambio regional a través de mayor interoperabilidad y convergencia regulatoria; y coproducir, promoviendo cadenas regionales de valor, inversión y desarrollo de proveedores. Para hacerlo posible, CAF fortalecerá la preparación y financiamiento de proyectos multinacionales y actuará como articulador entre países, combinando financiamiento, conocimiento y coordinación institucional para consolidar Corredores de Alto Valor Estratégico y una integración regional más tangible, competitiva y efectiva.",

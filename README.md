@@ -91,6 +91,24 @@ metas:[
 - `validado:true` en la tarjeta cambia la nota del pie: deja de advertir que el
   contenido es un borrador.
 
+Cada meta puede además abrirse y mostrar algo que se dibuja, con `detalle`:
+
+| `tipo` | Qué dibuja | Cuándo conviene |
+|---|---|---|
+| `comparar` | Dos o más barras que crecen | Hay un dato del ciclo anterior con qué comparar |
+| `palanca` | Dos círculos a escala de área | Se quiere mostrar la relación entre dos metas |
+| `mapa` | El mapa de ALC, encendiéndose país por país | El indicador habla de cobertura por países |
+
+El mapa vive en `js/mapa-lac.js`: son los 33 países de América Latina y el Caribe,
+generados a partir de Natural Earth (dominio público) y guardados como texto para
+que el sitio siga abriéndose con doble clic, sin servidor.
+
+### Resaltar palabras dentro de un párrafo
+
+`resalta:["conectar","comerciar","coproducir"]` marca esas palabras en el texto de
+`what`. Solo coincide la palabra completa: `conectar` se resalta y `conectividad`,
+que aparece en la misma frase, no.
+
 Al 2026-08-13 la única agenda con indicadores validados es **Integración regional
 pragmática**. Las demás siguen con cifras de ejemplo.
 

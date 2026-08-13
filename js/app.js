@@ -148,7 +148,26 @@ col.insertAdjacentHTML('beforeend','<div class="ground"></div>');
 
 /* ---------- META DE CADA AGENDA ---------- */
 
-const fmt = new Intl.NumberFormat('es', { maximumFractionDigits: 1 });
+/* useGrouping en "always": por defecto el español no separa los millares de
+   cuatro cifras, y quedaba "4489" al lado de "10.000". */
+const fmt = new Intl.NumberFormat('es', { maximumFractionDigits: 1, useGrouping: 'always' });
+
+/**
+ * Marca dentro de un párrafo las palabras que ordenan la agenda.
+ * El texto se escapa primero y recién después se mete la etiqueta, así que
+ * el contenido sigue entrando como texto plano.
+ *
+ * Solo cambia la palabra completa: "conectar" se resalta, pero "conectividad",
+ * que aparece en la misma frase, no.
+ */
+function resaltar(texto, palabras, color){
+  let t = esc(texto);
+  (palabras || []).forEach(p => {
+    const re = new RegExp('(^|[^\\p{L}])(' + esc(p) + ')(?![\\p{L}])', 'giu');
+    t = t.replace(re, '$1<b class="clave" style="--c:' + color + '">$2</b>');
+  });
+  return t;
+}
 
 /**
  * Dibuja la meta al 2031 como una barra entre el punto de partida y el
@@ -208,6 +227,11 @@ function pintarMetas(lista, color){
             + '<span class="meta2-uni">' + esc(m.uni || '') + '</span>'
             + '<div class="meta2-raya"><i></i></div>')
       + '<p class="meta2-nombre">' + esc(m.nombre) + '</p>'
+      + (m.detalle
+          ? '<button type="button" class="meta2-mas" data-meta="' + i + '" aria-expanded="false">'
+            + esc(m.detalle.boton || 'Ver el detalle') + '<span aria-hidden="true">▾</span></button>'
+            + '<div class="meta2-panel" id="meta-panel-' + i + '" hidden></div>'
+          : '')
       + '</div>').join('') + '</div>';
 
   const bloque = document.getElementById('dr-meta');
@@ -225,7 +249,102 @@ function pintarMetas(lista, color){
   ver.observe(bloque);
   // Si el panel se cierra antes de que el bloque llegue a verse, el observer
   // muere con el próximo pintado; no hace falta desconectarlo a mano.
+
+  METAS_VISIBLES = lista;
 }
+
+/* ---------- EL DETALLE DE CADA META ----------
+   Cada indicador puede abrirse y mostrar algo que se dibuja solo. Son tres
+   formas y cada una responde a lo que el indicador realmente dice. */
+
+let METAS_VISIBLES = [];
+
+/** Dos barras enfrentadas: de dónde venimos y a dónde vamos. */
+function verComparar(d){
+  const tope = Math.max.apply(null, d.barras.map(b=>b.v));
+  return '<p class="mdet-t">' + esc(d.titulo) + '</p>'
+    + '<div class="mdet-barras">' + d.barras.map(b =>
+        '<div class="mdet-b' + (b.fuerte ? ' es-meta' : '') + '">'
+        + '<span class="mdet-et">' + esc(b.et) + '</span>'
+        + '<div class="mdet-canal"><i style="--w:' + (b.v/tope*100).toFixed(1) + '%"></i></div>'
+        + '<b class="mdet-v">' + fmt.format(b.v) + '</b></div>').join('')
+    + '</div><p class="mdet-uni">' + esc(d.uni || '') + '</p>'
+    + '<p class="mdet-pie">' + esc(d.pie) + '</p>';
+}
+
+/** Dos círculos a escala real: cuánto acompaña cada dólar de asistencia. */
+function verPalanca(d){
+  // Lo que se compara es el área de cada círculo, así que el diámetro va por
+  // la raíz: si no, 240 contra 10.000 se vería mucho más chico de lo que es.
+  const chico = Math.sqrt(d.chico.v / d.grande.v) * 132;
+  const globo = (px, v, et, cls) =>
+    '<div class="mdet-globo ' + cls + '">'
+    + '<span class="mdet-disco" style="--d:' + px.toFixed(0) + 'px"></span>'
+    + '<b>' + fmt.format(v) + '</b><small>' + esc(et) + '</small></div>';
+  return '<p class="mdet-t">' + esc(d.titulo) + '</p>'
+    + '<div class="mdet-palanca">'
+    +   globo(132, d.grande.v, d.grande.et, 'es-gr')
+    +   globo(Math.max(14, chico), d.chico.v, d.chico.et, 'es-ch')
+    + '</div>'
+    + '<p class="mdet-pie">' + esc(d.pie) + '</p>';
+}
+
+/** El mapa de la región: los países se van encendiendo, uno tras otro. */
+function verMapa(d){
+  return '<p class="mdet-t">' + esc(d.titulo) + '</p>'
+    + '<div class="mdet-mapa">' + MAPA_LAC
+    +   '<span class="mdet-cuenta"><b>0</b> / <i></i> países</span></div>'
+    + '<p class="mdet-pie">' + esc(d.pie) + '</p>';
+}
+
+/** Enciende los países del mapa en desorden, llevando la cuenta al lado. */
+function encenderMapa(caja){
+  const paises = Array.from(caja.querySelectorAll('svg path'));
+  const cuenta = caja.querySelector('.mdet-cuenta b');
+  caja.querySelector('.mdet-cuenta i').textContent = paises.length;
+  if (SIN_MOVIMIENTO){
+    paises.forEach(p=>p.classList.add('on'));
+    cuenta.textContent = paises.length;
+    return;
+  }
+  // Desordenados: encenderlos de norte a sur se leería como un barrido y la
+  // idea es que la región se vaya poblando.
+  for (let i = paises.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    const t = paises[i]; paises[i] = paises[j]; paises[j] = t;
+  }
+  paises.forEach((p,i) => window.setTimeout(()=>{
+    p.classList.add('on');
+    cuenta.textContent = i + 1;
+  }, 220 + i*52));
+}
+
+/* Abrir y cerrar el detalle de un indicador */
+document.addEventListener('click', e => {
+  const b = e.target.closest('.meta2-mas');
+  if (!b) return;
+  const panel = document.getElementById('meta-panel-' + b.dataset.meta);
+  const abierto = b.getAttribute('aria-expanded') === 'true';
+  if (abierto){
+    b.setAttribute('aria-expanded','false');
+    panel.hidden = true; panel.innerHTML = '';
+    return;
+  }
+  const d = (METAS_VISIBLES[+b.dataset.meta] || {}).detalle;
+  if (!d) return;
+  panel.innerHTML = d.tipo === 'mapa'     ? verMapa(d)
+                  : d.tipo === 'palanca'  ? verPalanca(d)
+                  :                         verComparar(d);
+  panel.hidden = false;
+  b.setAttribute('aria-expanded','true');
+  // El dibujo arranca en el cuadro siguiente: si se pinta y se anima en el
+  // mismo, el navegador junta los dos estados y no se ve la transición.
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    panel.classList.add('va');
+    if (d.tipo === 'mapa') encenderMapa(panel);
+  }));
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+});
 
 function pintarMeta(m, color){
   const caja = document.getElementById('dr-meta-wrap');
@@ -262,7 +381,7 @@ function openCard(id, push){
   document.getElementById('dr-title').textContent = d.t;
   document.getElementById('dr-title').style.fontSize = d.t.length > 70 ? '20px' : '26px';
   document.getElementById('dr-lead').textContent = d.lead || '';
-  document.getElementById('dr-what').textContent = d.what || '';
+  document.getElementById('dr-what').innerHTML = resaltar(d.what || '', d.resalta, L.tono || L.color);
   document.getElementById('dr-acts').style.setProperty('--c', L.color);
   document.getElementById('dr-acts').innerHTML = (d.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
   const lw = document.getElementById('dr-links-wrap');

@@ -680,6 +680,81 @@ video.tdeco{
   .meta2-anillo .linea{transition:none}
 }
 
+/* Las palabras que ordenan una agenda, dentro del párrafo */
+.clave{color:var(--c);font-weight:700;box-shadow:inset 0 -.32em 0 rgba(0,0,0,.045)}
+
+/* ---- El detalle que se abre debajo de cada indicador ---------------- */
+.meta2-mas{
+  display:inline-flex;align-items:center;gap:6px;margin-top:12px;
+  background:none;border:0;padding:0;font:inherit;font-size:12.5px;font-weight:700;
+  color:var(--c);cursor:pointer;
+}
+.meta2-mas span{font-size:10px;transition:transform .25s ease}
+.meta2-mas[aria-expanded="true"] span{transform:rotate(180deg)}
+.meta2-mas:hover{text-decoration:underline}
+
+.meta2-panel{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;opacity:0;transition:opacity .4s ease}
+.meta2-panel.va{opacity:1}
+.meta2-panel[hidden]{display:none !important}
+
+.mdet-t{margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--mute)}
+.mdet-pie{margin:13px 0 0;font-size:12.5px;line-height:1.5;color:var(--mute)}
+.mdet-uni{margin:8px 0 0;font-size:11.5px;color:var(--mute);text-align:right}
+
+/* Comparación: dos barras que crecen */
+.mdet-barras{display:grid;gap:12px}
+.mdet-b{display:grid;grid-template-columns:1fr auto;gap:3px 10px;align-items:center}
+.mdet-et{font-size:12px;color:var(--ink-2)}
+.mdet-v{font-size:15px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;
+  justify-self:end;align-self:end}
+.mdet-canal{grid-column:1/-1;height:12px;border-radius:20px;background:#fff;border:1px solid var(--line)}
+.mdet-canal i{
+  display:block;height:100%;width:var(--w);border-radius:20px;background:var(--line);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 1s cubic-bezier(.22,.9,.25,1);
+}
+.mdet-b.es-meta .mdet-canal i{background:var(--c)}
+.mdet-b.es-meta .mdet-v{color:var(--c);font-size:17px}
+.meta2-panel.va .mdet-canal i{transform:scaleX(1)}
+.meta2-panel.va .mdet-b.es-meta .mdet-canal i{transition-delay:.25s}
+
+/* Palanca: dos círculos a escala de área */
+.mdet-palanca{display:flex;align-items:flex-end;gap:26px;padding:6px 0 2px}
+.mdet-globo{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.mdet-disco{
+  display:block;width:var(--d);height:var(--d);border-radius:50%;
+  transform:scale(0);transition:transform .8s var(--rebote);
+}
+.mdet-globo.es-gr .mdet-disco{background:color-mix(in srgb, var(--c) 18%, #fff)}
+.mdet-globo.es-ch .mdet-disco{background:var(--c)}
+.meta2-panel.va .mdet-disco{transform:scale(1)}
+.meta2-panel.va .mdet-globo.es-ch .mdet-disco{transition-delay:.3s}
+.mdet-globo b{font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+.mdet-globo small{font-size:11px;color:var(--mute);max-width:11ch;line-height:1.3}
+
+/* Mapa: los países se encienden de a uno */
+.mdet-mapa{position:relative}
+.mdet-mapa svg{display:block;width:100%;height:auto;max-height:52vh;margin:0 auto}
+.mdet-mapa path{
+  fill:#E9F1F1;stroke:#fff;stroke-width:1;
+  transition:fill .5s ease;
+}
+.mdet-mapa path.on{fill:var(--c)}
+.mdet-cuenta{
+  position:absolute;right:0;top:0;font-size:12.5px;color:var(--mute);
+  background:rgba(255,255,255,.86);border-radius:20px;padding:3px 10px;
+}
+.mdet-cuenta b{font-size:15px;color:var(--c);font-variant-numeric:tabular-nums}
+.mdet-cuenta i{font-style:normal}
+
+@media(prefers-reduced-motion:reduce){
+  .meta2-panel{opacity:1;transition:none}
+  .mdet-canal i{transform:scaleX(1);transition:none}
+  .mdet-disco{transform:scale(1);transition:none}
+  .mdet-mapa path{transition:none}
+}
+
 /* La etiqueta de fila del mapa, ahora es un botón */
 .rlabel--abrible{
   display:block;width:100%;border:0;background:none;font-family:inherit;cursor:pointer;
