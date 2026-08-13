@@ -55,6 +55,7 @@ const VID = {
   colibri: 'video/colibri',
   flamenco: 'video/flamenco',
   nina: 'video/nina',
+  ninos: 'video/ninos',
 };
 
 /* ====================== DATA ====================== */

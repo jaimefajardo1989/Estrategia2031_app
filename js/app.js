@@ -55,9 +55,9 @@ const COLLAGE = [
   {s:IMG.grass,     l:'63%', b:'0',   h:'22%', z:3, mov:'mece', p:.4, e:.62, d:2.6},
   {s:IMG.p_walk,    l:'6%',  b:'0',   h:'72%', z:3, p:.5, e:.78},
   {s:IMG.p_skate,   l:'21%', b:'0',   h:'68%', z:3, p:.5, e:.88},
-  // La foto está cortada al pecho, así que a igual altura se ve más grande que
+  // La toma está cortada al pecho, así que a igual altura se ve más grande que
   // una figura de cuerpo entero. Va más chica para que la escala cuadre.
-  {s:IMG.p_ninos,   l:'79%', b:'0',   h:'40%', z:3, p:.55, e:.98},
+  {s:IMG.p_ninos, v:VID.ninos, l:'79%', b:'0', h:'40%', z:3, p:.55, e:.98},
   // El flamenco es un ave de suelo: va parado, sin movimiento propio de vuelo.
   // Se ubica en el claro entre los estudiantes y el pasto alto, para que no
   // quede tapado por el árbol rojo.
