@@ -2,16 +2,20 @@
 const byId = id => DATA.find(d => d.id === id);
 const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
-document.querySelector('.goal').innerHTML = esc(byId('obj').t) + '<span class="more">Ver detalle →</span>';
-
-const attrsEl = document.getElementById('attrs');
-['t-res','t-int','t-pro'].forEach((id,i)=>{
-  const d = byId(id);
-  const b = document.createElement('button');
-  b.className = 'card attr a'+(i+1); b.dataset.id = id;
-  b.innerHTML = esc(d.t);
-  attrsEl.appendChild(b);
-});
+/* El objetivo lleva dentro de la frase sus tres atributos, cada uno pulsable.
+   Antes eran tres tarjetas aparte debajo; ahora están donde se leen. */
+(function(){
+  const attrs = ['t-res','t-int','t-pro'].map(byId);
+  const colores = ['var(--coral-d)','#ba8d0c','#6fa234'];
+  let frase = esc(byId('obj').t);
+  attrs.forEach((d,k)=>{
+    frase = frase.replace(esc(d.t),
+      '<button type="button" class="palabra palabra--enTarjeta" data-go="'+d.id+'"'
+      + ' style="--c:'+colores[k]+'">' + esc(d.t) + '</button>');
+  });
+  document.querySelector('.goal').innerHTML =
+    frase + '<button type="button" class="more" data-go="obj">Ver detalle →</button>';
+})();
 
 function makeCard(d, cls){
   const b = document.createElement('button');
@@ -252,8 +256,10 @@ function openLevel(lvl){
 
 document.addEventListener('click', e=>{
   const r = e.target.closest('.rlabel--abrible'); if(r){ openLevel(+r.dataset.nivel); return; }
-  const c = e.target.closest('.card'); if(c){ openCard(c.dataset.id); return; }
+  // Se mira primero [data-go]: las palabras del objetivo están dentro de una
+  // tarjeta, y si se comprobara la tarjeta antes, abrirían siempre el objetivo.
   const g = e.target.closest('[data-go]'); if(g){ openCard(g.dataset.go); return; }
+  const c = e.target.closest('.card'); if(c){ openCard(c.dataset.id); return; }
 });
 document.getElementById('dr-close').onclick = closeCard;
 scrim.onclick = closeCard;
@@ -860,4 +866,68 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
       document.body.appendChild(caja);
     }, 2500);
   }
+})();
+
+/* =========================================================
+   UN AVE CRUZA EL MAPA
+   Aparece cada tanto en un punto al azar del árbol, lo cruza planeando y
+   se desvanece. Va detrás de las tarjetas y delante del fondo, para que
+   dé vida sin estorbar la lectura.
+   ========================================================= */
+(function(){
+  'use strict';
+
+  const arbol = document.getElementById('tree');
+  if (!arbol || SIN_MOVIMIENTO) return;
+
+  arbol.style.position = 'relative';
+
+  const capa = document.createElement('span');
+  capa.className = 'ave-libre';
+  capa.setAttribute('aria-hidden','true');
+
+  // Mismo criterio que en la portada: video donde se puede, imagen animada en WebKit
+  let ave;
+  if (USA_ANIMADO) {
+    ave = document.createElement('img');
+    ave.src = VID.guacamaya + '_anim.webp';
+    ave.alt = '';
+    ave.onerror = () => { ave.onerror = null; ave.src = IMG.macaw; };
+  } else {
+    ave = document.createElement('video');
+    ave.autoplay = true; ave.loop = true; ave.muted = true; ave.playsInline = true;
+    ave.setAttribute('playsinline',''); ave.setAttribute('muted','');
+    ave.poster = IMG.macaw;
+    ave.dataset.fija = IMG.macaw;
+    ave.innerHTML = fuentesVideo(VID.guacamaya);
+  }
+  capa.appendChild(ave);
+  arbol.appendChild(capa);
+
+  const azar = (a,b) => a + Math.random() * (b - a);
+
+  function cruzar(){
+    const haciaLaDerecha = Math.random() < 0.5;
+    // Altura de entrada y de salida: el vuelo cae o sube un poco, nunca recto
+    const y0 = azar(6, 78);
+    const y1 = Math.min(88, Math.max(2, y0 + azar(-14, 14)));
+    const x0 = haciaLaDerecha ? -14 : 104;
+    const x1 = haciaLaDerecha ? 104 : -14;
+
+    ave.style.transform = haciaLaDerecha ? 'scaleX(1)' : 'scaleX(-1)';
+    capa.style.height = azar(38, 62) + 'px';   // algunas pasadas más cerca que otras
+
+    const vuelo = capa.animate([
+      { left: x0 + '%', top: y0 + '%', opacity: 0 },
+      { opacity: 0.9, offset: 0.16 },
+      { opacity: 0.9, offset: 0.82 },
+      { left: x1 + '%', top: y1 + '%', opacity: 0 }
+    ], { duration: azar(11000, 17000), easing: 'ease-in-out', fill: 'forwards' });
+
+    // Entre pasada y pasada se toma su tiempo, para que no resulte repetitivo
+    vuelo.onfinish = () => window.setTimeout(cruzar, azar(5000, 13000));
+  }
+
+  // La primera pasada no arranca de inmediato: primero se lee el mapa
+  window.setTimeout(cruzar, azar(2500, 6000));
 })();

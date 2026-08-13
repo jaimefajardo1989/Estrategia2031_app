@@ -917,3 +917,79 @@ video.tdeco{
   .tslide.on .palabra{animation:none}
   .palabra::after{transition:none}
 }
+
+/* =========================================================
+   LAS TRES PALABRAS DENTRO DE LA TARJETA DEL OBJETIVO
+   La tarjeta es verde con texto blanco, así que los colores no se pueden
+   aplicar a la letra: el verde sobre verde desaparecería. Cada palabra va
+   en una pastilla blanca con su color, que además la señala como pulsable.
+   ========================================================= */
+
+.goal{position:relative}
+
+.palabra--enTarjeta{
+  display:inline-block;
+  font:inherit;
+  color:var(--c);
+  background:#fff;
+  border:0;
+  border-radius:var(--r);
+  padding:.06em .42em;
+  margin:0 .04em;
+  cursor:pointer;
+  line-height:inherit;
+  box-shadow:0 2px 6px rgba(31,58,64,.14);
+  transition:transform .3s var(--rebote),box-shadow .3s var(--curva);
+}
+.palabra--enTarjeta:hover,
+.palabra--enTarjeta:focus-visible{
+  transform:translateY(-2px) scale(1.04);
+  box-shadow:0 6px 16px rgba(31,58,64,.24);
+  outline:none;
+}
+.palabra--enTarjeta:focus-visible{box-shadow:0 6px 16px rgba(31,58,64,.24),0 0 0 3px #fff}
+
+/* El "Ver detalle" pasa a ser un botón, para poder llegar con el teclado */
+.goal .more{
+  border:0;
+  background:none;
+  font:inherit;
+  font-size:11px;
+  font-weight:700;
+  color:inherit;
+  cursor:pointer;
+  padding:2px 6px;
+}
+
+@media(max-width:600px){
+  .palabra--enTarjeta{padding:.04em .3em}
+}
+@media (prefers-reduced-motion:reduce){
+  .palabra--enTarjeta{transition:none}
+}
+
+/* El ave que cruza el mapa: por detrás de las tarjetas, por delante del fondo */
+.ave-libre{
+  position:absolute;
+  left:-14%;
+  top:20%;
+  height:48px;
+  z-index:0;
+  pointer-events:none;
+  opacity:0;
+}
+.ave-libre img,.ave-libre video{
+  height:100%;
+  width:auto;
+  max-width:none;
+  display:block;
+}
+/* Las filas del árbol quedan por encima del ave */
+#tree .row{position:relative;z-index:1}
+
+@media(max-width:760px){
+  .ave-libre{display:none}   /* en pantalla chica solo estorbaría */
+}
+@media (prefers-reduced-motion:reduce){
+  .ave-libre{display:none}
+}
