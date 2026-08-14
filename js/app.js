@@ -215,39 +215,54 @@ function pintarMetas(lista, color){
   const R = 34, C = 2 * Math.PI * R;               // radio y perímetro del anillo
   document.getElementById('dr-meta').innerHTML =
     '<div class="metas" style="--c:' + color + '">' + lista.map((m,i) =>
+      /* Dos columnas: el dato a la izquierda y el nombre a la derecha. Apilados
+         la ficha se iba a 200 px de alto, y lo que la estiraba no era la cifra
+         sino el nombre del indicador, que ocupa tres renglones. */
       '<div class="meta2" style="--i:' + i + '">'
+      + '<div class="meta2-dato">'
       + (m.forma === 'anillo'
           ? '<div class="meta2-anillo"><svg viewBox="0 0 80 80" aria-hidden="true">'
             + '<circle class="pista" cx="40" cy="40" r="' + R + '"/>'
             + '<circle class="linea" cx="40" cy="40" r="' + R + '"'
             + ' style="stroke-dasharray:' + C.toFixed(1) + ';stroke-dashoffset:' + C.toFixed(1) + '"/>'
             + '</svg><b class="meta2-cifra" data-v="' + m.valor + '"></b></div>'
-            + '<span class="meta2-uni">' + esc(m.uni || '') + '</span>'
-          : '<b class="meta2-cifra meta2-cifra--sola" data-v="' + m.valor + '"></b>'
+          : '<b class="meta2-cifra" data-v="' + m.valor + '"></b>'
             + '<span class="meta2-uni">' + esc(m.uni || '') + '</span>'
             + '<div class="meta2-raya"><i></i></div>')
-      + '<p class="meta2-nombre">' + esc(m.nombre) + '</p>'
-      + (m.detalle
-          ? '<button type="button" class="meta2-mas" data-meta="' + i + '" aria-expanded="false">'
-            + esc(m.detalle.boton || 'Ver el detalle') + '<span aria-hidden="true">▾</span></button>'
-            + '<div class="meta2-panel" id="meta-panel-' + i + '" hidden></div>'
-          : '')
+      + '</div>'
+      + '<div class="meta2-txt">'
+      +   '<p class="meta2-nombre">' + esc(m.nombre) + '</p>'
+      +   (m.forma === 'anillo'
+            ? '<span class="meta2-uni meta2-uni--al-lado">' + esc(m.uni || '') + '</span>' : '')
+      +   (m.detalle
+            ? '<button type="button" class="meta2-mas" data-meta="' + i + '" aria-expanded="false">'
+              + esc(m.detalle.boton || 'Ver el detalle') + '<span aria-hidden="true">▾</span></button>'
+            : '')
+      + '</div>'
+      + (m.detalle ? '<div class="meta2-panel" id="meta-panel-' + i + '" hidden></div>' : '')
       + '</div>').join('') + '</div>';
 
   const bloque = document.getElementById('dr-meta');
-  const ver = new IntersectionObserver(es => {
-    if(!es.some(e => e.isIntersecting)) return;
-    ver.disconnect();
-    bloque.querySelectorAll('.meta2').forEach((n,i) => window.setTimeout(() => {
-      n.classList.add('va');
-      const cifra = n.querySelector('.meta2-cifra');
+  const fichas = Array.from(bloque.querySelectorAll('.meta2'));
+
+  /* Se vigila cada ficha por separado y con un umbral bajo. Vigilando el
+     bloque entero, como estaba antes, la primera ficha ya se veía completa y
+     seguía invisible: había que bajar un tercio de los tres indicadores para
+     que recién ahí aparecieran, y mientras tanto quedaba un hueco en blanco. */
+  const ver = new IntersectionObserver((es, obs) => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      obs.unobserve(e.target);
+      const i = fichas.indexOf(e.target);
+      e.target.classList.add('va');
+      const cifra = e.target.querySelector('.meta2-cifra');
       contarHasta(cifra, +cifra.dataset.v, lista[i].pre, lista[i].suf);
-      const linea = n.querySelector('.linea');
+      const linea = e.target.querySelector('.linea');
       if (linea) linea.style.strokeDashoffset = (C * (1 - lista[i].valor/100)).toFixed(1);
-    }, i * 260));
-  }, { root: drawer.querySelector('.dr-body'), threshold: 0.35 });
-  ver.observe(bloque);
-  // Si el panel se cierra antes de que el bloque llegue a verse, el observer
+    });
+  }, { root: drawer.querySelector('.dr-body'), rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+  fichas.forEach(f => ver.observe(f));
+  // Si el panel se cierra antes de que las fichas lleguen a verse, el observer
   // muere con el próximo pintado; no hace falta desconectarlo a mano.
 
   METAS_VISIBLES = lista;
