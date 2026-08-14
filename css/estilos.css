@@ -147,7 +147,10 @@ h2 em{font-style:normal;color:var(--teal-d)}
 .scrim.on{opacity:1;pointer-events:auto}
 .drawer{position:fixed;top:0;right:0;height:100%;width:min(520px,100%);background:#fff;z-index:100;transform:translateX(102%);transition:transform .32s cubic-bezier(.2,.8,.3,1);display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
 .drawer.on{transform:none}
-.dr-head{padding:24px 28px 18px;border-bottom:1px solid var(--line);position:relative;overflow:hidden;flex:none}
+/* El alto mínimo deja sitio para las decoraciones que van debajo del botón de
+   cerrar. Sin él, en las tarjetas de título corto la cabecera medía 122 px y el
+   flamenco, que es un cuerpo entero, se quedaba sin patas. */
+.dr-head{padding:24px 28px 18px;border-bottom:1px solid var(--line);position:relative;overflow:hidden;flex:none;min-height:152px}
 .dr-head .deco{position:absolute;right:-10px;top:-6px;width:112px;opacity:.9;pointer-events:none}
 /* El colibrí del nivel 3 va por debajo del botón de cerrar, no detrás de él.
    La X termina a los 50 px y la cabecera más corta —la de las agendas sin
@@ -158,6 +161,10 @@ h2 em{font-style:normal;color:var(--teal-d)}
 /* Se alinea con el borde derecho de la X. El recorte de este colibrí llega
    justo hasta la punta del pico, así que pegado al borde el pico se cortaba. */
 .dr-head .deco[data-nivel="3"]{top:52px;right:16px;width:100px}
+/* El flamenco, igual: debajo de la X y con el ancho que hace que el cuerpo
+   entero entre en los 152 px de la cabecera. Es angosto y alto, así que a
+   igual altura queda mucho más chico que el colibrí. */
+.dr-head .deco[data-nivel="4"]{top:52px;right:20px;width:56px}
 .dr-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;padding:6px 12px;border-radius:20px}
 .dr-head h3{margin:14px 0 0;font-size:26px;line-height:1.15;letter-spacing:-.025em;max-width:78%;color:var(--ink)}
 .dr-head .lead{margin:10px 0 0;font-size:14px;color:var(--ink-2);max-width:82%;line-height:1.5}

@@ -48,6 +48,9 @@ const IMG = {
      navegadores; el fijo es su primer cuadro, para "reducir movimiento". */
   colibri_anim: 'img/colibri_anim.webp',
   colibri_fijo: 'img/colibri_fijo.webp',
+  /* El flamenco animado ya existía para la portada: se reutiliza el mismo
+     archivo como decoración de las agendas habilitadoras. */
+  flamenco_anim: 'video/flamenco_anim.webp',
 };
 
 /* Videos de aves con fondo transparente (WebM con canal alfa).
@@ -90,7 +93,8 @@ const LEVELS = {
        what:"No son áreas de negocio ni líneas de producto: son las seis capacidades que se activan igual esté el proyecto en energía, en agua o en educación. Responden a una sola pregunta: qué ponemos nosotros que otro no pone. Porque el financiamiento solo es una mercancía —hay muchas fuentes de capital y varias más baratas—; lo que diferencia a una institución de desarrollo es lo que viene con el dinero.",
        acts:["Conocimiento, capacidad de convocar y acompañamiento en la ejecución","Se combinan entre sí: un proyecto bien hecho activa varias a la vez","Deben permear toda la acción del Banco, no algunas operaciones"]}},
 
-  4:{name:"Habilitadoras", color:"var(--coral-d)", tono:"var(--coral-tx)", deco:IMG.flamingo,
+  4:{name:"Habilitadoras", color:"var(--coral-d)", tono:"var(--coral-tx)",
+     deco:IMG.flamingo, decoAnim:IMG.flamenco_anim,
      explica:{
        t:"Agendas habilitadoras",
        lead:"Las condiciones internas que hacen posible todo lo demás.",
