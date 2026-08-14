@@ -135,13 +135,13 @@ const DATA = [
    valor:12000, pre:"USD ", uni:"millones"},
 
   {nombre:"Factor de movilización: más de USD 2 de terceros por cada USD 1 aportado por CAF",
-   valor:2, suf:"x", uni:"o más"},
+   valor:2, suf:"x"},
 
-  {nombre:"Recursos movilizados que provienen del sector privado",
-   valor:2, suf:"/3", uni:"como mínimo"},
+  {nombre:"Proporción mínima de los recursos movilizados que proviene del sector privado",
+   valor:2, suf:"/3"},
 
-  {nombre:"Cooperaciones técnicas vinculadas directamente con operaciones de crédito",
-   valor:50, suf:"%", uni:"como mínimo"}
+  {nombre:"Proporción mínima de cooperaciones técnicas vinculadas directamente con operaciones de crédito",
+   valor:50, suf:"%"}
  ],
  /* Los tres pilares de la agenda, resaltados dentro del párrafo */
  resalta:["movilizar","diversificar","alinear"],
