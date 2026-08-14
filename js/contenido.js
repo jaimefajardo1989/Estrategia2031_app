@@ -126,7 +126,20 @@ const DATA = [
  links:["f-pro","f-dem","v-cap"]},
 
 {id:"f-amb", temas:"agricultura agua bosques biodiversidad clima adaptación carbono emisiones deforestación sequía inundaciones cuencas suelo Amazonía naturaleza reforestación economía azul desastres", lvl:2, t:"Ambiental", sub:"Adaptación, naturaleza y gestión del riesgo"},
-{id:"f-ene", temas:"energía electricidad renovables solar eólica hidroeléctrica transmisión almacenamiento redes litio cobre minerales críticos hidrógeno eficiencia energética combustibles", lvl:2, t:"Energética", sub:"Matriz limpia, transmisión y eficiencia"},
+/* Tercera agenda con texto e indicadores validados. */
+{id:"f-ene", validado:true,
+ metas:[
+  {nombre:"Personas beneficiadas por los proyectos de transición energética",
+   valor:2.8, uni:"millones de personas"}
+ ],
+ /* Los cuatro objetivos que la agenda tiene que combinar a la vez */
+ resalta:["descarbonización","seguridad energética","asequibilidad","desarrollo económico"],
+ temas:"energía electricidad renovables solar eólica hidroeléctrica transmisión almacenamiento redes litio cobre minerales críticos hidrógeno eficiencia energética combustibles gas natural nuclear descarbonización interconexión blended finance certificación bancabilidad seguridad energética asequibilidad generación firme", lvl:2, t:"Energética", sub:"Matriz limpia, transmisión y eficiencia",
+ lead:"Modernizar los sistemas energéticos e integrar la región, reconociendo la realidad de cada país.",
+ resumen:"Al 2031, CAF modernizará los sistemas energéticos de la región e impulsará una integración eléctrica y gasífera más pragmática.",
+ what:"De cara a 2031, CAF impulsará una agenda energética que combine descarbonización, seguridad energética, asequibilidad y desarrollo económico, reconociendo las distintas realidades de América Latina y el Caribe. Para ello, apoyará la modernización de los sistemas energéticos mediante inversiones en generación renovable, almacenamiento, transmisión y, cuando corresponda, fuentes de transición y generación firme como el gas natural y la energía nuclear. Asimismo, promoverá el aprovechamiento de los minerales críticos como oportunidad de desarrollo productivo, ampliará el uso de blended finance para mejorar la bancabilidad de proyectos y fortalecerá marcos regulatorios y mecanismos de certificación. De manera complementaria, impulsará una integración energética regional más pragmática, mediante interconexiones eléctricas y gasíferas que fortalezcan la resiliencia, competitividad y seguridad del suministro.",
+ acts:["Generación renovable, almacenamiento y transmisión","Fuentes de transición y generación firme cuando corresponda: gas natural y energía nuclear","Minerales críticos como oportunidad de desarrollo productivo","Blended finance para mejorar la bancabilidad de los proyectos","Marcos regulatorios y mecanismos de certificación","Interconexiones eléctricas y gasíferas para la integración energética regional"],
+ links:["t-int","v-int","v-fin"]},
 {id:"f-dig", temas:"conectividad internet banda ancha fibra óptica datos inteligencia artificial IA gobierno digital ciberseguridad pagos inclusión financiera telecomunicaciones centros de datos cables submarinos identidad digital", lvl:2, t:"Digital", sub:"Conectividad, datos e inteligencia artificial"},
 {id:"f-dem", temas:"empleo trabajo juventud jóvenes envejecimiento pensiones salud cuidados mujeres género migración educación formación capacitación informalidad población primera infancia", lvl:2, t:"Demográfica", sub:"Bono demográfico, cuidados y migración"},
 {id:"f-ter", temas:"ciudades urbano vivienda movilidad transporte metro agua potable saneamiento alcantarillado residuos rural caminos carreteras subnacional municipios hábitat territorio barrios", lvl:2, t:"Territorial", sub:"Ciudades, regiones y gobiernos subnacionales"},

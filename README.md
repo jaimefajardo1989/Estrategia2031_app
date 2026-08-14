@@ -139,9 +139,9 @@ superpuestos. Si un resumen se alarga mucho, hay que subir ese número.
 `what`. Solo coincide la palabra completa: `conectar` se resalta y `conectividad`,
 que aparece en la misma frase, no.
 
-Al 2026-08-14 las agendas con indicadores validados son **Integración regional
-pragmática** y **Movilización de recursos y alianzas globales**. Las demás siguen
-sin texto.
+Al 2026-08-14 las agendas con texto e indicadores validados son **Energética**,
+**Integración regional pragmática** y **Movilización de recursos y alianzas
+globales**. Las demás siguen sin texto.
 
 ### El buscador
 
@@ -201,9 +201,10 @@ Las agendas de los niveles 2, 3 y 4 que todavía no tienen texto muestran
 **«Por definir»**: su panel solo lleva el título y el nivel. Basta con que una
 tarjeta no tenga `what` para que se vea así, no hay ningún interruptor aparte.
 
-Con texto propio están **Integración regional pragmática** y **Movilización de
-recursos y alianzas globales**, las dos validadas, más el nivel 1: el objetivo al
-2031 y los tres atributos, que alimentan la lámina del recorrido guiado.
+Con texto propio están las tres agendas validadas —**Energética**, **Integración
+regional pragmática** y **Movilización de recursos y alianzas globales**— más el
+nivel 1: el objetivo al 2031 y los tres atributos, que alimentan la lámina del
+recorrido guiado.
 
 Los borradores que se retiraron están en [BORRADORES.md](BORRADORES.md). Para
 reponer una agenda, se copian sus campos a `js/contenido.js` y, si el texto ya está
