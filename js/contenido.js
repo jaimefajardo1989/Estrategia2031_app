@@ -51,6 +51,7 @@ const IMG = {
   /* El flamenco animado ya existía para la portada: se reutiliza el mismo
      archivo como decoración de las agendas habilitadoras. */
   flamenco_anim: 'video/flamenco_anim.webp',
+  guacamaya_anim: 'video/guacamaya_anim.webp',
 };
 
 /* Videos de aves con fondo transparente (WebM con canal alfa).
@@ -71,7 +72,8 @@ const VID = {
    "explica" es lo que se abre al hacer clic en el nombre de la fila, a la
    izquierda del mapa: qué es ese tipo de agenda. */
 const LEVELS = {
-  1:{name:"Objetivo al 2031", color:"var(--green-d)", tono:"var(--green-tx)", deco:IMG.macaw,
+  1:{name:"Objetivo al 2031", color:"var(--green-d)", tono:"var(--green-tx)",
+     deco:IMG.macaw, decoAnim:IMG.guacamaya_anim,
      explica:{
        t:"Objetivo al 2031",
        lead:"El punto de llegada que ordena todo el ciclo estratégico.",
