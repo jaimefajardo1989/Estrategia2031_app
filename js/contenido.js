@@ -128,32 +128,17 @@ const DATA = [
 /* Segunda agenda con texto e indicadores validados. Misma estructura que
    Integración regional pragmática. */
 {id:"v-mov", validado:true,
+ /* Estos cuatro indicadores van sin "detalle": no llevan botón ni panel, solo
+    la cifra y su nombre. */
  metas:[
-  {nombre:"Movilización total de recursos entre 2026 y 2031",
-   valor:12000, pre:"USD ", uni:"millones",
-   detalle:{tipo:"comparar", boton:"Comparar con el período anterior",
-     titulo:"Frente a lo movilizado en el ciclo anterior",
-     barras:[{et:"Período anterior", v:100},
-             {et:"Meta 2026–2031", v:140, fuerte:true}],
-     uni:"índice, período anterior = 100",
-     pie:"Al menos 40% por encima de lo movilizado en el período anterior, en línea con el crecimiento proyectado de la cartera de CAF. La comparación va en índice porque la meta se fijó como porcentaje de aumento, no como una cifra del período previo."}},
+  {nombre:"Movilización total de recursos entre 2026 y 2031, al menos 40% por encima del período anterior",
+   valor:12000, pre:"USD ", uni:"millones"},
 
-  {nombre:"Factor de movilización en las operaciones con movilización",
-   valor:2, suf:"x", uni:"o más",
-   detalle:{tipo:"palanca", boton:"Ver la relación",
-     titulo:"Lo que atrae cada dólar aportado por CAF",
-     grande:{v:2, pre:"USD ", et:"Recursos de terceros"},
-     chico:{v:1, pre:"USD ", et:"Aporte de CAF"},
-     pie:"Más de USD 2 de recursos de terceros por cada USD 1 aportado por CAF. Los círculos están a escala de área."}},
+  {nombre:"Factor de movilización: más de USD 2 de terceros por cada USD 1 aportado por CAF",
+   valor:2, suf:"x", uni:"o más"},
 
   {nombre:"Recursos movilizados que provienen del sector privado",
-   valor:2, suf:"/3", uni:"como mínimo",
-   detalle:{tipo:"comparar", boton:"Ver la composición",
-     titulo:"De dónde vienen los recursos movilizados",
-     barras:[{et:"Sector privado", v:2, suf:"/3", fuerte:true},
-             {et:"Otras fuentes", v:1, suf:"/3"}],
-     uni:"proporción del total movilizado",
-     pie:"Al menos dos tercios de origen privado, para fortalecer el papel catalizador de CAF sobre la inversión privada en la región."}},
+   valor:2, suf:"/3", uni:"como mínimo"},
 
   {nombre:"Cooperaciones técnicas vinculadas directamente con operaciones de crédito",
    valor:50, suf:"%", uni:"como mínimo"}
