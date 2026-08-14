@@ -1100,8 +1100,10 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
    *           Importa: el ave va detrás del contenido, así que si cruza por
    *           donde hay tarjetas opacas no se ve. La banda la mantiene en las
    *           zonas despejadas de cada sección.
+   *   miraALaIzquierda = hacia dónde apunta el ave en su video, sin espejar.
+   *           No es igual en todos: hay que mirar el archivo antes de ponerlo.
    */
-  function soltarAve(contenedor, base, respaldo, alto, pausa, banda){
+  function soltarAve(contenedor, base, respaldo, alto, pausa, banda, miraALaIzquierda){
     if (!contenedor) return;
     contenedor.style.position = 'relative';
     const franja = banda || [6, 78];
@@ -1118,10 +1120,11 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
       const y0 = azar(franja[0], franja[1]);
       const y1 = Math.min(franja[1], Math.max(franja[0], y0 + azar(-10, 10)));
 
-      /* Las tres aves miran a la izquierda en su video original. Entonces la
-         que va hacia la izquierda se deja tal cual y la que va hacia la
-         derecha se espeja. Estaba al revés, y por eso volaban de espaldas. */
-      ave.style.transform = haciaLaDerecha ? 'scaleX(-1)' : 'scaleX(1)';
+      /* Cada video trae al ave mirando para un lado, y no todos para el mismo:
+         la guacamaya mira a la derecha y el ave de la trayectoria a la
+         izquierda. Se espeja solo cuando el rumbo no coincide con ese lado. */
+      const espejar = miraALaIzquierda ? haciaLaDerecha : !haciaLaDerecha;
+      ave.style.transform = espejar ? 'scaleX(-1)' : 'scaleX(1)';
       capa.style.height = azar(alto[0], alto[1]) + 'px';
 
       const vuelo = capa.animate([
@@ -1144,5 +1147,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
   soltarAve(document.querySelector('#contexto .wrap'), VID.colibri, IMG.hummingbird, [26,42], [5000,11000], [2,38]);
   // La trayectoria de CAF: el ave en blanco y negro. Se cuelga de la sección
   // entera (no del .wrap) para aprovechar también el aire de arriba.
-  soltarAve(document.getElementById('donde'), VID.ave, IMG.hummingbird2, [38,58], [4000,9000], [1,25]);
+  // Es la única cuyo video la trae mirando a la izquierda: sin ese último
+  // dato volaba de espaldas.
+  soltarAve(document.getElementById('donde'), VID.ave, IMG.hummingbird2, [38,58], [4000,9000], [1,25], true);
 })();
