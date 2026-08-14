@@ -149,6 +149,13 @@ h2 em{font-style:normal;color:var(--teal-d)}
 .drawer.on{transform:none}
 .dr-head{padding:24px 28px 18px;border-bottom:1px solid var(--line);position:relative;overflow:hidden;flex:none}
 .dr-head .deco{position:absolute;right:-10px;top:-6px;width:112px;opacity:.9;pointer-events:none}
+/* El colibrí del nivel 3 va por debajo del botón de cerrar, no detrás de él.
+   La X termina a los 50 px y la cabecera más corta —la de las agendas sin
+   texto— mide 122, así que con 100 px de ancho (unos 69 de alto) entra justo
+   entre una cosa y la otra sin que lo recorte el borde.
+   Las otras tres decoraciones se quedan donde estaban: son siluetas altas,
+   como el flamenco, que ya se ven recortadas a propósito. */
+.dr-head .deco[data-nivel="3"]{top:52px;right:-6px;width:100px}
 .dr-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;padding:6px 12px;border-radius:20px}
 .dr-head h3{margin:14px 0 0;font-size:26px;line-height:1.15;letter-spacing:-.025em;max-width:78%;color:var(--ink)}
 .dr-head .lead{margin:10px 0 0;font-size:14px;color:var(--ink-2);max-width:82%;line-height:1.5}

@@ -354,9 +354,11 @@ function openCard(id, push){
   document.getElementById('dr-tag').textContent = L.name;
   document.getElementById('dr-tag').style.background = L.color;
   /* Si el nivel trae una versión animada, se usa esa; con "reducir
-     movimiento" queda la fija. */
-  document.getElementById('dr-deco').src =
-    (!SIN_MOVIMIENTO && L.decoAnim) ? L.decoAnim : L.deco;
+     movimiento" queda la fija. El nivel va como dato porque cada decoración
+     se coloca distinto: el colibrí esquiva el botón de cerrar. */
+  const deco = document.getElementById('dr-deco');
+  deco.src = (!SIN_MOVIMIENTO && L.decoAnim) ? L.decoAnim : L.deco;
+  deco.dataset.nivel = d.lvl;
   document.getElementById('dr-title').textContent = d.t;
   document.getElementById('dr-title').style.fontSize = d.t.length > 70 ? '20px' : '26px';
   /* Las agendas cuyo texto todavía no llegó no muestran nada inventado: se
@@ -414,9 +416,11 @@ function openLevel(lvl){
   document.getElementById('dr-tag').textContent = 'Qué es este nivel';
   document.getElementById('dr-tag').style.background = L.color;
   /* Si el nivel trae una versión animada, se usa esa; con "reducir
-     movimiento" queda la fija. */
-  document.getElementById('dr-deco').src =
-    (!SIN_MOVIMIENTO && L.decoAnim) ? L.decoAnim : L.deco;
+     movimiento" queda la fija. El nivel va como dato porque cada decoración
+     se coloca distinto: el colibrí esquiva el botón de cerrar. */
+  const deco = document.getElementById('dr-deco');
+  deco.src = (!SIN_MOVIMIENTO && L.decoAnim) ? L.decoAnim : L.deco;
+  deco.dataset.nivel = lvl;
   document.getElementById('dr-title').textContent = e.t;
   document.getElementById('dr-title').style.fontSize = '26px';
   document.getElementById('dr-lead').textContent = e.lead || '';
@@ -1114,7 +1118,10 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
       const y0 = azar(franja[0], franja[1]);
       const y1 = Math.min(franja[1], Math.max(franja[0], y0 + azar(-10, 10)));
 
-      ave.style.transform = haciaLaDerecha ? 'scaleX(1)' : 'scaleX(-1)';
+      /* Las tres aves miran a la izquierda en su video original. Entonces la
+         que va hacia la izquierda se deja tal cual y la que va hacia la
+         derecha se espeja. Estaba al revés, y por eso volaban de espaldas. */
+      ave.style.transform = haciaLaDerecha ? 'scaleX(-1)' : 'scaleX(1)';
       capa.style.height = azar(alto[0], alto[1]) + 'px';
 
       const vuelo = capa.animate([
