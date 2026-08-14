@@ -590,8 +590,8 @@ footer.foot strong{color:var(--ink-2)}
 /* Panel de explicación */
 /* Los paneles van superpuestos y en posición absoluta, así que el contenedor
    no crece solo: el alto tiene que alcanzar para el más largo, botón incluido.
-   Con los resúmenes del recorrido el más alto pide 152 px. */
-.texp{position:relative;margin-top:22px;min-height:158px}
+   El más alto es hoy el de "resiliente", que pide 204 px. */
+.texp{position:relative;margin-top:22px;min-height:210px}
 .texp-uno{
   /* Ancho acotado a propósito: con inset:0 el fondo blanco del panel se
      extendía hasta el borde y tapaba la ilustración de la derecha. */

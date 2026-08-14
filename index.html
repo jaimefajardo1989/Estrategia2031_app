@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-version="69">
+<html lang="es" data-version="70">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,7 +14,7 @@
     <!-- El ?v= obliga al navegador a bajar los archivos de nuevo cuando cambian.
          Si editas css/estilos.css, js/contenido.js o js/app.js, sube el número
          en las tres líneas (aquí y al final del body). -->
-    <link rel="stylesheet" href="css/estilos.css?v=69" />
+    <link rel="stylesheet" href="css/estilos.css?v=70" />
   </head>
 
   <body>
@@ -170,8 +170,12 @@
     <p class="dr-pendiente">Por definir</p>
     <h4>Qué significa</h4>
     <p id="dr-what"></p>
-    <h4>Cómo se traduce en acción</h4>
-    <ul class="acts" id="dr-acts"></ul>
+    <!-- Se oculta entero cuando la tarjeta no trae acciones: si no, quedaba
+         el título "Cómo se traduce en acción" encabezando una lista vacía. -->
+    <div id="dr-acts-wrap">
+      <h4>Cómo se traduce en acción</h4>
+      <ul class="acts" id="dr-acts"></ul>
+    </div>
     <!-- Meta de la agenda, con su barra de avance. La arma js/app.js -->
     <div id="dr-meta-wrap"><h4>La meta al 2031</h4><div id="dr-meta"></div></div>
     <div id="dr-links-wrap"><h4>Se conecta con</h4><div class="links" id="dr-links"></div></div>
@@ -195,8 +199,8 @@
     <button class="btn btn-ghost" id="tclose" style="margin-left:10px">Salir ✕</button>
   </div>
 </div>
-    <script src="js/mapa-lac.js?v=69"></script>
-    <script src="js/contenido.js?v=69"></script>
-    <script src="js/app.js?v=69"></script>
+    <script src="js/mapa-lac.js?v=70"></script>
+    <script src="js/contenido.js?v=70"></script>
+    <script src="js/app.js?v=70"></script>
   </body>
 </html>

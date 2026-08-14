@@ -417,6 +417,8 @@ function openCard(id, push){
   document.getElementById('dr-what').innerHTML = resaltar(d.what || '', d.resalta, L.tono || L.color);
   document.getElementById('dr-acts').style.setProperty('--c', L.color);
   document.getElementById('dr-acts').innerHTML = (d.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
+  // Sin acciones no se muestra ni el título de la sección
+  document.getElementById('dr-acts-wrap').style.display = (d.acts||[]).length ? '' : 'none';
   const lw = document.getElementById('dr-links-wrap');
   const ls = porDefinir ? [] : (d.links||[]).map(byId).filter(Boolean);
   lw.style.display = ls.length ? '' : 'none';
@@ -474,6 +476,7 @@ function openLevel(lvl){
   document.getElementById('dr-what').textContent = e.what || '';
   document.getElementById('dr-acts').style.setProperty('--c', L.color);
   document.getElementById('dr-acts').innerHTML = (e.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
+  document.getElementById('dr-acts-wrap').style.display = (e.acts||[]).length ? '' : 'none';
   document.getElementById('dr-note').innerHTML =
     'Textos en borrador. Para editarlos, modifica el bloque <b>LEVELS</b> en <b>js/contenido.js</b>.';
 
