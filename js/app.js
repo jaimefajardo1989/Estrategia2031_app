@@ -29,8 +29,54 @@ DATA.filter(d=>d.lvl===2).forEach(d=>document.getElementById('forces').appendChi
 DATA.filter(d=>d.lvl===3).forEach(d=>document.getElementById('valor').appendChild(makeCard(d,'seg')));
 DATA.filter(d=>d.lvl===4).forEach(d=>document.getElementById('agendas').appendChild(makeCard(d,'seg')));
 
-document.getElementById('trans').innerHTML = TRANS.map(t=>
- '<div class="tcard"><div class="ph"><img src="'+t.img+'" alt=""></div><div class="bd"><span class="lab">'+esc(t.lab)+'</span><p>'+esc(t.txt)+'</p></div></div>').join('');
+/* ---------- LAS CUATRO TRANSICIONES ---------- */
+/* Cada tarjeta es un botón: al pulsarla se abre debajo, a todo el ancho, el
+   texto completo de esa transición. Vuelve a pulsarse y se cierra. */
+const COLOR_TRANS = ['var(--green-tx)','var(--yellow-tx)','var(--teal-tx)','var(--coral-tx)'];
+
+document.getElementById('trans').innerHTML = TRANS.map((t,k)=>
+ '<button type="button" class="tcard" data-trans="'+k+'" aria-expanded="false"'
+ + ' style="--c:'+COLOR_TRANS[k]+'">'
+ +   '<div class="ph"><img src="'+t.img+'" alt=""></div>'
+ +   '<div class="bd"><span class="lab">'+esc(t.lab)+'</span><p>'+esc(t.txt)+'</p>'
+ +     (t.texto ? '<span class="tcard-mas">Leer más <i aria-hidden="true">▾</i></span>' : '')
+ +   '</div>'
+ + '</button>').join('');
+
+(function(){
+  const caja = document.getElementById('trans-det');
+  if (!caja) return;
+  let abierta = -1;
+
+  document.getElementById('trans').addEventListener('click', e => {
+    const b = e.target.closest('[data-trans]');
+    if (!b) return;
+    const k = +b.dataset.trans;
+    const t = TRANS[k];
+    if (!t || !t.texto) return;
+
+    document.querySelectorAll('#trans .tcard').forEach(c =>
+      c.setAttribute('aria-expanded', String(+c.dataset.trans === k && abierta !== k)));
+
+    if (abierta === k){                       // se vuelve a pulsar la misma
+      abierta = -1;
+      caja.hidden = true; caja.innerHTML = '';
+      return;
+    }
+    abierta = k;
+    caja.style.setProperty('--c', COLOR_TRANS[k]);
+    caja.innerHTML =
+        '<div class="tdet-in">'
+      +   '<img class="tdet-ph" src="' + t.img + '" alt="">'
+      +   '<div class="tdet-txt">'
+      +     '<span class="tdet-lab">' + esc(t.lab) + '</span>'
+      +     '<p>' + esc(t.texto) + '</p>'
+      +   '</div>'
+      + '</div>';
+    // Se muestra y ya: la entrada la hace el CSS con una animación propia.
+    caja.hidden = false;
+  });
+})();
 document.getElementById('stats').innerHTML = STATS.map(s=>
  '<div class="stat '+s.c+'"><b>'+esc(s.n)+'</b><span>'+esc(s.d)+'</span></div>').join('');
 document.getElementById('tl').innerHTML = TL.map(t=>

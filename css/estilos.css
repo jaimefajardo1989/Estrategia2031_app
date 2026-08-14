@@ -191,12 +191,54 @@ h2 em{font-style:normal;color:var(--teal-d)}
 
 /* ---------- CONTEXTO ---------- */
 .trans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.tcard{border-radius:22px;overflow:hidden;background:#fff;border:1px solid var(--line)}
+.tcard{border-radius:22px;overflow:hidden;background:#fff;border:1px solid var(--line);
+  display:block;width:100%;text-align:left;font:inherit;padding:0;cursor:pointer}
 .tcard .ph{height:138px;overflow:hidden;background:#fff;display:flex;align-items:flex-end;justify-content:center;padding:10px 12px 0}
 .tcard .ph img{height:100%;width:auto;max-width:100%;object-fit:contain}
 .tcard .bd{padding:16px 18px 20px}
 .tcard .lab{display:inline-block;background:var(--teal-d);color:#fff;font-size:12px;font-weight:700;border-radius:16px;padding:6px 13px;margin-bottom:10px}
 .tcard p{font-size:13px;line-height:1.5;color:var(--ink-2);margin:0}
+
+/* La tarjeta abierta se marca con el color de su transición */
+.tcard[aria-expanded="true"]{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset}
+.tcard-mas{display:inline-flex;align-items:center;gap:5px;margin-top:11px;
+  font-size:12px;font-weight:700;color:var(--c)}
+.tcard-mas i{font-style:normal;font-size:10px;transition:transform .25s ease}
+.tcard[aria-expanded="true"] .tcard-mas i{transform:rotate(180deg)}
+
+/* El texto completo, a todo el ancho y debajo de las cuatro */
+.trans-det[hidden]{display:none !important}
+/* La entrada solo desplaza el panel: no toca la opacidad.
+   Con una pestaña en segundo plano el navegador congela las animaciones en su
+   primer fotograma, y si ese fotograma fuera opacidad 0 el texto quedaría
+   invisible hasta volver a la pestaña. Desplazado sí se lee igual. */
+.trans-det{
+  margin-top:16px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--c);
+  border-radius:20px;padding:22px 26px;
+  animation:entraDetalle .45s var(--rebote);
+}
+@keyframes entraDetalle{
+  from{transform:translateY(-10px)}
+  to{transform:none}
+}
+.tdet-in{display:flex;gap:22px;align-items:flex-start}
+/* Caja cuadrada con la foto encajada dentro. Las cuatro fotos tienen formas
+   muy distintas —la de digital es 300x958, casi una columna— y a ancho fijo
+   esa sola estiraba el panel al doble de alto que las demás. */
+.tdet-ph{width:150px;height:150px;flex:none;object-fit:contain;object-position:center}
+.tdet-txt{min-width:0}
+.tdet-lab{display:inline-block;background:var(--c);color:#fff;font-size:12px;font-weight:700;
+  border-radius:16px;padding:6px 13px;margin-bottom:11px}
+.trans-det p{font-size:14.5px;line-height:1.65;color:var(--ink-2);margin:0;max-width:74ch}
+
+@media(max-width:760px){
+  .tdet-in{flex-direction:column;gap:14px}
+  .tdet-ph{width:110px;height:110px}
+  .trans-det{padding:18px 18px}
+}
+@media(prefers-reduced-motion:reduce){
+  .trans-det{animation:none}
+}
 @media(max-width:900px){.trans{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.trans{grid-template-columns:1fr}}
 

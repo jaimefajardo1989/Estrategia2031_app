@@ -235,11 +235,25 @@ const DATA = [
 {id:"a-gob", temas:"gobierno corporativo transparencia control interno auditoría eficiencia procesos resultados impacto integridad cumplimiento gestión de riesgos evaluación", lvl:4, t:"Gobernanza, efectividad y excelencia operacional", sub:"Decidir rápido y ejecutar bien"}
 ];
 
+/* Cada transición va con dos textos:
+     txt   = el resumen. Es lo que se lee en la tarjeta y en el recorrido.
+     texto = el texto completo, que aparece al hacer clic en la tarjeta.        */
 const TRANS = [
- {lab:"Transición ambiental", img:IMG.ph_amb, txt:"Adaptación, biodiversidad y agua como condición de toda inversión en la región."},
- {lab:"Transición energética", img:IMG.ph_ene, txt:"Renovables, transmisión, almacenamiento e integración energética entre países."},
- {lab:"Transición digital", img:IMG.ph_dig, txt:"Conectividad, datos e inteligencia artificial al servicio de la productividad."},
- {lab:"Transición demográfica", img:IMG.ph_dem, txt:"Bono demográfico, cuidados y migración redefinen la agenda social."}
+ {lab:"Transición ambiental", img:IMG.ph_amb,
+  txt:"Adaptar la producción, la inversión y las ciudades al cambio climático, y aprovechar el capital natural de la región.",
+  texto:"Es la necesidad de adaptar la forma en que producimos, invertimos y desarrollamos nuestras ciudades y territorios frente al cambio climático y la pérdida de biodiversidad. Para la región, supone fortalecer la resiliencia ante eventos extremos y, al mismo tiempo, aprovechar su extraordinario capital natural como una fuente de desarrollo sostenible y nuevas oportunidades económicas."},
+
+ {lab:"Transición energética", img:IMG.ph_ene,
+  txt:"Sistemas de energía más limpios, seguros y eficientes, aprovechando los recursos energéticos de la región.",
+  texto:"Es el cambio hacia sistemas de energía más limpios, seguros y eficientes, combinando la expansión de las energías renovables con nuevas tecnologías, almacenamiento y fuentes de transición. Para América Latina y el Caribe, implica aprovechar sus recursos energéticos para reducir emisiones, fortalecer la seguridad energética y generar nuevas oportunidades de inversión y desarrollo."},
+
+ {lab:"Transición digital", img:IMG.ph_dig,
+  txt:"Tecnologías digitales, datos e inteligencia artificial para elevar la productividad y mejorar los servicios públicos.",
+  texto:"Es la transformación de la economía, los servicios y la forma de trabajar a partir del uso creciente de tecnologías digitales, datos e inteligencia artificial. Para la región, representa una oportunidad para aumentar la productividad, mejorar los servicios públicos, conectar territorios y empresas y desarrollar nuevas capacidades, siempre que se reduzcan las brechas de acceso y talento digital."},
+
+ {lab:"Transición demográfica", img:IMG.ph_dem,
+  txt:"Envejecimiento, urbanización y migración cambian las necesidades de empleo, educación, salud, cuidados y vivienda.",
+  texto:"Es el cambio en la estructura y distribución de la población, marcado por el envejecimiento, la urbanización y los movimientos migratorios, con diferencias importantes entre países. Estos cambios transformarán las necesidades de empleo, educación, salud, cuidados, vivienda e infraestructura, y exigirán políticas capaces de aprovechar el talento de la población y responder a nuevas demandas sociales."}
 ];
 
 const STATS = [

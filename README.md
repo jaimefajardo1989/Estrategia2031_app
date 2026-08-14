@@ -153,7 +153,9 @@ encuentra `Energética`) y, si escribes varias palabras, exige que estén todas.
 
 ### Las otras secciones
 
-- `TRANS` — las cuatro tarjetas de transiciones, con su foto.
+- `TRANS` — las cuatro transiciones. Cada una lleva dos textos: `txt`, el resumen
+  que se lee en la tarjeta y en el recorrido guiado, y `texto`, el desarrollo
+  completo que aparece al pulsar la tarjeta en la sección de contexto.
 - `STATS` — las ocho cifras alcanzadas.
 - `TL` — los hitos de la línea de tiempo (`on:true` marca el tramo actual).
 - `TOUR` — las pantallas del recorrido guiado.
