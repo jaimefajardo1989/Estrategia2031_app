@@ -125,7 +125,46 @@ const DATA = [
 {id:"f-ter", temas:"ciudades urbano vivienda movilidad transporte metro agua potable saneamiento alcantarillado residuos rural caminos carreteras subnacional municipios hábitat territorio barrios", lvl:2, t:"Territorial", sub:"Ciudades, regiones y gobiernos subnacionales"},
 {id:"f-pro", temas:"productividad pymes mipymes empresas exportaciones comercio industria manufactura innovación cadenas de valor competitividad crédito emprendimiento turismo agroindustria logística", lvl:2, t:"Productiva y competitiva", sub:"Productividad, pymes, comercio y turismo"},
 
-{id:"v-mov", temas:"cofinanciamiento donantes fondos verdes alianzas movilización banca multilateral inversión privada filantropía sindicación capital concesional emisiones temáticas", lvl:3, t:"Movilización de recursos y alianzas globales", sub:"Que cada dólar de CAF traiga más recursos"},
+/* Segunda agenda con texto e indicadores validados. Misma estructura que
+   Integración regional pragmática. */
+{id:"v-mov", validado:true,
+ metas:[
+  {nombre:"Movilización total de recursos entre 2026 y 2031",
+   valor:12000, pre:"USD ", uni:"millones",
+   detalle:{tipo:"comparar", boton:"Comparar con el período anterior",
+     titulo:"Frente a lo movilizado en el ciclo anterior",
+     barras:[{et:"Período anterior", v:100},
+             {et:"Meta 2026–2031", v:140, fuerte:true}],
+     uni:"índice, período anterior = 100",
+     pie:"Al menos 40% por encima de lo movilizado en el período anterior, en línea con el crecimiento proyectado de la cartera de CAF. La comparación va en índice porque la meta se fijó como porcentaje de aumento, no como una cifra del período previo."}},
+
+  {nombre:"Factor de movilización en las operaciones con movilización",
+   valor:2, suf:"x", uni:"o más",
+   detalle:{tipo:"palanca", boton:"Ver la relación",
+     titulo:"Lo que atrae cada dólar aportado por CAF",
+     grande:{v:2, pre:"USD ", et:"Recursos de terceros"},
+     chico:{v:1, pre:"USD ", et:"Aporte de CAF"},
+     pie:"Más de USD 2 de recursos de terceros por cada USD 1 aportado por CAF. Los círculos están a escala de área."}},
+
+  {nombre:"Recursos movilizados que provienen del sector privado",
+   valor:2, suf:"/3", uni:"como mínimo",
+   detalle:{tipo:"comparar", boton:"Ver la composición",
+     titulo:"De dónde vienen los recursos movilizados",
+     barras:[{et:"Sector privado", v:2, suf:"/3", fuerte:true},
+             {et:"Otras fuentes", v:1, suf:"/3"}],
+     uni:"proporción del total movilizado",
+     pie:"Al menos dos tercios de origen privado, para fortalecer el papel catalizador de CAF sobre la inversión privada en la región."}},
+
+  {nombre:"Cooperaciones técnicas vinculadas directamente con operaciones de crédito",
+   valor:50, suf:"%", uni:"como mínimo"}
+ ],
+ /* Los tres pilares de la agenda, resaltados dentro del párrafo */
+ resalta:["movilizar","diversificar","alinear"],
+ temas:"cofinanciamiento donantes fondos verdes alianzas movilización banca multilateral inversión privada filantropía sindicación capital concesional emisiones temáticas cooperación técnica catalizador socios originación cofinanciación capital privado", lvl:3, t:"Movilización de recursos y alianzas globales", sub:"Que cada dólar de CAF traiga más recursos",
+ lead:"Movilizar, diversificar alianzas y alinear la cooperación técnica: tres pilares para multiplicar cada dólar.",
+ what:"De cara a 2031, CAF buscará consolidar su papel como catalizador de recursos, alianzas y conocimiento para ampliar la escala y el impacto de sus intervenciones en América Latina y el Caribe. Para ello, la agenda se estructurará en tres pilares estratégicos: movilizar mayores recursos hacia la región, incorporando la movilización y la cofinanciación desde la originación de las operaciones y fortaleciendo la participación del capital privado; diversificar y profundizar las alianzas globales, ampliando la red de socios de CAF y su presencia en espacios estratégicos para atraer nuevas oportunidades de inversión y cooperación y proyectar la voz de la región; y alinear la cooperación técnica con las agendas misionales y la originación de operaciones, orientando recursos de terceros hacia la preparación y estructuración de iniciativas de alto impacto. Con ello, CAF buscará multiplicar los recursos y capacidades que acompañan su financiamiento y conectar las prioridades de sus países accionistas con nuevas fuentes de capital, conocimiento y alianzas globales.",
+ acts:["Movilizar: incorporar la movilización y la cofinanciación desde la originación de las operaciones","Fortalecer la participación del capital privado en las operaciones","Diversificar: ampliar la red de socios y la presencia en espacios estratégicos","Proyectar la voz de la región y atraer nuevas oportunidades de inversión y cooperación","Alinear: orientar la cooperación técnica y los fondos de terceros hacia la preparación y estructuración de proyectos"],
+ links:["t-int","v-fin","v-int"]},
 {id:"v-fin", temas:"bonos verdes bonos temáticos inclusión financiera garantías moneda local liquidez línea contingente intermediarios financieros trazabilidad microfinanzas", lvl:3, t:"Financiamiento verde, inclusivo y digital", sub:"Soluciones a la medida y con impacto trazable"},
 /* Esta agenda ya tiene texto e indicadores validados: por eso usa "metas" (en
    plural, la tarjeta de cifras animadas) y lleva validado:true, que cambia la

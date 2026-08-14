@@ -233,7 +233,7 @@ function verComparar(d){
         '<div class="mdet-b' + (b.fuerte ? ' es-meta' : '') + '">'
         + '<span class="mdet-et">' + esc(b.et) + '</span>'
         + '<div class="mdet-canal"><i style="--w:' + (b.v/tope*100).toFixed(1) + '%"></i></div>'
-        + '<b class="mdet-v">' + fmt.format(b.v) + '</b></div>').join('')
+        + '<b class="mdet-v">' + esc((b.pre||'') + fmt.format(b.v) + (b.suf||'')) + '</b></div>').join('')
     + '</div><p class="mdet-uni">' + esc(d.uni || '') + '</p>'
     + '<p class="mdet-pie">' + esc(d.pie) + '</p>';
 }
@@ -243,14 +243,15 @@ function verPalanca(d){
   // Lo que se compara es el área de cada círculo, así que el diámetro va por
   // la raíz: si no, 240 contra 10.000 se vería mucho más chico de lo que es.
   const chico = Math.sqrt(d.chico.v / d.grande.v) * 132;
-  const globo = (px, v, et, cls) =>
+  const globo = (px, g, cls) =>
     '<div class="mdet-globo ' + cls + '">'
     + '<span class="mdet-disco" style="--d:' + px.toFixed(0) + 'px"></span>'
-    + '<b>' + fmt.format(v) + '</b><small>' + esc(et) + '</small></div>';
+    + '<b>' + esc((g.pre||'') + fmt.format(g.v) + (g.suf||'')) + '</b>'
+    + '<small>' + esc(g.et) + '</small></div>';
   return '<p class="mdet-t">' + esc(d.titulo) + '</p>'
     + '<div class="mdet-palanca">'
-    +   globo(132, d.grande.v, d.grande.et, 'es-gr')
-    +   globo(Math.max(14, chico), d.chico.v, d.chico.et, 'es-ch')
+    +   globo(132, d.grande, 'es-gr')
+    +   globo(Math.max(14, chico), d.chico, 'es-ch')
     + '</div>'
     + '<p class="mdet-pie">' + esc(d.pie) + '</p>';
 }

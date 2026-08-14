@@ -72,22 +72,28 @@ El campo `lvl` define el nivel (1 objetivo, 2 oportunidades, 3 transversales,
 ### Los indicadores y metas de una agenda
 
 Una agenda puede tener **una** meta (`meta`, la barra que va del punto de partida
-al destino) o **varias** (`metas`, las fichas con la cifra que cuenta desde cero).
-La segunda es la forma que conviene cuando los indicadores ya están validados:
+al destino) o **varias** (`metas`, las fichas de dos columnas). La segunda es la
+forma que conviene cuando los indicadores ya están validados:
 
 ```js
 metas:[
  {nombre:"Financiamiento aprobado para operaciones de integración regional",
-  valor:10000, pre:"USD ", uni:"millones", forma:"barra"},
+  valor:10000, pre:"USD ", uni:"millones"},
  {nombre:"Países de ALC con al menos una operación de integración regional",
-  valor:100, suf:"%", uni:"de los países de la región", forma:"anillo"}
+  valor:100, suf:"%", uni:"de los países"}
 ]
 ```
 
-- `forma:"barra"` → cifra grande y una raya que se traza debajo. Para montos.
-- `forma:"anillo"` → un anillo que se dibuja hasta el valor. Solo para porcentajes,
-  porque ahí el anillo mide algo real.
-- `pre` y `suf` se pegan antes y después del número (`USD `, `%`).
+Las fichas no tienen animación de aparición: se dibujan con su cifra y se ven al
+llegar a ellas. Se probó revelarlas al bajar y dejaba huecos en blanco cuando el
+desplazamiento era rápido.
+
+La columna de la cifra mide 106 px fijos, que es lo que alinea las fichas entre
+sí. Conviene revisar que la cifra más larga entre en ese ancho.
+
+- `pre` y `suf` se pegan antes y después del número (`USD `, `%`, `x`, `/3`).
+  Funcionan igual en la cifra de la ficha, en las barras de `comparar` y en los
+  círculos de `palanca`, así que las unidades se escriben una sola vez.
 - `validado:true` en la tarjeta cambia la nota del pie: deja de advertir que el
   contenido es un borrador.
 
@@ -115,8 +121,9 @@ del mapa; si uno no coincide, ese país simplemente no se enciende.
 `what`. Solo coincide la palabra completa: `conectar` se resalta y `conectividad`,
 que aparece en la misma frase, no.
 
-Al 2026-08-13 la única agenda con indicadores validados es **Integración regional
-pragmática**. Las demás siguen con cifras de ejemplo.
+Al 2026-08-14 las agendas con indicadores validados son **Integración regional
+pragmática** y **Movilización de recursos y alianzas globales**. Las demás siguen
+sin texto.
 
 ### El buscador
 
@@ -172,13 +179,13 @@ el contenido aparece igual pero sin desplazamientos.
 
 ## Qué agendas tienen texto y cuáles no
 
-Las 14 agendas de los niveles 2, 3 y 4 muestran **«Por definir»**: su panel solo
-lleva el título y el nivel. Basta con que una tarjeta no tenga `what` para que se
-vea así, no hay ningún interruptor aparte.
+Las agendas de los niveles 2, 3 y 4 que todavía no tienen texto muestran
+**«Por definir»**: su panel solo lleva el título y el nivel. Basta con que una
+tarjeta no tenga `what` para que se vea así, no hay ningún interruptor aparte.
 
-Con texto propio quedan **Integración regional pragmática** —la única validada— y
-el nivel 1: el objetivo al 2031 y los tres atributos, que alimentan la lámina del
-recorrido guiado.
+Con texto propio están **Integración regional pragmática** y **Movilización de
+recursos y alianzas globales**, las dos validadas, más el nivel 1: el objetivo al
+2031 y los tres atributos, que alimentan la lámina del recorrido guiado.
 
 Los borradores que se retiraron están en [BORRADORES.md](BORRADORES.md). Para
 reponer una agenda, se copian sus campos a `js/contenido.js` y, si el texto ya está
