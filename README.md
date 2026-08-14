@@ -88,8 +88,9 @@ Las fichas no tienen animación de aparición: se dibujan con su cifra y se ven 
 llegar a ellas. Se probó revelarlas al bajar y dejaba huecos en blanco cuando el
 desplazamiento era rápido.
 
-La columna de la cifra mide 106 px fijos, que es lo que alinea las fichas entre
-sí. Conviene revisar que la cifra más larga entre en ese ancho.
+La columna de la cifra mide 116 px fijos, que es lo que alinea las fichas entre
+sí. Conviene revisar que la cifra más larga entre en ese ancho: hoy la que manda
+es "USD 100.000", que ocupa 108.
 
 - `pre` y `suf` se pegan antes y después del número (`USD `, `%`, `x`, `/3`).
   Funcionan igual en la cifra de la ficha, en las barras de `comparar` y en los
@@ -139,9 +140,9 @@ superpuestos. Si un resumen se alarga mucho, hay que subir ese número.
 `what`. Solo coincide la palabra completa: `conectar` se resalta y `conectividad`,
 que aparece en la misma frase, no.
 
-Al 2026-08-14 las agendas con texto e indicadores validados son **Energética**,
-**Integración regional pragmática** y **Movilización de recursos y alianzas
-globales**. Las demás siguen sin texto.
+Al 2026-08-14 tienen texto e indicadores validados el **objetivo al 2031** y tres
+agendas: **Energética**, **Integración regional pragmática** y **Movilización de
+recursos y alianzas globales**. Las demás siguen sin texto.
 
 ### El buscador
 

@@ -105,10 +105,18 @@ const LEVELS = {
 };
 
 const DATA = [
-{id:"obj", meta:{nombre:"Bienestar que llega a las personas",unidad:"personas alcanzadas, en millones",desde:{etiqueta:"2025",valor:0},hasta:{etiqueta:"Meta 2031",valor:120}},temas:"visión misión países miembros bienestar horizonte plataforma regional",lvl:1,t:"Una región más resiliente, integrada y próspera, donde el desarrollo sostenible se traduce en bienestar para cada persona",
- lead:"El objetivo que ordena todo el ciclo estratégico 2026–2031.",
- what:"Ante la magnitud de los desbalances estructurales y de las transiciones que enfrenta la región hacia 2031, el desafío no es solo crecer más, sino crecer mejor. Avanzar hacia una América Latina y el Caribe más resiliente, integrada y próspera exigirá movilizar más recursos, construir más alianzas y sostener una forma de actuar basada en la cercanía, la agilidad y la flexibilidad. Ese es el rol que CAF está llamada a cumplir: una plataforma regional capaz de conectar financiamiento, conocimiento, ejecución e impacto.",
- acts:["Traducir el crecimiento del Banco en bienestar concreto para las personas","Movilizar más recursos y alianzas en favor de la región","Sostener la cercanía y la atención integral a los países como ancla de la agenda","Medir el avance por impacto y no solo por volumen"],
+/* El objetivo estratégico, con texto e indicadores validados. */
+{id:"obj", validado:true,
+ metas:[
+  {nombre:"Cartera al 2031", valor:67000, pre:"USD ", uni:"millones"},
+  {nombre:"Aprobaciones acumuladas entre 2026 y 2031", valor:100000, pre:"USD ", uni:"millones"}
+ ],
+ /* Los tres conceptos que la segunda frase define uno por uno */
+ resalta:["resiliencia","integración","prosperidad"],
+ temas:"visión misión países miembros bienestar horizonte plataforma regional cartera aprobaciones socio resiliencia integración prosperidad crecimiento sostenible inclusivo",lvl:1,t:"Una región más resiliente, integrada y próspera, donde el desarrollo sostenible se traduce en bienestar para cada persona",
+ lead:"Ser el principal socio de los países accionistas para llegar allí.",
+ what:"A partir del entendimiento compartido con sus países accionistas sobre los principales retos, desbalances y transiciones que marcarán el desarrollo de la región hacia 2031, CAF aspira a ser el principal socio de sus países accionistas para avanzar hacia una América Latina y el Caribe más resiliente, integrada y próspera, donde el desarrollo sostenible se traduzca en bienestar para cada persona. Esta visión reconoce la resiliencia como capacidad para enfrentar un entorno más incierto, la integración como condición para ampliar la escala y las capacidades de la región, y la prosperidad como expresión de un crecimiento sostenible e inclusivo que genere mayores oportunidades para todos los latinoamericanos y caribeños.",
+ acts:["Resiliencia: capacidad para enfrentar un entorno más incierto","Integración: condición para ampliar la escala y las capacidades de la región","Prosperidad: crecimiento sostenible e inclusivo, con más oportunidades para todos","Un entendimiento construido junto a los países accionistas sobre los retos, desbalances y transiciones de la región"],
  links:["t-res","t-int","t-pro"]},
 
 {id:"t-res", meta:{nombre:"Operaciones con criterio de resiliencia",unidad:"% de la cartera",desde:{etiqueta:"2025",valor:18},hasta:{etiqueta:"Meta 2031",valor:45}},temas:"resiliencia choques desastres clima fiscal contingente emergencia riesgo",lvl:1,t:"resiliente",lead:"Capacidad de absorber choques sin perder la trayectoria de desarrollo.",

@@ -676,8 +676,9 @@ video.tdeco{
 .meta2{
   background:var(--soft);border:1px solid var(--line);border-radius:12px;
   padding:10px 12px 9px;
-  /* Columna izquierda de ancho fijo: es lo que alinea las tres fichas entre sí */
-  display:grid;grid-template-columns:106px 1fr;gap:4px 12px;align-items:center;
+  /* Columna izquierda de ancho fijo: es lo que alinea las fichas entre sí.
+     116 px es lo que pide la cifra más larga que hay hoy, "USD 100.000". */
+  display:grid;grid-template-columns:116px 1fr;gap:4px 12px;align-items:center;
 }
 /* Sin aparición: la ficha está siempre a la vista. Lo que se anima es la
    cifra, que se cuenta desde cero al asomar. */
