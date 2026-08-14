@@ -477,17 +477,20 @@ function openLevel(lvl){
   document.getElementById('dr-acts').style.setProperty('--c', L.color);
   document.getElementById('dr-acts').innerHTML = (e.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
   document.getElementById('dr-acts-wrap').style.display = (e.acts||[]).length ? '' : 'none';
-  document.getElementById('dr-note').innerHTML =
-    'Textos en borrador. Para editarlos, modifica el bloque <b>LEVELS</b> en <b>js/contenido.js</b>.';
+  document.getElementById('dr-note').innerHTML = e.soloTexto ? ''
+    : 'Textos en borrador. Para editarlos, modifica el bloque <b>LEVELS</b> en <b>js/contenido.js</b>.';
+  document.getElementById('dr-note').style.display = e.soloTexto ? 'none' : '';
 
-  // Las tarjetas de ese nivel quedan como accesos directos
-  const ls = DATA.filter(d=>d.lvl===lvl);
+  /* Las tarjetas del nivel quedan como accesos directos, salvo cuando el nivel
+     pide mostrar solo su texto. */
+  const ls = e.soloTexto ? [] : DATA.filter(d=>d.lvl===lvl);
   document.getElementById('dr-links-wrap').style.display = ls.length ? '' : 'none';
   document.getElementById('dr-links').innerHTML = ls.map(x=>
     '<button class="lchip" data-go="'+x.id+'"><i style="background:'+L.color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
 
   document.getElementById('dr-meta-wrap').style.display = 'none';
-  document.getElementById('dr-pos').textContent = ls.length + (ls.length===1?' tarjeta':' tarjetas');
+  document.getElementById('dr-pos').textContent =
+    ls.length ? ls.length + (ls.length===1?' tarjeta':' tarjetas') : '';
   document.getElementById('dr-prev').disabled = true;
   document.getElementById('dr-next').disabled = true;
 

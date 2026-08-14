@@ -74,11 +74,12 @@ const VID = {
 const LEVELS = {
   1:{name:"Objetivo al 2031", color:"var(--green-d)", tono:"var(--green-tx)",
      deco:IMG.macaw, decoAnim:IMG.guacamaya_anim,
+     /* soloTexto: el panel muestra este párrafo y nada más. Sin acciones, sin
+        accesos a las tarjetas del nivel y sin la nota del pie. */
      explica:{
        t:"Objetivo al 2031",
-       lead:"El punto de llegada que ordena todo el ciclo estratégico.",
-       what:"No es una consigna: es el criterio con el que se decide qué priorizar cuando hay que elegir. Todo lo que está más abajo en el mapa existe para acercarnos a él. Los tres atributos —resiliente, integrada y próspera— describen la región que queremos ver, y el cierre de la frase marca la vara: que el desarrollo se traduzca en bienestar para cada persona, no solo en indicadores agregados.",
-       acts:["Traducir el crecimiento del Banco en bienestar concreto","Medir el avance por impacto y no solo por volumen","Sostener la cercanía con los países como ancla de la agenda"]}},
+       soloTexto:true,
+       what:"Esta estrategia se construyó junto a los países accionistas, sus equipos técnicos, los equipos de CAF y un grupo de expertos internacionales, con el propósito de entender el contexto global al que nos enfrentamos en los próximos años. De ese diálogo surgió un rumbo compartido para acompañar a los países en aprovechar las oportunidades que hoy se le abren a la región a partir de las transiciones socioeconómicas, y en saldar los desbalances históricos que todavía marcan su desarrollo. Para que la resiliencia, la integración y la prosperidad se traduzcan en desarrollo y bienestar para todos los latinoamericanos y caribeños."}},
 
   2:{name:"Oportunidades",    color:"var(--yellow-d)", tono:"var(--yellow-tx)",deco:IMG.butterfly_a,
      explica:{
