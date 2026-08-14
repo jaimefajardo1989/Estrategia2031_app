@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-version="51">
+<html lang="es" data-version="52">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,7 +14,7 @@
     <!-- El ?v= obliga al navegador a bajar los archivos de nuevo cuando cambian.
          Si editas css/estilos.css, js/contenido.js o js/app.js, sube el número
          en las tres líneas (aquí y al final del body). -->
-    <link rel="stylesheet" href="css/estilos.css?v=51" />
+    <link rel="stylesheet" href="css/estilos.css?v=52" />
   </head>
 
   <body>
@@ -163,6 +163,9 @@
     <p class="lead" id="dr-lead"></p>
   </div>
   <div class="dr-body">
+    <!-- Se muestra en lugar de todo lo demás cuando la agenda todavía no
+         tiene texto propio. Lo enciende la clase .sin-texto del panel. -->
+    <p class="dr-pendiente">Por definir</p>
     <h4>Qué significa</h4>
     <p id="dr-what"></p>
     <h4>Cómo se traduce en acción</h4>
@@ -190,8 +193,8 @@
     <button class="btn btn-ghost" id="tclose" style="margin-left:10px">Salir ✕</button>
   </div>
 </div>
-    <script src="js/mapa-lac.js?v=51"></script>
-    <script src="js/contenido.js?v=51"></script>
-    <script src="js/app.js?v=51"></script>
+    <script src="js/mapa-lac.js?v=52"></script>
+    <script src="js/contenido.js?v=52"></script>
+    <script src="js/app.js?v=52"></script>
   </body>
 </html>

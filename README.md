@@ -170,6 +170,23 @@ Están todas al final de `css/estilos.css`, en un bloque separado, y en el bloqu
 Todo respeta la preferencia del sistema de reducir movimiento: con esa opción activada,
 el contenido aparece igual pero sin desplazamientos.
 
+## Qué agendas tienen texto y cuáles no
+
+Las 14 agendas de los niveles 2, 3 y 4 muestran **«Por definir»**: su panel solo
+lleva el título y el nivel. Basta con que una tarjeta no tenga `what` para que se
+vea así, no hay ningún interruptor aparte.
+
+Con texto propio quedan **Integración regional pragmática** —la única validada— y
+el nivel 1: el objetivo al 2031 y los tres atributos, que alimentan la lámina del
+recorrido guiado.
+
+Los borradores que se retiraron están en [BORRADORES.md](BORRADORES.md). Para
+reponer una agenda, se copian sus campos a `js/contenido.js` y, si el texto ya está
+validado, se agrega `validado:true`.
+
+El buscador sigue funcionando en todas: `temas` no se tocó, así que «agricultura»
+sigue encontrando la agenda Ambiental aunque su panel esté vacío.
+
 ## Estado del contenido
 
 Los textos provienen de la presentación del Directorio de junio de 2026 y del material de

@@ -212,28 +212,19 @@ function pintarMetas(lista, color){
   caja.style.display = '';
   caja.querySelector('h4').textContent = lista.length > 1 ? 'Las metas al 2031' : 'La meta al 2031';
 
-  const R = 34, C = 2 * Math.PI * R;               // radio y perímetro del anillo
+  /* Dos columnas, y la de la izquierda con ancho fijo: si cada ficha se ajusta
+     a su propia cifra, los nombres arrancan en tres sitios distintos y el
+     conjunto se ve torcido. Las tres van iguales, sin anillo. */
   document.getElementById('dr-meta').innerHTML =
     '<div class="metas" style="--c:' + color + '">' + lista.map((m,i) =>
-      /* Dos columnas: el dato a la izquierda y el nombre a la derecha. Apilados
-         la ficha se iba a 200 px de alto, y lo que la estiraba no era la cifra
-         sino el nombre del indicador, que ocupa tres renglones. */
       '<div class="meta2" style="--i:' + i + '">'
       + '<div class="meta2-dato">'
-      + (m.forma === 'anillo'
-          ? '<div class="meta2-anillo"><svg viewBox="0 0 80 80" aria-hidden="true">'
-            + '<circle class="pista" cx="40" cy="40" r="' + R + '"/>'
-            + '<circle class="linea" cx="40" cy="40" r="' + R + '"'
-            + ' style="stroke-dasharray:' + C.toFixed(1) + ';stroke-dashoffset:' + C.toFixed(1) + '"/>'
-            + '</svg><b class="meta2-cifra" data-v="' + m.valor + '"></b></div>'
-          : '<b class="meta2-cifra" data-v="' + m.valor + '"></b>'
-            + '<span class="meta2-uni">' + esc(m.uni || '') + '</span>'
-            + '<div class="meta2-raya"><i></i></div>')
+      +   '<b class="meta2-cifra" data-v="' + m.valor + '"></b>'
+      +   '<span class="meta2-uni">' + esc(m.uni || '') + '</span>'
+      +   '<div class="meta2-raya"><i></i></div>'
       + '</div>'
       + '<div class="meta2-txt">'
       +   '<p class="meta2-nombre">' + esc(m.nombre) + '</p>'
-      +   (m.forma === 'anillo'
-            ? '<span class="meta2-uni meta2-uni--al-lado">' + esc(m.uni || '') + '</span>' : '')
       +   (m.detalle
             ? '<button type="button" class="meta2-mas" data-meta="' + i + '" aria-expanded="false">'
               + esc(m.detalle.boton || 'Ver el detalle') + '<span aria-hidden="true">▾</span></button>'
@@ -257,8 +248,6 @@ function pintarMetas(lista, color){
       e.target.classList.add('va');
       const cifra = e.target.querySelector('.meta2-cifra');
       contarHasta(cifra, +cifra.dataset.v, lista[i].pre, lista[i].suf);
-      const linea = e.target.querySelector('.linea');
-      if (linea) linea.style.strokeDashoffset = (C * (1 - lista[i].valor/100)).toFixed(1);
     });
   }, { root: drawer.querySelector('.dr-body'), rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
   fichas.forEach(f => ver.observe(f));
@@ -405,23 +394,29 @@ function openCard(id, push){
   document.getElementById('dr-deco').src = L.deco;
   document.getElementById('dr-title').textContent = d.t;
   document.getElementById('dr-title').style.fontSize = d.t.length > 70 ? '20px' : '26px';
-  document.getElementById('dr-lead').textContent = d.lead || '';
+  /* Las agendas cuyo texto todavía no llegó no muestran nada inventado: se
+     ven el título y el nivel, y el resto dice "Por definir". En cuanto haya
+     texto real se carga en contenido.js y la ficha se arma sola. */
+  const porDefinir = !d.what;
+  drawer.classList.toggle('sin-texto', porDefinir);
+  document.getElementById('dr-lead').textContent = porDefinir ? '' : (d.lead || '');
   document.getElementById('dr-what').innerHTML = resaltar(d.what || '', d.resalta, L.tono || L.color);
   document.getElementById('dr-acts').style.setProperty('--c', L.color);
   document.getElementById('dr-acts').innerHTML = (d.acts||[]).map(a=>'<li>'+esc(a)+'</li>').join('');
   const lw = document.getElementById('dr-links-wrap');
-  const ls = (d.links||[]).map(byId).filter(Boolean);
+  const ls = porDefinir ? [] : (d.links||[]).map(byId).filter(Boolean);
   lw.style.display = ls.length ? '' : 'none';
   document.getElementById('dr-links').innerHTML = ls.map(x=>
     '<button class="lchip" data-go="'+x.id+'"><i style="background:'+LEVELS[x.lvl].color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
   // Aquí el color va en el texto y en trazos finos, no de relleno: por eso el
   // tono oscuro del nivel y no el de las tarjetas.
   if (d.metas && d.metas.length) pintarMetas(d.metas, L.tono || L.color);
-  else pintarMeta(d.meta, L.color);
-  // Las agendas ya validadas no llevan la advertencia de borrador.
+  else pintarMeta(porDefinir ? null : d.meta, L.color);
   document.getElementById('dr-note').innerHTML = d.validado
     ? 'Texto e indicadores validados para esta agenda.'
-    : 'Textos en borrador y cifras de ejemplo. Para editarlos, modifica el bloque <b>DATA</b> en <b>js/contenido.js</b>.';
+    : porDefinir
+      ? 'El texto y los indicadores de esta agenda están pendientes de definición.'
+      : 'Textos en borrador y cifras de ejemplo. Para editarlos, modifica el bloque <b>DATA</b> en <b>js/contenido.js</b>.';
 
   document.getElementById('dr-pos').textContent = (ORDER.indexOf(id)+1) + ' / ' + ORDER.length;
   document.getElementById('dr-prev').disabled = false;
@@ -449,6 +444,7 @@ function openLevel(lvl){
   const e = L.explica;
   if(!current) lastFocus = document.activeElement;
   current = null;   // no es una tarjeta: Anterior/Siguiente no aplican
+  drawer.classList.remove('sin-texto');   // los niveles sí tienen explicación
 
   document.getElementById('dr-tag').textContent = 'Qué es este nivel';
   document.getElementById('dr-tag').style.background = L.color;
