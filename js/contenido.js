@@ -43,6 +43,11 @@ const IMG = {
   ph_ene: 'img/ph_ene.webp',
   ph_dig: 'img/ph_dig.webp',
   ph_dem: 'img/ph_dem.webp',
+  /* El colibrí que decora el panel de las agendas transversales.
+     El animado es un WebP animado, que va como imagen en todos los
+     navegadores; el fijo es su primer cuadro, para "reducir movimiento". */
+  colibri_anim: 'img/colibri_anim.webp',
+  colibri_fijo: 'img/colibri_fijo.webp',
 };
 
 /* Videos de aves con fondo transparente (WebM con canal alfa).
@@ -77,7 +82,8 @@ const LEVELS = {
        what:"Seis transformaciones estructurales que ya están en marcha y que van a ocurrir con nosotros o sin nosotros: ambiental, energética, digital, demográfica, territorial y productiva. No son sectores ni áreas de negocio, son terrenos donde una intervención bien puesta tiene efecto multiplicador. Funcionan como filtro: una institución con recursos limitados no puede estar en todo, y estas seis indican dónde concentrar el esfuerzo.",
        acts:["Identificar y anticipar oportunidades en cada frente","Materializarlas en operaciones de crédito y cooperación técnica","Llegar temprano, que es donde se marca la diferencia"]}},
 
-  3:{name:"Transversales",   color:"var(--teal-d)", tono:"var(--teal-tx)",  deco:IMG.hummingbird2,
+  3:{name:"Transversales",   color:"var(--teal-d)", tono:"var(--teal-tx)",
+     deco:IMG.colibri_fijo, decoAnim:IMG.colibri_anim,
      explica:{
        t:"Agendas transversales",
        lead:"Lo que CAF aporta y que atraviesa todas las agendas.",

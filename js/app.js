@@ -353,7 +353,10 @@ function openCard(id, push){
   const L = LEVELS[d.lvl];
   document.getElementById('dr-tag').textContent = L.name;
   document.getElementById('dr-tag').style.background = L.color;
-  document.getElementById('dr-deco').src = L.deco;
+  /* Si el nivel trae una versión animada, se usa esa; con "reducir
+     movimiento" queda la fija. */
+  document.getElementById('dr-deco').src =
+    (!SIN_MOVIMIENTO && L.decoAnim) ? L.decoAnim : L.deco;
   document.getElementById('dr-title').textContent = d.t;
   document.getElementById('dr-title').style.fontSize = d.t.length > 70 ? '20px' : '26px';
   /* Las agendas cuyo texto todavía no llegó no muestran nada inventado: se
@@ -410,7 +413,10 @@ function openLevel(lvl){
 
   document.getElementById('dr-tag').textContent = 'Qué es este nivel';
   document.getElementById('dr-tag').style.background = L.color;
-  document.getElementById('dr-deco').src = L.deco;
+  /* Si el nivel trae una versión animada, se usa esa; con "reducir
+     movimiento" queda la fija. */
+  document.getElementById('dr-deco').src =
+    (!SIN_MOVIMIENTO && L.decoAnim) ? L.decoAnim : L.deco;
   document.getElementById('dr-title').textContent = e.t;
   document.getElementById('dr-title').style.fontSize = '26px';
   document.getElementById('dr-lead').textContent = e.lead || '';

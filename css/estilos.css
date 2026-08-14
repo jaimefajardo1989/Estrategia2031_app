@@ -148,7 +148,7 @@ h2 em{font-style:normal;color:var(--teal-d)}
 .drawer{position:fixed;top:0;right:0;height:100%;width:min(520px,100%);background:#fff;z-index:100;transform:translateX(102%);transition:transform .32s cubic-bezier(.2,.8,.3,1);display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
 .drawer.on{transform:none}
 .dr-head{padding:24px 28px 18px;border-bottom:1px solid var(--line);position:relative;overflow:hidden;flex:none}
-.dr-head .deco{position:absolute;right:-10px;top:-6px;width:132px;opacity:.9;pointer-events:none}
+.dr-head .deco{position:absolute;right:-10px;top:-6px;width:112px;opacity:.9;pointer-events:none}
 .dr-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;padding:6px 12px;border-radius:20px}
 .dr-head h3{margin:14px 0 0;font-size:26px;line-height:1.15;letter-spacing:-.025em;max-width:78%;color:var(--ink)}
 .dr-head .lead{margin:10px 0 0;font-size:14px;color:var(--ink-2);max-width:82%;line-height:1.5}
