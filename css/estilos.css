@@ -641,10 +641,9 @@ video.tdeco{
   padding:10px 12px 9px;
   /* Columna izquierda de ancho fijo: es lo que alinea las tres fichas entre sí */
   display:grid;grid-template-columns:106px 1fr;gap:4px 12px;align-items:center;
-  opacity:0;transform:translateY(9px);
-  transition:opacity .35s ease, transform .35s var(--rebote);
 }
-.meta2.va{opacity:1;transform:none}
+/* Sin aparición: la ficha está siempre a la vista. Lo que se anima es la
+   cifra, que se cuenta desde cero al asomar. */
 .meta2-txt{min-width:0}
 /* El panel del detalle cruza las dos columnas */
 .meta2-panel{grid-column:1/-1}
@@ -659,21 +658,10 @@ video.tdeco{
    con canal se leería como una barra de avance, y estas dos metas son montos
    totales, no un porcentaje cumplido. */
 .meta2-raya{margin-top:9px;height:3px}
-.meta2-raya i{
-  display:block;height:100%;width:46px;border-radius:3px;background:var(--c);
-  transform:scaleX(0);transform-origin:left;
-  transition:transform .8s cubic-bezier(.22,.9,.25,1);
-  transition-delay:.1s;
-}
-.meta2.va .meta2-raya i{transform:scaleX(1)}
+.meta2-raya i{display:block;height:100%;width:46px;border-radius:3px;background:var(--c)}
 
 .meta2-uni{display:block;margin-top:3px;font-size:11px;color:var(--ink-2)}
 .meta2-nombre{margin:0;font-size:12.5px;line-height:1.4;color:var(--mute)}
-
-@media(prefers-reduced-motion:reduce){
-  .meta2{opacity:1;transform:none}
-  .meta2-raya i{transform:scaleX(1);transition:none}
-}
 
 /* ---- Agendas todavía sin texto ------------------------------------- */
 .dr-pendiente{display:none}
