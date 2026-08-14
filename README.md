@@ -115,6 +115,24 @@ región** —con España y Portugal, CAF llega a 25—, y el último en incorpor
 Santa Lucía. Los nombres deben coincidir exactamente con el `data-p` de cada trazo
 del mapa; si uno no coincide, ese país simplemente no se enciende.
 
+### El texto del recorrido guiado
+
+En las láminas del recorrido cada agenda muestra su campo **`resumen`**: una
+frase corta, escrita a propósito, que dice qué se hará. No es un recorte del
+texto largo. Debajo va un botón que cierra el recorrido y abre la tarjeta en el
+mapa, donde está el texto completo y los indicadores.
+
+```js
+resumen:"Al 2031, CAF trabajará en conectar, comerciar y coproducir para …",
+```
+
+Si una agenda llega sin `resumen`, el recorrido recorta el texto largo al final
+de una oración para que no quede cortado a media palabra. Es una red de
+emergencia, no la forma prevista.
+
+El alto del panel es fijo (`.texp{min-height}`) porque los paneles van
+superpuestos. Si un resumen se alarga mucho, hay que subir ese número.
+
 ### Resaltar palabras dentro de un párrafo
 
 `resalta:["conectar","comerciar","coproducir"]` marca esas palabras en el texto de

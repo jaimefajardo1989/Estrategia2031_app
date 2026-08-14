@@ -524,10 +524,12 @@ function decoHTML(list){
  * items = [{titulo, texto, color, textoColor}]
  */
 /**
- * Recorta un texto largo para la lámina del recorrido.
- * Corta en el final de una oración, no a mitad de palabra: busca el último
- * punto que quede dentro del límite y, si no hay ninguno, el último espacio.
- * El texto completo queda a un clic, en el panel del mapa.
+ * Red de emergencia por si una agenda llega sin "resumen".
+ *
+ * En el recorrido cada agenda muestra su campo "resumen": una frase escrita
+ * a propósito, que dice qué se hará, no las primeras líneas del texto largo.
+ * Si alguna todavía no lo tiene, esto recorta el texto completo al final de
+ * una oración para que al menos no quede cortado a media palabra.
  */
 function recortar(texto, limite){
   const t = String(texto || '').trim();
@@ -614,7 +616,7 @@ function buildTour(){
       const paneles = attrs.map((d,k)=>
         '<div class="texp-uno'+(k===0?' on':'')+'" data-exp="'+k+'">'
         + '<b style="color:'+colores[k]+'">'+esc(d.t)+'</b>'
-        + '<p>'+esc(recortar((d.lead||'') + ' ' + (d.what||'')))+'</p>'
+        + '<p>'+esc(d.resumen || recortar((d.lead||'') + ' ' + (d.what||'')))+'</p>'
         + '<button type="button" class="texp-ir" data-ir="'+d.id+'">'
         +   'Ver el detalle en el mapa <span aria-hidden="true">→</span></button>'
         + '</div>').join('');
@@ -639,7 +641,7 @@ function buildTour(){
             // Sin texto propio no hay nada que ir a ver: no lleva botón.
             id: d.what ? d.id : null,
             titulo: d.t,
-            texto: d.what ? ((d.lead||'') + ' ' + d.what) : 'Por definir.',
+            texto: d.resumen || (d.what ? (d.lead||'') + ' ' + d.what : 'Por definir.'),
             color: bg,
             textoColor: fg
           })), 3)
