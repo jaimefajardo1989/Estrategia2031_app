@@ -314,9 +314,17 @@ footer.foot strong{color:var(--ink-2)}
 .scrim{transition:opacity .4s var(--curva),backdrop-filter .4s var(--curva);backdrop-filter:blur(0)}
 .scrim.on{backdrop-filter:blur(3px)}
 
-/* El contenido del panel entra escalonado al cambiar de tarjeta */
-.drawer.on .dr-head > *,
-.drawer.on .dr-body > *{animation:subirBloque .5s var(--rebote) backwards;animation-delay:calc(var(--i,0) * 60ms + 80ms)}
+/* La cabecera del panel entra escalonada. El cuerpo NO: su contenido está
+   desde el primer momento.
+
+   Antes el cuerpo entraba bloque por bloque, con retardos que llegaban a un
+   segundo entre el primero y el último. Como el retardo se cuenta desde que
+   se abre la tarjeta y no desde que cada bloque se ve, quien abría y bajaba
+   enseguida aterrizaba en la mitad de la secuencia y encontraba las viñetas y
+   los indicadores todavía en opacidad cero: un blanco de varios cientos de
+   píxeles. El panel es alto y casi nunca entra completo en pantalla, así que
+   esa animación casi nunca se veía entera y sí molestaba. */
+.drawer.on .dr-head > *{animation:subirBloque .5s var(--rebote) backwards;animation-delay:calc(var(--i,0) * 60ms + 80ms)}
 @keyframes subirBloque{
   from{opacity:0;transform:translateY(16px)}
   to{opacity:1;transform:none}
@@ -326,7 +334,6 @@ footer.foot strong{color:var(--ink-2)}
   from{opacity:0;transform:translate(18px,-10px) rotate(-8deg)}
   to{opacity:.9;transform:none}
 }
-.acts li{animation:subirBloque .45s var(--rebote) backwards;animation-delay:calc(var(--i,0) * 70ms + 260ms)}
 
 .lchip,.nav-btn,.chip{transition:background .25s var(--curva),border-color .25s var(--curva),color .25s var(--curva),transform .3s var(--rebote)}
 .lchip:hover,.nav-btn:hover:not(:disabled){transform:translateY(-2px)}
@@ -376,8 +383,6 @@ footer.foot strong{color:var(--ink-2)}
   .js-anim .row .rlabel,
   .js-anim .flow,
   .drawer.on .dr-head > *,
-  .drawer.on .dr-body > *,
-  .acts li,
   .tslide.on .inner > *,
   .tslide.on .tdeco,
   .dr-head .deco{animation:none}

@@ -179,40 +179,9 @@ function resaltar(texto, palabras, color){
  * ninguna información.
  */
 /**
- * Cuenta un número desde cero hasta su valor, con frenada al final.
- * Reserva el ancho del número completo antes de empezar, para que la fila
- * no baile mientras las cifras crecen.
- */
-function contarHasta(nodo, valor, pre, suf){
-  const escribir = v => { nodo.textContent = (pre||'') + fmt.format(v) + (suf||''); };
-
-  /* Se escribe primero el valor final y se reserva su ancho. Si la animación
-     no llega a correr —pestaña en segundo plano, movimiento reducido, un
-     navegador que no dispara el cuadro— lo que queda es la cifra completa y
-     no un hueco. Antes se arrancaba en cero y ese cero se podía quedar. */
-  nodo.style.minWidth = '';
-  escribir(valor);
-  nodo.style.minWidth = nodo.getBoundingClientRect().width + 'px';
-  if (SIN_MOVIMIENTO || document.visibilityState !== 'visible') return;
-
-  const dura = 1400;
-  let t0 = null;
-  requestAnimationFrame(function paso(t){
-    if (t0 === null) t0 = t;
-    const p = Math.min(1, (t - t0) / dura);
-    const suave = 1 - Math.pow(1 - p, 3);          // frena al acercarse
-    escribir(valor <= 100 ? Math.round(valor*suave) : Math.round(valor*suave/10)*10);
-    if (p < 1) requestAnimationFrame(paso); else escribir(valor);
-  });
-}
-
-/**
  * Dibuja las metas al 2031 de una agenda que tiene varios indicadores.
- * Cada una es una cifra que cuenta desde cero, acompañada de una barra que se
- * llena o de un anillo que se dibuja, según convenga al indicador.
- *
- * La animación no se dispara al abrir el panel sino cuando el bloque entra en
- * pantalla: casi siempre queda por debajo del pliegue y, si no, nadie la vería.
+ * Son fichas quietas: la cifra a la izquierda y el nombre a la derecha.
+ * Lo que se mueve es solo el detalle que cada una puede abrir.
  */
 function pintarMetas(lista, color){
   const caja = document.getElementById('dr-meta-wrap');
@@ -224,10 +193,7 @@ function pintarMetas(lista, color){
      conjunto se ve torcido. Las tres van iguales, sin anillo. */
   document.getElementById('dr-meta').innerHTML =
     '<div class="metas" style="--c:' + color + '">' + lista.map((m,i) =>
-      /* La cifra va escrita en el HTML desde el primer momento. La animación
-         solo la vuelve a contar desde cero: nunca es ella la que la pone. Así
-         la ficha nace legible pase lo que pase con la animación. */
-      '<div class="meta2" style="--i:' + i + '">'
+      '<div class="meta2">'
       + '<div class="meta2-dato">'
       +   '<b class="meta2-cifra" data-v="' + m.valor + '">'
       +     esc((m.pre||'') + fmt.format(m.valor) + (m.suf||'')) + '</b>'
@@ -244,29 +210,13 @@ function pintarMetas(lista, color){
       + (m.detalle ? '<div class="meta2-panel" id="meta-panel-' + i + '" hidden></div>' : '')
       + '</div>').join('') + '</div>';
 
-  const bloque = document.getElementById('dr-meta');
-  const fichas = Array.from(bloque.querySelectorAll('.meta2'));
+  /* Los indicadores no tienen animación de aparición: están dibujados con su
+     cifra desde el primer momento y se ven al llegar a ellos.
+     Se probó de dos maneras —revelar el bloque entero y revelar ficha por
+     ficha— y las dos dejaban un hueco en blanco al bajar rápido, porque lo
+     que se veía dependía de que algo se disparara a tiempo. Acá no depende
+     de nada. */
   METAS_VISIBLES = lista;
-
-  /* Las fichas no se desvanecen: están siempre a la vista, con su cifra
-     escrita. Lo único que se dispara al asomar es que la cifra se vuelva a
-     contar desde cero. Antes la ficha entera nacía invisible y se revelaba al
-     bajar, y bastaba con desplazarse rápido —o que la pestaña estuviera en
-     segundo plano— para quedarse mirando un hueco en blanco. */
-  if (SIN_MOVIMIENTO) return;
-
-  const contar = ficha => {
-    if (ficha.dataset.contada) return;
-    ficha.dataset.contada = '1';
-    const i = fichas.indexOf(ficha);
-    const cifra = ficha.querySelector('.meta2-cifra');
-    contarHasta(cifra, +cifra.dataset.v, lista[i].pre, lista[i].suf);
-  };
-
-  const ver = new IntersectionObserver((es, obs) => {
-    es.forEach(e => { if (e.isIntersecting){ obs.unobserve(e.target); contar(e.target); } });
-  }, { root: drawer.querySelector('.dr-body'), rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
-  fichas.forEach(f => ver.observe(f));
 }
 
 /* ---------- EL DETALLE DE CADA META ----------
