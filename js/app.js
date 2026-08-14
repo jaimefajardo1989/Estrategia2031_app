@@ -421,6 +421,8 @@ function openCard(id, push){
   document.getElementById('dr-acts-wrap').style.display = (d.acts||[]).length ? '' : 'none';
   const lw = document.getElementById('dr-links-wrap');
   const ls = porDefinir ? [] : (d.links||[]).map(byId).filter(Boolean);
+  // openLevel reescribe este título, así que aquí se vuelve a poner el suyo
+  lw.querySelector('h4').textContent = 'Se conecta con';
   lw.style.display = ls.length ? '' : 'none';
   document.getElementById('dr-links').innerHTML = ls.map(x=>
     '<button class="lchip" data-go="'+x.id+'"><i style="background:'+LEVELS[x.lvl].color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
@@ -428,7 +430,9 @@ function openCard(id, push){
   // tono oscuro del nivel y no el de las tarjetas.
   if (d.metas && d.metas.length) pintarMetas(d.metas, L.tono || L.color);
   else pintarMeta(porDefinir ? null : d.meta, L.color);
-  document.getElementById('dr-note').innerHTML = d.validado
+  const nota = document.getElementById('dr-note');
+  nota.style.display = '';        // openLevel la puede haber ocultado
+  nota.innerHTML = d.validado
     ? 'Texto e indicadores validados para esta agenda.'
     : porDefinir
       ? 'El texto y los indicadores de esta agenda están pendientes de definición.'
@@ -481,10 +485,13 @@ function openLevel(lvl){
     : 'Textos en borrador. Para editarlos, modifica el bloque <b>LEVELS</b> en <b>js/contenido.js</b>.';
   document.getElementById('dr-note').style.display = e.soloTexto ? 'none' : '';
 
-  /* Las tarjetas del nivel quedan como accesos directos, salvo cuando el nivel
-     pide mostrar solo su texto. */
-  const ls = e.soloTexto ? [] : DATA.filter(d=>d.lvl===lvl);
-  document.getElementById('dr-links-wrap').style.display = ls.length ? '' : 'none';
+  /* Debajo del texto van las agendas del nivel, para saltar a cualquiera.
+     "sinAtajos" las quita: lo usa el objetivo, que no tiene agendas debajo
+     sino los tres atributos. */
+  const ls = e.sinAtajos ? [] : DATA.filter(d=>d.lvl===lvl);
+  const lw = document.getElementById('dr-links-wrap');
+  lw.querySelector('h4').textContent = 'Las agendas de este nivel';
+  lw.style.display = ls.length ? '' : 'none';
   document.getElementById('dr-links').innerHTML = ls.map(x=>
     '<button class="lchip" data-go="'+x.id+'"><i style="background:'+L.color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
 

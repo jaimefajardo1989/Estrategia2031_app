@@ -78,31 +78,28 @@ const LEVELS = {
         accesos a las tarjetas del nivel y sin la nota del pie. */
      explica:{
        t:"Objetivo al 2031",
-       soloTexto:true,
+       soloTexto:true, sinAtajos:true,
        what:"Esta estrategia se construyó junto a los países accionistas, sus equipos técnicos, los equipos de CAF y un grupo de expertos internacionales, con el propósito de entender el contexto global al que nos enfrentamos en los próximos años. De ese diálogo surgió un rumbo compartido para acompañar a los países en aprovechar las oportunidades que hoy se le abren a la región a partir de las transiciones socioeconómicas, y en saldar los desbalances históricos que todavía marcan su desarrollo. Para que la resiliencia, la integración y la prosperidad se traduzcan en desarrollo y bienestar para todos los latinoamericanos y caribeños."}},
 
   2:{name:"Oportunidades",    color:"var(--yellow-d)", tono:"var(--yellow-tx)",deco:IMG.butterfly_a,
      explica:{
-       t:"Oportunidades",
-       lead:"Dónde está el potencial de la región hacia 2031.",
-       what:"Seis transformaciones estructurales que ya están en marcha y que van a ocurrir con nosotros o sin nosotros: ambiental, energética, digital, demográfica, territorial y productiva. No son sectores ni áreas de negocio, son terrenos donde una intervención bien puesta tiene efecto multiplicador. Funcionan como filtro: una institución con recursos limitados no puede estar en todo, y estas seis indican dónde concentrar el esfuerzo.",
-       acts:["Identificar y anticipar oportunidades en cada frente","Materializarlas en operaciones de crédito y cooperación técnica","Llegar temprano, que es donde se marca la diferencia"]}},
+       t:"Agendas de oportunidades",
+       soloTexto:true,
+       what:"Definen los sectores y ámbitos en los que CAF concentrará su actuación para atender los principales desbalances de la región y aprovechar las oportunidades de desarrollo que emergen de sus transformaciones."}},
 
   3:{name:"Transversales",   color:"var(--teal-d)", tono:"var(--teal-tx)",
      deco:IMG.colibri_fijo, decoAnim:IMG.colibri_anim,
      explica:{
        t:"Agendas transversales",
-       lead:"Lo que CAF aporta y que atraviesa todas las agendas.",
-       what:"No son áreas de negocio ni líneas de producto: son las seis capacidades que se activan igual esté el proyecto en energía, en agua o en educación. Responden a una sola pregunta: qué ponemos nosotros que otro no pone. Porque el financiamiento solo es una mercancía —hay muchas fuentes de capital y varias más baratas—; lo que diferencia a una institución de desarrollo es lo que viene con el dinero.",
-       acts:["Conocimiento, capacidad de convocar y acompañamiento en la ejecución","Se combinan entre sí: un proyecto bien hecho activa varias a la vez","Deben permear toda la acción del Banco, no algunas operaciones"]}},
+       soloTexto:true,
+       what:"Representan dimensiones de valor agregado que CAF busca incorporar de manera sistemática en sus intervenciones, para potenciar su impacto y diferenciar la forma en que acompaña el desarrollo de sus países accionistas."}},
 
   4:{name:"Habilitadoras", color:"var(--coral-d)", tono:"var(--coral-tx)",
      deco:IMG.flamingo, decoAnim:IMG.flamenco_anim,
      explica:{
        t:"Agendas habilitadoras",
-       lead:"Las condiciones internas que hacen posible todo lo demás.",
-       what:"Las tres anteriores miran hacia la región; estas miran hacia adentro: la solidez financiera, las personas y la tecnología, y la manera de gobernarnos y operar. Están en el mapa porque una institución no puede prometer más de lo que su propia estructura aguanta. Sin capital sólido no hay volumen de financiamiento; sin equipos y sistemas a la altura no hay agilidad; sin gobernanza clara no hay confianza de los mercados ni de los países.",
-       acts:["Sostener el crecimiento con disciplina financiera","Talento y procesos digitales a la altura de lo prometido","Gobernanza que convierta la ambición en resultados"]}}
+       soloTexto:true,
+       what:"Reúnen las capacidades internas que CAF necesita fortalecer y movilizar para ejecutar la estrategia y hacer posible la materialización efectiva de las agendas de oportunidades y transversales."}}
 };
 
 const DATA = [
