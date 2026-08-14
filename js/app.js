@@ -30,23 +30,32 @@ DATA.filter(d=>d.lvl===3).forEach(d=>document.getElementById('valor').appendChil
 DATA.filter(d=>d.lvl===4).forEach(d=>document.getElementById('agendas').appendChild(makeCard(d,'seg')));
 
 /* ---------- LAS CUATRO TRANSICIONES ---------- */
-/* Cada tarjeta es un botón: al pulsarla se abre debajo, a todo el ancho, el
-   texto completo de esa transición. Vuelve a pulsarse y se cierra. */
-const COLOR_TRANS = ['var(--green-tx)','var(--yellow-tx)','var(--teal-tx)','var(--coral-tx)'];
+/* Cada tarjeta es un botón: al pulsarla, el texto completo se abre encima de
+   las cuatro. Vuelve a pulsarse —o se cierra con la ✕— y se ve la rejilla.
+   Todas usan el verde de la sección, no un color por transición. */
 
-document.getElementById('trans').innerHTML = TRANS.map((t,k)=>
- '<button type="button" class="tcard" data-trans="'+k+'" aria-expanded="false"'
- + ' style="--c:'+COLOR_TRANS[k]+'">'
+/* Las tarjetas se insertan al principio: el panel de detalle ya vive dentro de
+   #trans y no hay que pisarlo. */
+document.getElementById('trans').insertAdjacentHTML('afterbegin', TRANS.map((t,k)=>
+ '<button type="button" class="tcard" data-trans="'+k+'" aria-expanded="false">'
  +   '<div class="ph"><img src="'+t.img+'" alt=""></div>'
  +   '<div class="bd"><span class="lab">'+esc(t.lab)+'</span><p>'+esc(t.txt)+'</p>'
  +     (t.texto ? '<span class="tcard-mas">Leer más <i aria-hidden="true">▾</i></span>' : '')
  +   '</div>'
- + '</button>').join('');
+ + '</button>').join(''));
 
 (function(){
   const caja = document.getElementById('trans-det');
   if (!caja) return;
   let abierta = -1;
+
+  function cerrar(){
+    abierta = -1;
+    caja.hidden = true; caja.innerHTML = '';
+    document.querySelectorAll('#trans .tcard').forEach(c => c.setAttribute('aria-expanded','false'));
+  }
+  caja.addEventListener('click', e => { if (e.target.closest('[data-cerrar]')) cerrar(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && abierta >= 0) cerrar(); });
 
   document.getElementById('trans').addEventListener('click', e => {
     const b = e.target.closest('[data-trans]');
@@ -59,14 +68,20 @@ document.getElementById('trans').innerHTML = TRANS.map((t,k)=>
       c.setAttribute('aria-expanded', String(+c.dataset.trans === k && abierta !== k)));
 
     if (abierta === k){                       // se vuelve a pulsar la misma
-      abierta = -1;
-      caja.hidden = true; caja.innerHTML = '';
+      cerrar();
       return;
     }
     abierta = k;
-    caja.style.setProperty('--c', COLOR_TRANS[k]);
+
+    /* El panel se abre desde la tarjeta que se pulsó: se le pasa el centro de
+       esa tarjeta como origen de la escala. */
+    const r = b.getBoundingClientRect(), rc = caja.parentElement.getBoundingClientRect();
+    caja.style.setProperty('--ox', ((r.left + r.width/2 - rc.left) / rc.width * 100).toFixed(1) + '%');
+    caja.style.setProperty('--oy', ((r.top + r.height/2 - rc.top) / rc.height * 100).toFixed(1) + '%');
+
     caja.innerHTML =
-        '<div class="tdet-in">'
+        '<button type="button" class="tdet-x" data-cerrar aria-label="Cerrar">✕</button>'
+      + '<div class="tdet-in">'
       +   '<img class="tdet-ph" src="' + t.img + '" alt="">'
       +   '<div class="tdet-txt">'
       +     '<span class="tdet-lab">' + esc(t.lab) + '</span>'

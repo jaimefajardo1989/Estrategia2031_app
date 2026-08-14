@@ -190,7 +190,8 @@ h2 em{font-style:normal;color:var(--teal-d)}
 .nav-btn:hover{border-color:var(--teal);color:var(--teal-dd)}
 
 /* ---------- CONTEXTO ---------- */
-.trans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+/* position:relative para que el panel de detalle pueda cubrir la rejilla */
+.trans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;position:relative}
 .tcard{border-radius:22px;overflow:hidden;background:#fff;border:1px solid var(--line);
   display:block;width:100%;text-align:left;font:inherit;padding:0;cursor:pointer}
 .tcard .ph{height:138px;overflow:hidden;background:#fff;display:flex;align-items:flex-end;justify-content:center;padding:10px 12px 0}
@@ -199,42 +200,58 @@ h2 em{font-style:normal;color:var(--teal-d)}
 .tcard .lab{display:inline-block;background:var(--teal-d);color:#fff;font-size:12px;font-weight:700;border-radius:16px;padding:6px 13px;margin-bottom:10px}
 .tcard p{font-size:13px;line-height:1.5;color:var(--ink-2);margin:0}
 
-/* La tarjeta abierta se marca con el color de su transición */
-.tcard[aria-expanded="true"]{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset}
+/* El "Leer más" va del mismo verde en las cuatro, como el resto de la sección */
+.tcard[aria-expanded="true"]{border-color:var(--teal-d);box-shadow:0 0 0 2px var(--teal-d) inset}
 .tcard-mas{display:inline-flex;align-items:center;gap:5px;margin-top:11px;
-  font-size:12px;font-weight:700;color:var(--c)}
+  font-size:12px;font-weight:700;color:var(--teal-tx)}
 .tcard-mas i{font-style:normal;font-size:10px;transition:transform .25s ease}
 .tcard[aria-expanded="true"] .tcard-mas i{transform:rotate(180deg)}
 
-/* El texto completo, a todo el ancho y debajo de las cuatro */
+/* El texto completo se abre ENCIMA de las cuatro tarjetas, no debajo: así la
+   página no se mueve y la atención queda donde se hizo clic. */
 .trans-det[hidden]{display:none !important}
-/* La entrada solo desplaza el panel: no toca la opacidad.
-   Con una pestaña en segundo plano el navegador congela las animaciones en su
-   primer fotograma, y si ese fotograma fuera opacidad 0 el texto quedaría
-   invisible hasta volver a la pestaña. Desplazado sí se lee igual. */
 .trans-det{
-  margin-top:16px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--c);
-  border-radius:20px;padding:22px 26px;
-  animation:entraDetalle .45s var(--rebote);
+  position:absolute; inset:0; z-index:3; overflow:auto;
+  background:#fff; border:1px solid var(--line); border-left:4px solid var(--teal-d);
+  border-radius:22px; padding:26px 30px;
+  box-shadow:0 18px 44px rgba(16,42,48,.14);
+  display:flex; align-items:center;
+  /* Se abre desde la tarjeta pulsada. La animación no toca la opacidad: si el
+     navegador la congelara en su primer fotograma —pasa con la pestaña en
+     segundo plano—, el panel se vería igual, solo un poco más chico. */
+  transform-origin:var(--ox,50%) var(--oy,50%);
+  animation:abreDetalle .42s cubic-bezier(.2,.9,.25,1.06);
 }
-@keyframes entraDetalle{
-  from{transform:translateY(-10px)}
+@keyframes abreDetalle{
+  from{transform:scale(.9)}
   to{transform:none}
 }
-.tdet-in{display:flex;gap:22px;align-items:flex-start}
+/* La ✕ del panel, porque las tarjetas quedan tapadas */
+.tdet-x{
+  position:absolute;top:14px;right:16px;width:34px;height:34px;border-radius:50%;
+  border:0;background:var(--soft);color:var(--ink);font-size:17px;line-height:1;cursor:pointer;
+  transition:background .25s var(--curva),transform .4s var(--rebote);
+}
+.tdet-x:hover{background:var(--line);transform:rotate(90deg)}
+/* El grupo foto + texto va centrado: el párrafo tiene un ancho máximo de
+   lectura y sin esto quedaba todo pegado a la izquierda del panel. */
+.tdet-in{display:flex;gap:28px;align-items:center;width:100%;max-width:940px;margin:0 auto}
 /* Caja cuadrada con la foto encajada dentro. Las cuatro fotos tienen formas
    muy distintas —la de digital es 300x958, casi una columna— y a ancho fijo
    esa sola estiraba el panel al doble de alto que las demás. */
 .tdet-ph{width:150px;height:150px;flex:none;object-fit:contain;object-position:center}
 .tdet-txt{min-width:0}
-.tdet-lab{display:inline-block;background:var(--c);color:#fff;font-size:12px;font-weight:700;
+.tdet-lab{display:inline-block;background:var(--teal-d);color:#fff;font-size:12px;font-weight:700;
   border-radius:16px;padding:6px 13px;margin-bottom:11px}
 .trans-det p{font-size:14.5px;line-height:1.65;color:var(--ink-2);margin:0;max-width:74ch}
 
 @media(max-width:760px){
-  .tdet-in{flex-direction:column;gap:14px}
+  /* En el móvil la rejilla es una columna y el panel superpuesto no cabe:
+     vuelve a abrirse en el flujo, debajo de las tarjetas. */
+  .trans-det{position:static;padding:18px;box-shadow:none;margin-top:14px;display:block}
+  .tdet-in{flex-direction:column;gap:14px;align-items:flex-start}
   .tdet-ph{width:110px;height:110px}
-  .trans-det{padding:18px 18px}
+  .tdet-x{top:10px;right:10px}
 }
 @media(prefers-reduced-motion:reduce){
   .trans-det{animation:none}

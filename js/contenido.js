@@ -85,7 +85,7 @@ const LEVELS = {
      explica:{
        t:"Agendas de oportunidades",
        soloTexto:true,
-       what:"Definen los sectores y ámbitos en los que CAF concentrará su actuación para atender los principales desbalances de la región y aprovechar las oportunidades de desarrollo que emergen de sus transformaciones."}},
+       what:"Definen los sectores y ámbitos en los que CAF concentrará su actuación para atender los principales desbalances de la región y aprovechar las oportunidades de desarrollo que emergen de las transiciones."}},
 
   3:{name:"Transversales",   color:"var(--teal-d)", tono:"var(--teal-tx)",
      deco:IMG.colibri_fijo, decoAnim:IMG.colibri_anim,
