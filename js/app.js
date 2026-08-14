@@ -523,6 +523,26 @@ function decoHTML(list){
  * primera abierta, para que no quede un hueco vacío.
  * items = [{titulo, texto, color, textoColor}]
  */
+/**
+ * Recorta un texto largo para la lámina del recorrido.
+ * Corta en el final de una oración, no a mitad de palabra: busca el último
+ * punto que quede dentro del límite y, si no hay ninguno, el último espacio.
+ * El texto completo queda a un clic, en el panel del mapa.
+ */
+function recortar(texto, limite){
+  const t = String(texto || '').trim();
+  /* 175 es lo que entra en el panel de la lámina junto al botón. Con el texto
+     completo —las agendas validadas pasan de 1.000 caracteres— se salía de la
+     caja y quedaba cortado a media frase. */
+  const tope = limite || 175;
+  if (t.length <= tope) return t;
+  const trozo = t.slice(0, tope);
+  const punto = trozo.lastIndexOf('. ');
+  if (punto > tope * 0.5) return trozo.slice(0, punto + 1);
+  const espacio = trozo.lastIndexOf(' ');
+  return trozo.slice(0, espacio > 0 ? espacio : tope).replace(/[,;:]$/, '') + '…';
+}
+
 function rejillaHTML(items, columnas){
   const casillas = items.map((it,k)=>
     '<button type="button" class="it" data-exp="'+k+'" aria-pressed="'+(k===0)+'"'
@@ -533,7 +553,12 @@ function rejillaHTML(items, columnas){
   const paneles = items.map((it,k)=>
     '<div class="texp-uno'+(k===0?' on':'')+'" data-exp="'+k+'">'
     + '<b style="color:'+(it.textoColor && it.textoColor!=='#fff' ? it.textoColor : it.color)+'">'+esc(it.titulo)+'</b>'
-    + '<p>'+esc(it.texto)+'</p></div>'
+    + '<p>'+esc(recortar(it.texto))+'</p>'
+    + (it.id
+        ? '<button type="button" class="texp-ir" data-ir="'+it.id+'">'
+          + 'Ver el detalle en el mapa <span aria-hidden="true">→</span></button>'
+        : '')
+    + '</div>'
   ).join('');
 
   return '<div class="tgrid tgrid--clic" style="grid-template-columns:repeat('+columnas+',1fr)">'+casillas+'</div>'
@@ -589,7 +614,10 @@ function buildTour(){
       const paneles = attrs.map((d,k)=>
         '<div class="texp-uno'+(k===0?' on':'')+'" data-exp="'+k+'">'
         + '<b style="color:'+colores[k]+'">'+esc(d.t)+'</b>'
-        + '<p>'+esc((d.lead||'') + ' ' + (d.what||''))+'</p></div>').join('');
+        + '<p>'+esc(recortar((d.lead||'') + ' ' + (d.what||'')))+'</p>'
+        + '<button type="button" class="texp-ir" data-ir="'+d.id+'">'
+        +   'Ver el detalle en el mapa <span aria-hidden="true">→</span></button>'
+        + '</div>').join('');
 
       inner = '<div class="inner"><div class="kick">Objetivo al 2031</div>'
         + '<h3 class="objetivo">'+frase+'</h3>'
@@ -608,8 +636,10 @@ function buildTour(){
       inner = '<div class="inner"><div class="kick">'+s.kick+'</div><h3>'+s.h+'</h3><p>'+s.p+'</p>'
         + '<p class="tpista">Haz clic en cada una para ver el detalle.</p>'
         + rejillaHTML(items.map(d=>({
+            // Sin texto propio no hay nada que ir a ver: no lleva botón.
+            id: d.what ? d.id : null,
             titulo: d.t,
-            texto: (d.lead||'') + ' ' + (d.what||''),
+            texto: d.what ? ((d.lead||'') + ' ' + d.what) : 'Por definir.',
             color: bg,
             textoColor: fg
           })), 3)
@@ -659,7 +689,21 @@ document.getElementById('tdots').addEventListener('click', e=>{ const b=e.target
 /* Elementos que se pueden pulsar dentro del recorrido: las casillas de las
    rejillas y las palabras coloreadas del objetivo. En los dos casos el panel
    con la explicación es el .texp que está dentro de la misma lámina. */
+/* "Ver el detalle en el mapa": cierra el recorrido, lleva la página al mapa y
+   abre la tarjeta. Va antes que el resto porque el botón vive dentro del
+   panel de explicación y si no lo tomaría el manejador de las casillas. */
 tstage.addEventListener('click', e=>{
+  const ir = e.target.closest('[data-ir]');
+  if(!ir) return;
+  e.stopPropagation();
+  closeTour();
+  const destino = document.getElementById('arbol');
+  if (destino) destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  openCard(ir.dataset.ir);
+});
+
+tstage.addEventListener('click', e=>{
+  if (e.target.closest('[data-ir]')) return;
   const disparador = e.target.closest('.tgrid--clic .it, .palabra');
   if(!disparador) return;
 

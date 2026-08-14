@@ -536,7 +536,9 @@ footer.foot strong{color:var(--ink-2)}
 .tgrid--clic .it[aria-pressed="true"] .it-mas{transform:rotate(45deg);background:rgba(255,255,255,.45)}
 
 /* Panel de explicación */
-.texp{position:relative;margin-top:22px;min-height:112px}
+/* Los paneles van superpuestos y en posición absoluta, así que el contenedor
+   no crece solo: el alto tiene que alcanzar para el más largo, botón incluido. */
+.texp{position:relative;margin-top:22px;min-height:184px}
 .texp-uno{
   /* Ancho acotado a propósito: con inset:0 el fondo blanco del panel se
      extendía hasta el borde y tapaba la ilustración de la derecha. */
@@ -549,6 +551,16 @@ footer.foot strong{color:var(--ink-2)}
 .texp-uno.on{visibility:visible;opacity:1;transform:none}
 .texp-uno b{display:block;font-size:15px;margin-bottom:8px;letter-spacing:-.01em}
 .texp-uno p{font-size:clamp(14px,1.5vw,16.5px);line-height:1.6;color:var(--ink-2);margin:0;max-width:820px}
+/* Lleva al mapa, donde está el texto completo y los indicadores */
+.texp-ir{
+  display:inline-flex;align-items:center;gap:7px;margin-top:12px;
+  background:var(--ink);color:#fff;border:0;border-radius:999px;
+  padding:9px 16px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;
+  transition:transform .3s var(--rebote),background .25s var(--curva);
+}
+.texp-ir span{transition:transform .3s var(--rebote)}
+.texp-ir:hover{background:var(--teal-dd)}
+.texp-ir:hover span{transform:translateX(4px)}
 
 @media(max-width:760px){
   .tgrid--clic{grid-template-columns:1fr !important;gap:8px}
