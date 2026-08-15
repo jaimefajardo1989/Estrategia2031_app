@@ -211,14 +211,15 @@ h2 em{font-style:normal;color:var(--teal-d)}
    página no se mueve y la atención queda donde se hizo clic. */
 .trans-det[hidden]{display:none !important}
 .trans-det{
-  position:absolute; inset:0; z-index:3; overflow:auto;
-  background:#fff; border:1px solid var(--line); border-left:4px solid var(--teal-d);
-  border-radius:22px; padding:26px 30px;
+  position:absolute; inset:0; z-index:3; overflow:hidden;
+  background:#fff; border:1px solid var(--line);
+  border-radius:22px; padding:30px 38px;
   box-shadow:0 18px 44px rgba(16,42,48,.14);
   display:flex; align-items:center;
-  /* Se abre desde la tarjeta pulsada. La animación no toca la opacidad: si el
-     navegador la congelara en su primer fotograma —pasa con la pestaña en
-     segundo plano—, el panel se vería igual, solo un poco más chico. */
+  /* Se abre desde la tarjeta pulsada. Ninguna de las animaciones de este panel
+     toca la opacidad: si el navegador las congelara en su primer fotograma
+     —pasa con la pestaña en segundo plano—, todo se vería igual, apenas
+     corrido de sitio. Con opacidad quedaría en blanco. */
   transform-origin:var(--ox,50%) var(--oy,50%);
   animation:abreDetalle .42s cubic-bezier(.2,.9,.25,1.06);
 }
@@ -226,6 +227,20 @@ h2 em{font-style:normal;color:var(--teal-d)}
   from{transform:scale(.9)}
   to{transform:none}
 }
+
+/* La barra de color baja por el borde izquierdo al abrirse */
+.tdet-barra{
+  position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--teal-d);
+  border-radius:22px 0 0 22px;transform-origin:top;
+  animation:bajaBarra .5s cubic-bezier(.2,.9,.25,1) .06s backwards;
+}
+@keyframes bajaBarra{ from{transform:scaleY(0)} to{transform:scaleY(1)} }
+
+/* La etiqueta entra desde la izquierda y el párrafo sube detrás */
+.tdet-lab{animation:entraLab .5s var(--rebote) .1s backwards}
+@keyframes entraLab{ from{transform:translateX(-16px)} to{transform:none} }
+.trans-det p{animation:entraTxt .55s var(--rebote) .18s backwards}
+@keyframes entraTxt{ from{transform:translateY(14px)} to{transform:none} }
 /* La ✕ del panel, porque las tarjetas quedan tapadas */
 .tdet-x{
   position:absolute;top:14px;right:16px;width:34px;height:34px;border-radius:50%;
@@ -233,28 +248,21 @@ h2 em{font-style:normal;color:var(--teal-d)}
   transition:background .25s var(--curva),transform .4s var(--rebote);
 }
 .tdet-x:hover{background:var(--line);transform:rotate(90deg)}
-/* El grupo foto + texto va centrado: el párrafo tiene un ancho máximo de
-   lectura y sin esto quedaba todo pegado a la izquierda del panel. */
-.tdet-in{display:flex;gap:28px;align-items:center;width:100%;max-width:940px;margin:0 auto}
-/* Caja cuadrada con la foto encajada dentro. Las cuatro fotos tienen formas
-   muy distintas —la de digital es 300x958, casi una columna— y a ancho fijo
-   esa sola estiraba el panel al doble de alto que las demás. */
-.tdet-ph{width:150px;height:150px;flex:none;object-fit:contain;object-position:center}
-.tdet-txt{min-width:0}
+/* Sin foto: manda el texto, centrado y con ancho cómodo de lectura */
+.tdet-in{width:100%;max-width:720px;margin:0 auto}
 .tdet-lab{display:inline-block;background:var(--teal-d);color:#fff;font-size:12px;font-weight:700;
-  border-radius:16px;padding:6px 13px;margin-bottom:11px}
-.trans-det p{font-size:14.5px;line-height:1.65;color:var(--ink-2);margin:0;max-width:74ch}
+  border-radius:16px;padding:6px 13px;margin-bottom:14px}
+.trans-det p{font-size:16px;line-height:1.7;color:var(--ink-2);margin:0}
 
 @media(max-width:760px){
   /* En el móvil la rejilla es una columna y el panel superpuesto no cabe:
      vuelve a abrirse en el flujo, debajo de las tarjetas. */
-  .trans-det{position:static;padding:18px;box-shadow:none;margin-top:14px;display:block}
-  .tdet-in{flex-direction:column;gap:14px;align-items:flex-start}
-  .tdet-ph{width:110px;height:110px}
+  .trans-det{position:static;padding:20px 18px;box-shadow:none;margin-top:14px;display:block}
+  .trans-det p{font-size:14.5px;line-height:1.6}
   .tdet-x{top:10px;right:10px}
 }
 @media(prefers-reduced-motion:reduce){
-  .trans-det{animation:none}
+  .trans-det,.tdet-barra,.tdet-lab,.trans-det p{animation:none}
 }
 @media(max-width:900px){.trans{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.trans{grid-template-columns:1fr}}

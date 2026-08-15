@@ -80,13 +80,11 @@ document.getElementById('trans').insertAdjacentHTML('afterbegin', TRANS.map((t,k
     caja.style.setProperty('--oy', ((r.top + r.height/2 - rc.top) / rc.height * 100).toFixed(1) + '%');
 
     caja.innerHTML =
-        '<button type="button" class="tdet-x" data-cerrar aria-label="Cerrar">✕</button>'
+        '<span class="tdet-barra" aria-hidden="true"></span>'
+      + '<button type="button" class="tdet-x" data-cerrar aria-label="Cerrar">✕</button>'
       + '<div class="tdet-in">'
-      +   '<img class="tdet-ph" src="' + t.img + '" alt="">'
-      +   '<div class="tdet-txt">'
-      +     '<span class="tdet-lab">' + esc(t.lab) + '</span>'
-      +     '<p>' + esc(t.texto) + '</p>'
-      +   '</div>'
+      +   '<span class="tdet-lab">' + esc(t.lab) + '</span>'
+      +   '<p>' + esc(t.texto) + '</p>'
       + '</div>';
     // Se muestra y ya: la entrada la hace el CSS con una animación propia.
     caja.hidden = false;
