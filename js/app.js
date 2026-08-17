@@ -323,83 +323,6 @@ function verMapa(d){
     + '<p class="mdet-pie">' + esc(d.pie) + '</p>';
 }
 
-/**
- * Enciende los países del mapa en desorden, llevando la cuenta al lado.
- * Solo se encienden los de la lista; el resto de la región queda dibujado en
- * gris, para que se vea dónde están los accionistas dentro del continente.
- */
-function encenderMapa(caja, lista){
-  const todos = Array.from(caja.querySelectorAll('svg path'));
-  const marcados = lista && lista.length ? new Set(lista) : null;
-  const paises = marcados
-    ? todos.filter(p => marcados.has(p.dataset.p))
-    : todos;
-  todos.forEach(p => { if (marcados && !marcados.has(p.dataset.p)) p.classList.add('fuera'); });
-
-  const cuenta = caja.querySelector('.mdet-cuenta b');
-  caja.querySelector('.mdet-cuenta i').textContent = paises.length;
-  if (SIN_MOVIMIENTO){
-    paises.forEach(p=>p.classList.add('on'));
-    cuenta.textContent = paises.length;
-    return;
-  }
-  // Desordenados: encenderlos de norte a sur se leería como un barrido y la
-  // idea es que la región se vaya poblando.
-  for (let i = paises.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random()*(i+1));
-    const t = paises[i]; paises[i] = paises[j]; paises[j] = t;
-  }
-  paises.forEach((p,i) => window.setTimeout(()=>{
-    p.classList.add('on');
-    cuenta.textContent = i + 1;
-  }, 220 + i*52));
-}
-
-/* Abrir y cerrar el detalle de un indicador */
-document.addEventListener('click', e => {
-  const b = e.target.closest('.meta2-mas');
-  if (!b) return;
-  const panel = document.getElementById('meta-panel-' + b.dataset.meta);
-  const abierto = b.getAttribute('aria-expanded') === 'true';
-  if (abierto){
-    b.setAttribute('aria-expanded','false');
-    panel.hidden = true; panel.innerHTML = '';
-    return;
-  }
-  const d = (METAS_VISIBLES[+b.dataset.meta] || {}).detalle;
-  if (!d) return;
-  panel.innerHTML = d.tipo === 'mapa'     ? verMapa(d)
-                  : d.tipo === 'palanca'  ? verPalanca(d)
-                  :                         verComparar(d);
-  panel.hidden = false;
-  b.setAttribute('aria-expanded','true');
-  // El dibujo arranca en el cuadro siguiente: si se pinta y se anima en el
-  // mismo, el navegador junta los dos estados y no se ve la transición.
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    panel.classList.add('va');
-    if (d.tipo === 'mapa') encenderMapa(panel, d.encender);
-  }));
-  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
-});
-
-function pintarMeta(m, color){
-  const caja = document.getElementById('dr-meta-wrap');
-  if(!m){ caja.style.display = 'none'; return; }
-  caja.style.display = '';
-  caja.querySelector('h4').textContent = 'La meta al 2031';
-
-  const baja = m.hasta.valor < m.desde.valor;
-  document.getElementById('dr-meta').innerHTML =
-      '<p class="meta-nombre">' + esc(m.nombre) + '</p>'
-    + '<div class="meta-cifra"><b style="color:' + color + '">' + fmt.format(m.hasta.valor) + '</b>'
-    + '<span>' + esc(m.unidad) + '</span></div>'
-    + '<div class="meta-pista" style="--c:' + color + '"><i></i></div>'
-    + '<div class="meta-pie">'
-    +   '<span><small>' + esc(m.desde.etiqueta) + '</small><b>' + fmt.format(m.desde.valor) + '</b></span>'
-    +   '<span class="meta-flecha" aria-hidden="true">' + (baja ? '↓' : '↑') + '</span>'
-    +   '<span class="meta-fin"><small>' + esc(m.hasta.etiqueta) + '</small><b>' + fmt.format(m.hasta.valor) + '</b></span>'
-    + '</div>';
-}
 
 /* ---------- DRAWER ---------- */
 const drawer = document.getElementById('drawer'), scrim = document.getElementById('scrim');
@@ -441,8 +364,10 @@ function openCard(id, push){
     '<button class="lchip" data-go="'+x.id+'"><i style="background:'+LEVELS[x.lvl].color+'"></i>'+esc(x.t.length>44?x.t.slice(0,42)+'…':x.t)+'</button>').join('');
   // Aquí el color va en el texto y en trazos finos, no de relleno: por eso el
   // tono oscuro del nivel y no el de las tarjetas.
-  if (d.metas && d.metas.length) pintarMetas(d.metas, L.tono || L.color);
-  else pintarMeta(porDefinir ? null : d.meta, L.color);
+  /* Todas las agendas con indicadores usan "metas". La versión de una sola
+     meta con barra de avance se retiró: ya no quedaba ninguna que la usara. */
+  if (!porDefinir && d.metas && d.metas.length) pintarMetas(d.metas, L.tono || L.color);
+  else document.getElementById('dr-meta-wrap').style.display = 'none';
   const nota = document.getElementById('dr-note');
   nota.style.display = '';        // openLevel la puede haber ocultado
   nota.innerHTML = d.validado
@@ -1224,6 +1149,25 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
    */
   function soltarAve(contenedor, base, respaldo, alto, pausa, banda, miraALaIzquierda){
     if (!contenedor) return;
+
+    /* El ave no se crea hasta que su sección está por entrar en pantalla.
+       Antes las tres se cargaban de entrada, aunque quedaran a dos o tres
+       pantallas de distancia: eran más de un mega de video que el visitante
+       pagaba sin haber llegado ahí. Si no llega nunca, no se descargan.
+       Es decoración pura, así que si el aviso no llegara tampoco se pierde
+       nada: simplemente no habría ave. */
+    if ('IntersectionObserver' in window){
+      const espera = new IntersectionObserver(es => {
+        if (!es.some(x => x.isIntersecting)) return;
+        espera.disconnect();
+        crear();
+      }, { rootMargin: '250px 0px' });
+      espera.observe(contenedor);
+    } else {
+      crear();
+    }
+
+    function crear(){
     contenedor.style.position = 'relative';
     const franja = banda || [6, 78];
 
@@ -1256,6 +1200,7 @@ if(location.hash && byId(location.hash.slice(1))) openCard(location.hash.slice(1
       vuelo.onfinish = () => window.setTimeout(cruzar, azar(pausa[0], pausa[1]));
     }
     window.setTimeout(cruzar, azar(2500, 7000));
+    }   // fin de crear()
   }
 
   // El mapa estratégico: la guacamaya. Aquí las filas dejan aire entre sí, así
