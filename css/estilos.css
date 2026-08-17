@@ -760,6 +760,20 @@ video.tdeco{
 .drawer.sin-texto #dr-what,
 .drawer.sin-texto #dr-acts{display:none}
 
+/* ---- Lámina de cierre del recorrido -------------------------------- */
+.cierre-lema{
+  margin-top:20px;font-size:clamp(17px,2vw,23px);line-height:1.45;
+  max-width:min(760px,66%);color:var(--ink);font-weight:400;
+}
+/* Los tres verbos, con los colores de los niveles del mapa */
+.cierre-c1{color:var(--teal-tx)}
+.cierre-c2{color:var(--green-tx)}
+.cierre-c3{color:var(--coral-tx)}
+.cierre-pie{margin-top:22px;font-size:13.5px;color:var(--mute)}
+@media(max-width:760px){
+  .cierre-lema{max-width:100%}
+}
+
 /* Las palabras que ordenan una agenda, dentro del párrafo */
 .clave{color:var(--c);font-weight:700;box-shadow:inset 0 -.32em 0 rgba(0,0,0,.045)}
 

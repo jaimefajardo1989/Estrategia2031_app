@@ -290,5 +290,9 @@ const TOUR = [
   p:'Lo que el Banco aporta más allá del volumen de financiamiento. Atraviesan todas las agendas y toda su acción.'},
  {kind:'level', lvl:4, kick:'Nivel 4', h:'Las agendas <em>habilitadoras</em>',
   p:'El trabajo puertas adentro que habilita todo lo demás.'},
- {kind:'close'}
+ /* Lámina de cierre. El texto se edita aquí, no en app.js. */
+ {kind:'close',
+  h:'CAF — <em>Banco de Desarrollo</em><br>de América Latina y el Caribe',
+  p:'Para <b class="cierre-c1">integrar más</b>, <b class="cierre-c2">movilizar más</b> y <b class="cierre-c3">estar más cerca</b> de los países.',
+  pie:'Estrategia 2026–2031 · Dirección de Estrategia y Análisis Institucional'}
 ];

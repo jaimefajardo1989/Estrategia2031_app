@@ -649,8 +649,10 @@ function buildTour(){
             ? [{s:IMG.hummingbird, v:VID.colibri, st:'right:2%;top:6%;height:13%'},{s:IMG.dots_teal, st:'left:0;bottom:4%;height:8%;opacity:.8'}]
             : [{s:IMG.flamingo, v:VID.flamenco, st:'right:4%;bottom:2%;height:38%'},{s:IMG.dots_coral, st:'left:0;bottom:4%;height:8%;opacity:.8'}]);
     } else if(s.kind === 'close'){
-      inner = '<div class="inner"><h3 style="font-size:clamp(30px,4.6vw,56px);max-width:min(720px,64%)">CAF — <em>Banco Verde</em><br>de América Latina y el Caribe</h3>'
-        + '<p style="margin-top:18px">Estrategia 2026–2031 · Dirección de Estrategia y Análisis Institucional</p></div>'
+      inner = '<div class="inner">'
+        + '<h3 style="font-size:clamp(28px,4.2vw,50px);max-width:min(760px,66%)">' + s.h + '</h3>'
+        + '<p class="cierre-lema">' + s.p + '</p>'
+        + '<p class="cierre-pie">' + esc(s.pie) + '</p></div>'
         + decoHTML([
           {s:IMG.tree_a, st:'right:3%;bottom:-3%;height:46%;z-index:1'},
           {s:IMG.p_wheelchair, st:'right:26%;bottom:3%;height:18%;z-index:2'},
