@@ -182,6 +182,27 @@ cuadro. Lo que sí lo baja, en orden de efecto:
 Entre lo primero y lo segundo, los niños pasaron de 1.140 KB a 602 KB, y de paso
 dejaron de dar un salto cada vez que el ciclo volvía a empezar.
 
+## Peso de la página
+
+Lo que descarga una visita nueva a la portada ronda **1,1 MB**, de los cuales algo
+menos de la mitad son los cuatro videos del collage. Antes eran 3,3 MB.
+
+Tres cosas lo sostienen, y conviene no deshacerlas sin querer:
+
+1. **Cada video es un solo ciclo.** Los originales traían entre 230 y 240 cuadros
+   repitiendo el mismo aleteo. Recortados a su ciclo y con la costura cerrada,
+   `colibri.webm` pasó de 299 a 19 KB y `guacamaya.webm` de 485 a 92.
+2. **Las aves de sección se cargan al llegar.** Las tres que cruzan el mapa, las
+   transiciones y la trayectoria no existen hasta que su sección está a 250 px de
+   entrar en pantalla. Antes se descargaban de entrada, estando a dos o tres
+   pantallas de distancia, y además duplicaban lo que ya había pedido la portada.
+3. **La portada solo carga sus cuatro videos.** Los del recorrido guiado y los
+   de los paneles se piden cuando se abren.
+
+Hay unos 260 KB de imágenes en `img/` que ya no usa nadie (quedaron de versiones
+anteriores del collage). No pesan para el visitante —nunca se descargan— así que
+se dejaron ahí por si vuelven a hacer falta.
+
 ## Las animaciones
 
 Están todas al final de `css/estilos.css`, en un bloque separado, y en el bloque final de
