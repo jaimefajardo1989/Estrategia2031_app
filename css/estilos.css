@@ -787,9 +787,14 @@ video.tdeco{
 .meta2-mas[aria-expanded="true"] span{transform:rotate(180deg)}
 .meta2-mas:hover{text-decoration:underline}
 
-.meta2-panel{margin-top:11px;border-top:1px solid var(--line);padding-top:12px;opacity:0;transition:opacity .4s ease}
-.meta2-panel.va{opacity:1}
+/* Igual que el panel de las transiciones: la entrada solo desplaza, nunca
+   parte de opacidad 0. Con la pestaña en segundo plano el navegador congela
+   la animación en su primer fotograma y el detalle quedaría invisible. */
+.meta2-panel{margin-top:11px;border-top:1px solid var(--line);padding-top:12px;
+  animation:entraMetaPanel .4s var(--rebote)}
+@keyframes entraMetaPanel{ from{transform:translateY(-6px)} to{transform:none} }
 .meta2-panel[hidden]{display:none !important}
+@media(prefers-reduced-motion:reduce){ .meta2-panel{animation:none} }
 
 .mdet-t{margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.06em;
   text-transform:uppercase;color:var(--mute)}
@@ -803,27 +808,27 @@ video.tdeco{
 .mdet-v{font-size:15px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;
   justify-self:end;align-self:end}
 .mdet-canal{grid-column:1/-1;height:12px;border-radius:20px;background:#fff;border:1px solid var(--line)}
+/* La barra crece con una animación propia, no con una clase que agregue JS:
+   así su estado normal es "llena" y nunca queda en cero si algo falla. */
 .mdet-canal i{
   display:block;height:100%;width:var(--w);border-radius:20px;background:var(--line);
-  transform:scaleX(0);transform-origin:left;
-  transition:transform 1s cubic-bezier(.22,.9,.25,1);
+  transform-origin:left;
+  animation:crecerBarra 1s cubic-bezier(.22,.9,.25,1) backwards;
 }
-.mdet-b.es-meta .mdet-canal i{background:var(--c)}
+@keyframes crecerBarra{ from{transform:scaleX(0)} to{transform:none} }
+.mdet-b.es-meta .mdet-canal i{background:var(--c);animation-delay:.25s}
 .mdet-b.es-meta .mdet-v{color:var(--c);font-size:17px}
-.meta2-panel.va .mdet-canal i{transform:scaleX(1)}
-.meta2-panel.va .mdet-b.es-meta .mdet-canal i{transition-delay:.25s}
 
 /* Palanca: dos círculos a escala de área */
 .mdet-palanca{display:flex;align-items:flex-end;gap:26px;padding:6px 0 2px}
 .mdet-globo{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .mdet-disco{
   display:block;width:var(--d);height:var(--d);border-radius:50%;
-  transform:scale(0);transition:transform .8s var(--rebote);
+  animation:creceDisco .8s var(--rebote) backwards;
 }
+@keyframes creceDisco{ from{transform:scale(0)} to{transform:none} }
 .mdet-globo.es-gr .mdet-disco{background:color-mix(in srgb, var(--c) 18%, #fff)}
-.mdet-globo.es-ch .mdet-disco{background:var(--c)}
-.meta2-panel.va .mdet-disco{transform:scale(1)}
-.meta2-panel.va .mdet-globo.es-ch .mdet-disco{transition-delay:.3s}
+.mdet-globo.es-ch .mdet-disco{background:var(--c);animation-delay:.3s}
 .mdet-globo b{font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
 .mdet-globo small{font-size:11px;color:var(--mute);max-width:11ch;line-height:1.3}
 
@@ -846,8 +851,7 @@ video.tdeco{
 
 @media(prefers-reduced-motion:reduce){
   .meta2-panel{opacity:1;transition:none}
-  .mdet-canal i{transform:scaleX(1);transition:none}
-  .mdet-disco{transform:scale(1);transition:none}
+  .mdet-canal i,.mdet-disco{animation:none}
   .mdet-mapa path{transition:none}
 }
 

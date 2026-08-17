@@ -324,6 +324,62 @@ function verMapa(d){
 }
 
 
+/**
+ * Enciende los países del mapa en desorden, llevando la cuenta al lado.
+ * Solo se encienden los de la lista; el resto de la región queda dibujado en
+ * gris, para que se vea dónde están los accionistas dentro del continente.
+ */
+function encenderMapa(caja, lista){
+  const todos = Array.from(caja.querySelectorAll('svg path'));
+  const marcados = lista && lista.length ? new Set(lista) : null;
+  const paises = marcados
+    ? todos.filter(p => marcados.has(p.dataset.p))
+    : todos;
+  todos.forEach(p => { if (marcados && !marcados.has(p.dataset.p)) p.classList.add('fuera'); });
+
+  const cuenta = caja.querySelector('.mdet-cuenta b');
+  caja.querySelector('.mdet-cuenta i').textContent = paises.length;
+  if (SIN_MOVIMIENTO){
+    paises.forEach(p=>p.classList.add('on'));
+    cuenta.textContent = paises.length;
+    return;
+  }
+  // Desordenados: encenderlos de norte a sur se leería como un barrido y la
+  // idea es que la región se vaya poblando.
+  for (let i = paises.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    const t = paises[i]; paises[i] = paises[j]; paises[j] = t;
+  }
+  paises.forEach((p,i) => window.setTimeout(()=>{
+    p.classList.add('on');
+    cuenta.textContent = i + 1;
+  }, 220 + i*52));
+}
+
+/* Abrir y cerrar el detalle de un indicador */
+document.addEventListener('click', e => {
+  const b = e.target.closest('.meta2-mas');
+  if (!b) return;
+  const panel = document.getElementById('meta-panel-' + b.dataset.meta);
+  const abierto = b.getAttribute('aria-expanded') === 'true';
+  if (abierto){
+    b.setAttribute('aria-expanded','false');
+    panel.hidden = true; panel.innerHTML = '';
+    return;
+  }
+  const d = (METAS_VISIBLES[+b.dataset.meta] || {}).detalle;
+  if (!d) return;
+  panel.innerHTML = d.tipo === 'mapa'     ? verMapa(d)
+                  : d.tipo === 'palanca'  ? verPalanca(d)
+                  :                         verComparar(d);
+  panel.hidden = false;
+  b.setAttribute('aria-expanded','true');
+  // Las barras y los círculos se animan solos desde el CSS. Lo único que hace
+  // falta desde aquí es encender los países del mapa.
+  if (d.tipo === 'mapa') encenderMapa(panel, d.encender);
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+});
+
 /* ---------- DRAWER ---------- */
 const drawer = document.getElementById('drawer'), scrim = document.getElementById('scrim');
 let current = null, lastFocus = null;
