@@ -168,6 +168,8 @@ h2 em{font-style:normal;color:var(--teal-d)}
 /* La guacamaya vuela con las alas extendidas: es ancha y baja, así que a
    112 px de ancho mide 86 de alto y entra debajo de la X sin recortarse. */
 .dr-head .deco[data-nivel="1"]{top:52px;right:16px;width:112px}
+/* El ave en blanco y negro, con la misma colocación que las otras tres */
+.dr-head .deco[data-nivel="2"]{top:52px;right:16px;width:104px}
 .dr-tag{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;padding:6px 12px;border-radius:20px}
 .dr-head h3{margin:14px 0 0;font-size:26px;line-height:1.15;letter-spacing:-.025em;max-width:78%;color:var(--ink)}
 .dr-head .lead{margin:10px 0 0;font-size:14px;color:var(--ink-2);max-width:82%;line-height:1.5}

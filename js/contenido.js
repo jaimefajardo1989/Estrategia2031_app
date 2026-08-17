@@ -52,6 +52,7 @@ const IMG = {
      archivo como decoración de las agendas habilitadoras. */
   flamenco_anim: 'video/flamenco_anim.webp',
   guacamaya_anim: 'video/guacamaya_anim.webp',
+  ave_anim: 'video/ave_anim.webp',
 };
 
 /* Videos de aves con fondo transparente (WebM con canal alfa).
@@ -81,7 +82,8 @@ const LEVELS = {
        soloTexto:true, sinAtajos:true,
        what:"Esta estrategia se construyó junto a los países accionistas, sus equipos técnicos, los equipos de CAF y un grupo de expertos internacionales, con el propósito de entender el contexto global al que nos enfrentamos en los próximos años. De ese diálogo surgió un rumbo compartido para acompañar a los países en aprovechar las oportunidades que hoy se le abren a la región a partir de las transiciones socioeconómicas, y en saldar los desbalances históricos que todavía marcan su desarrollo. Para que la resiliencia, la integración y la prosperidad se traduzcan en desarrollo y bienestar para todos los latinoamericanos y caribeños."}},
 
-  2:{name:"Oportunidades",    color:"var(--yellow-d)", tono:"var(--yellow-tx)",deco:IMG.butterfly_a,
+  2:{name:"Oportunidades",    color:"var(--yellow-d)", tono:"var(--yellow-tx)",
+     deco:IMG.hummingbird2, decoAnim:IMG.ave_anim,
      explica:{
        t:"Agendas de oportunidades",
        soloTexto:true,
